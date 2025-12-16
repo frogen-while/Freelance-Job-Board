@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import userRoutes from './routes/userRoutes.js'
+import categoryRoutes from './routes/categoryRoutes.js'
 
 const app: Application = express();
 
@@ -13,5 +14,6 @@ app.get('/', (req: Request, res: Response) => {
 
 
 app.use('/api/users', userRoutes)
+app.use('/api/categories', categoryRoutes)
 
 export default app;

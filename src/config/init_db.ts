@@ -244,7 +244,7 @@ export async function createSchemaAndData(): Promise<void> {
 
 }
 
-// Only run initialization when this module is executed directly (e.g. `npm run init-db`).
+// Only run initialization when this module is executed directly
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   openDb().catch((error) => {
     console.error('❌ Failed to initialize database:', error);
