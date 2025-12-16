@@ -1,6 +1,7 @@
 // open sqlite database and create tables if they do not exist
 import { open, Database } from "sqlite";
 import sqlite3 from "sqlite3"
+import { pathToFileURL } from 'node:url';
 
 export const db: { connection: Database | null} = {
   connection: null
@@ -243,4 +244,10 @@ export async function createSchemaAndData(): Promise<void> {
 
 }
 
-openDb()
+// Only run initialization when this module is executed directly (e.g. `npm run init-db`).
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  openDb().catch((error) => {
+    console.error('❌ Failed to initialize database:', error);
+    process.exit(1);
+  });
+}
