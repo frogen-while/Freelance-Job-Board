@@ -4,6 +4,7 @@ import userRoutes from './routes/userRoutes.js'
 import categoryRoutes from './routes/categoryRoutes.js'
 import jobRoutes from './routes/jobRoutes.js'
 import jobaplRoutes from './routes/jobaplRoutes.js'
+import jobreviewRoutes from './routes/jobreviewRoutes.js'
 
 const app: Application = express();
 
@@ -19,5 +20,6 @@ app.use('/api/users', userRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/jobs', jobRoutes)
 app.use('/api/jobapplications', jobaplRoutes)
+app.use('/api/jobreviews', jobreviewRoutes)
 
 export default app;
