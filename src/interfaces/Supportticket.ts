@@ -1,7 +1,7 @@
 
 export type status = 'Open' | 'In Progress' | 'Closed';
 
-export interface Assignment {
+export interface Supportticket {
   ticket_id: number
   user_id: number;
   support_id: number;

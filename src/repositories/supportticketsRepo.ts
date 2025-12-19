@@ -1,10 +1,10 @@
 import { db } from '../config/init_db.js';
-import { status, Assignment } from '../interfaces/Supportticket.js';
+import { status, Supportticket } from '../interfaces/Supportticket.js';
 
 export const supportTicketsRepo = {
 
-    async get_all(): Promise<Assignment[]> {
-        const result = await db.connection?.all<Assignment[]>(
+    async get_all(): Promise<Supportticket[]> {
+        const result = await db.connection?.all<Supportticket[]>(
             'SELECT ticket_id, user_id, support_id, subject, message, status FROM supporttickets'
         );
         return result || [];
@@ -19,8 +19,8 @@ export const supportTicketsRepo = {
         return result?.lastID ?? null;
     },
     
-    async findById(ticket_id: number): Promise<Assignment | undefined> {
-        return await db.connection?.get<Assignment | undefined>(
+    async findById(ticket_id: number): Promise<Supportticket | undefined> {
+        return await db.connection?.get<Supportticket | undefined>(
             `SELECT * FROM supporttickets WHERE ticket_id = ?`,
             ticket_id
         );
