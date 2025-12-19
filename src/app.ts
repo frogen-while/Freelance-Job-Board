@@ -7,6 +7,7 @@ import jobaplRoutes from './routes/jobaplRoutes.js'
 import jobreviewRoutes from './routes/jobreviewRoutes.js'
 import assignmentRoutes from './routes/assignmentsRoutes.js'
 import paymentsRoutes from './routes/paymentsRoutes.js'
+import supportticketsRoutes from './routes/supportticketsRoutes.js'
 
 const app: Application = express();
 
@@ -24,6 +25,7 @@ app.use('/api/jobs', jobRoutes)
 app.use('/api/jobapplications', jobaplRoutes)
 app.use('/api/jobreviews', jobreviewRoutes)
 app.use('/api/assignments', assignmentRoutes)
-app.use('api/payments', paymentsRoutes)
+app.use('/api/payments', paymentsRoutes)
+app.use('/api/supporttickets', supportticketsRoutes)
 
 export default app;
