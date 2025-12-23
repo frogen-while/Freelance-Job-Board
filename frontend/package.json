@@ -14,7 +14,8 @@
     "e2e:open": "cypress open",
     "e2e:run": "cypress run",
     "start:static": "http-server ./dist/frontend -p 4200 --silent --cors",
-    "e2e:ci": "npx http-server ./dist/frontend -p 4200 --silent --cors & npx wait-on http://127.0.0.1:4200 && npx cypress run",
+    "start:spa": "node scripts/spa-server.js",
+    "e2e:ci": "node scripts/spa-server.js & npx wait-on http://127.0.0.1:4200 && npx cypress run",
     "check:ts": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
