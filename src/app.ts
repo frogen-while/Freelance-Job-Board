@@ -30,4 +30,23 @@ app.use('/api/payments', paymentsRoutes)
 app.use('/api/supporttickets', supportticketsRoutes)
 app.use('/api/auditlog', auditlogRoutes)
 
+// Serve frontend build if present (production)
+import path from 'path';
+import fs from 'fs';
+
+const distPath = path.join(__dirname, '..', 'frontend', 'dist', 'frontend');
+const publicPath = path.join(__dirname, '..', 'public');
+
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.get('*', (req: Request, res: Response) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+} else if (fs.existsSync(publicPath)) {
+  app.use(express.static(publicPath));
+  app.get('*', (req: Request, res: Response) => {
+    res.sendFile(path.join(publicPath, 'index.html'));
+  });
+}
+
 export default app;

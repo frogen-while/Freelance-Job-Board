@@ -1,0 +1,49 @@
+<main class="hero-section section-card">
+  <div class="hero-content">
+    <div class="tab-buttons" role="tablist" aria-label="Primary action">
+      <button class="tab-btn" [class.active]="activeTab==='hire'" (click)="setActiveTab('hire')" type="button" role="tab">Hire freelancers</button>
+      <button class="tab-btn" [class.active]="activeTab==='work'" (click)="setActiveTab('work')" type="button" role="tab">Find work</button>
+    </div>
+
+    <div class="tab-panels">
+      <div class="tab-panel" [class.active]="activeTab==='hire'" *ngIf="activeTab==='hire'">
+        <h1 class="hero-title">Empowering talent<br>to collaborate with<br>businesses worldwide</h1>
+
+        <div class="search-container">
+          <input class="search-input" [(ngModel)]="search" placeholder="Search for skills, categories, or projects">
+          <button class="search-btn" (click)="onSearch()">Find</button>
+        </div>
+      </div>
+
+      <div class="tab-panel" [class.active]="activeTab==='work'" *ngIf="activeTab==='work'">
+        <div class="work-card">
+          <h2 class="work-title">Build your freelancing career with new opportunities.</h2>
+          <p class="work-subtitle">Discover projects posted regularly and apply in minutes.</p>
+          <a class="cta-btn" routerLink="/login">Explore recently posted jobs</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<section class="categories-section section-card">
+  <h2 class="categories-title">Browse top categories</h2>
+  <div class="categories-grid">
+    <a class="category-card" *ngFor="let c of categories" [routerLink]="['/categories']">
+      <h3 class="category-name">{{c.name}}</h3>
+      <p class="category-hint">Browse jobs</p>
+    </a>
+  </div>
+</section>
+
+<section class="section-card">
+  <div class="content-wrapper">
+    <section>
+      <h2>Recent jobs</h2>
+      <ul>
+        <li *ngFor="let j of jobs">{{ j.title }} — {{ j.budget }}</li>
+      </ul>
+    </section>
+  </div>
+</section>

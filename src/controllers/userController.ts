@@ -6,10 +6,14 @@ const SALT_ROUNDS = 10;
 
 
 export const registerUser = async (req: Request, res: Response) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, type_name } = req.body;
 
     if (!name || !email || !password) {
         return res.status(400).json({ error: 'Name, email, and password are required.' });
+    }
+
+    if (type_name && !['Employer', 'Freelancer', 'Reviewer', 'Support'].includes(type_name)) {
+        return res.status(400).json({ error: 'type_name must be one of: Employer, Freelancer, Reviewer, Support.' });
     }
 
     try {
@@ -22,7 +26,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
         const password_hash = await bcrypt.hash(password, SALT_ROUNDS);
 
-        const newUserId = await userRepo.create(name, email, password_hash);
+        const newUserId = await userRepo.create(name, email, password_hash, type_name);
 
         if (newUserId) {
             return res.status(201).json({ 
@@ -95,18 +99,23 @@ export const deleteUser = async(req: Request, res: Response) =>{
 
 export const updateUser = async (req: Request, res: Response) => {
     const userId = parseInt(req.params.id, 10);
-    const { name, main_role } = req.body; 
+    const { name, main_role, type_name } = req.body; 
 
     if (isNaN(userId)) {
         return res.status(400).json({ error: 'Invalid user ID format.' });
     }
 
-    const updateData: { name?: string, main_role?: string } = {};
+    if (type_name && !['Employer', 'Freelancer', 'Reviewer', 'Support'].includes(type_name)) {
+        return res.status(400).json({ error: 'type_name must be one of: Employer, Freelancer, Reviewer, Support.' });
+    }
+
+    const updateData: { name?: string, main_role?: string, type_name?: string } = {};
     if (name) updateData.name = name;
     if (main_role) updateData.main_role = main_role;
+    if (type_name) updateData.type_name = type_name;
 
     if (Object.keys(updateData).length === 0) {
-        return res.status(400).json({ error: 'No valid fields provided for update (allowed: name, main_role).' });
+        return res.status(400).json({ error: 'No valid fields provided for update (allowed: name, main_role, type_name).' });
     }
 
     try {

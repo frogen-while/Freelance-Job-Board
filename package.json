@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "init-db": "tsx src/config/init_db.ts",
-    "dev": "tsx src/server.ts"
+    "dev": "tsx src/server.ts",
+    "start:frontend": "cd frontend && npm install && ng serve --proxy-config proxy.conf.json --open",
+    "build:frontend": "cd frontend && npm run build"
   },
   "author": "",
   "license": "ISC",
