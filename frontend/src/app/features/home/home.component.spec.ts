@@ -5,6 +5,8 @@ import { HomeComponent } from './home.component';
 import { ApiService } from '../../core/api.service';
 import { of } from 'rxjs';
 
+const jExpect = (globalThis as any).expect as unknown as jasmine.Expect;
+
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -25,15 +27,15 @@ describe('HomeComponent', () => {
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    jExpect(component).toBeTruthy();
   });
 
   it('should load jobs on init', () => {
-    expect(component.jobs).toEqual([]);
+    jExpect(component.jobs).toEqual([]);
   });
 
   it('should load categories on init', () => {
-    expect(component.categories).toEqual([]);
+    jExpect(component.categories).toEqual([]);
   });
 });
 

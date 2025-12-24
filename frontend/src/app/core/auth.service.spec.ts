@@ -3,6 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
+const jExpect = (globalThis as any).expect as unknown as jasmine.Expect;
+
 describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
@@ -14,6 +16,6 @@ describe('AuthService', () => {
   });
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    jExpect(service).toBeTruthy();
   });
 });
