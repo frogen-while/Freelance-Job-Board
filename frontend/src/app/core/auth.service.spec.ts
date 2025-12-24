@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
-const jExpect = (globalThis as any).expect as unknown as jasmine.Expect;
+const jExpect = (globalThis as any).expect as <T>(actual: T) => jasmine.Matchers<T>;
 
 describe('AuthService', () => {
   let service: AuthService;

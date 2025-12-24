@@ -5,7 +5,7 @@ import { HomeComponent } from './home.component';
 import { ApiService } from '../../core/api.service';
 import { of } from 'rxjs';
 
-const jExpect = (globalThis as any).expect as unknown as jasmine.Expect;
+const jExpect = (globalThis as any).expect as <T>(actual: T) => jasmine.Matchers<T>;
 
 
 describe('HomeComponent', () => {
