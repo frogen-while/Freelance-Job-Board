@@ -40,12 +40,12 @@ const publicPath = path.join(__dirname, '..', 'public');
 
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
-  app.use('*', (req: Request, res: Response) => {
+  app.use((req: Request, res: Response) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
 } else if (fs.existsSync(publicPath)) {
   app.use(express.static(publicPath));
-  app.use('*', (req: Request, res: Response) => {
+  app.use((req: Request, res: Response) => {
     res.sendFile(path.join(publicPath, 'index.html'));
   });
 }
