@@ -5,6 +5,7 @@ import { HomeComponent } from './home.component';
 import { ApiService } from '../../core/api.service';
 import { of } from 'rxjs';
 
+
 describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
@@ -28,11 +29,11 @@ describe('HomeComponent', () => {
   });
 
   it('should load jobs on init', () => {
-    expect(component.jobs).toBeDefined();
+    expect(component.jobs).toEqual([]);
   });
 
   it('should load categories on init', () => {
-    expect(component.categories).toBeDefined();
+    expect(component.categories).toEqual([]);
   });
 });
 

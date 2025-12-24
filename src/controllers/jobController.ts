@@ -35,8 +35,8 @@ export const createJob = async (req: Request, res: Response) => {
         }
 
     } catch (error) {
-        console.error('creation error:', error);
-        return res.status(500).json({ error: 'An internal server error occurred during registration.' });
+        console.error('Error creating job:', error);
+        return res.status(500).json({ error: 'An internal server error occurred during job creation.' });
     }
 };
 
@@ -49,55 +49,55 @@ export const getAllJobs = async (req: Request, res: Response) => {
             data
         });
     } catch (error){
-        console.error('Error fetching Jobs', error)
-        return res.status(500).json({ error: 'An internal server error occurred while fetching categories.' });
+        console.error('Error fetching jobs:', error);
+        return res.status(500).json({ error: 'An internal server error occurred while fetching jobs.' });
     }
 };
 
 export const getJobById = async (req: Request, res: Response) => {
-    const JobId = parseInt(req.params.id, 10); 
+    const jobId = parseInt(req.params.id, 10);
 
-    if (isNaN(JobId)) {
+    if (isNaN(jobId)) {
         return res.status(400).json({ error: 'Invalid job ID format.' });
     }
 
     try {
-        const job = await jobRepo.findById(JobId);
+        const job = await jobRepo.findById(jobId);
 
         if (!job) {
-            return res.status(404).json({ error: 'job not found.' });
+            return res.status(404).json({ error: 'Job not found.' });
         }
 
         return res.status(200).json({ data: job });
 
     } catch (error) {
-        console.error(`Error fetching job ${JobId}:`, error);
-        return res.status(500).json({ error: 'An internal server error occurred while fetching the category.' });
+        console.error(`Error fetching job ${jobId}:`, error);
+        return res.status(500).json({ error: 'An internal server error occurred while fetching the job.' });
     }
 };
 
 export const deleteJob = async(req: Request, res: Response) =>{
-    const JobId = parseInt(req.params.id, 10); 
+    const jobId = parseInt(req.params.id, 10);
 
-    if (isNaN(JobId)) {
+    if (isNaN(jobId)) {
         return res.status(400).json({ error: 'Invalid job ID format.' });
     }
 
     try {
-        await jobRepo.deleteByID(JobId)
+        await jobRepo.deleteByID(jobId);
         return res.status(204).send();
     } catch (error) {
-        console.error(`Error fetching job ${JobId}:`, error);
-        return res.status(500).json({ error: 'An internal server error occurred while deleting the category.' });
+        console.error(`Error deleting job ${jobId}:`, error);
+        return res.status(500).json({ error: 'An internal server error occurred while deleting the job.' });
     }
 
 };
 
 export const updateJob = async (req: Request, res: Response) => {
-    const JobId = parseInt(req.params.id, 10);
+    const jobId = parseInt(req.params.id, 10);
     const { employer_id, category_id, title, description, budget, status, deadline} = req.body; 
 
-    if (isNaN(JobId)) {
+    if (isNaN(jobId)) {
         return res.status(400).json({ error: 'Invalid job ID format.' });
     }
 
@@ -122,24 +122,24 @@ export const updateJob = async (req: Request, res: Response) => {
     if (status !== undefined) updateData.status = status;
     if (deadline !== undefined) updateData.deadline = deadline;
 
-        if (Object.keys(updateData).length === 0) {
-        return res.status(400).json({ error: 'No valid fields provided for update (allowed: job_id, employer_id, category_id, title, description, budget, status, deadline' })
+    if (Object.keys(updateData).length === 0) {
+        return res.status(400).json({ error: 'No valid fields provided for update (allowed: employer_id, category_id, title, description, budget, status, deadline)' });
     }
     try {
-        const existingJob = await jobRepo.findById(JobId);
+        const existingJob = await jobRepo.findById(jobId);
         if (!existingJob) {
-            return res.status(404).json({ error: 'job not found.' });
+            return res.status(404).json({ error: 'Job not found.' });
         }
         
-        const success = await jobRepo.update(JobId, updateData);
+        const success = await jobRepo.update(jobId, updateData);
 
         if (success) {
-            return res.status(200).json({ message: 'job updated successfully.' });
+            return res.status(200).json({ message: 'Job updated successfully.' });
         } else {
             return res.status(500).json({ error: 'Failed to update job.' });
         }
     } catch (error) {
-        console.error(`Error updating job ${JobId}:`, error);
-        return res.status(500).json({ error: 'An internal server error occurred while updating the category.' });
+        console.error(`Error updating job ${jobId}:`, error);
+        return res.status(500).json({ error: 'An internal server error occurred while updating the job.' });
     }
 };
