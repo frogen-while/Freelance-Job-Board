@@ -46,8 +46,8 @@ export const createCategory = async (req: Request, res: Response) => {
         }
 
     } catch (error) {
-        console.error('Registration error:', error);
-        return res.status(500).json({ error: 'An internal server error occurred during registration.' });
+        console.error('Error creating category:', error);
+        return res.status(500).json({ error: 'An internal server error occurred while creating the category.' });
     }
 };
 
