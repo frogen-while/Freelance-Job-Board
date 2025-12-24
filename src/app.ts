@@ -9,6 +9,10 @@ import assignmentRoutes from './routes/assignmentsRoutes.js'
 import paymentsRoutes from './routes/paymentsRoutes.js'
 import supportticketsRoutes from './routes/supportticketsRoutes.js'
 import auditlogRoutes from './routes/auditlogRoutes.js'
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app: Application = express();
 
@@ -30,21 +34,18 @@ app.use('/api/payments', paymentsRoutes)
 app.use('/api/supporttickets', supportticketsRoutes)
 app.use('/api/auditlog', auditlogRoutes)
 
-// Serve frontend build if present (production)
-import path from 'path';
-import fs from 'fs';
 
 const distPath = path.join(__dirname, '..', 'frontend', 'dist', 'frontend');
 const publicPath = path.join(__dirname, '..', 'public');
 
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
-  app.get('*', (req: Request, res: Response) => {
+  app.use('*', (req: Request, res: Response) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
 } else if (fs.existsSync(publicPath)) {
   app.use(express.static(publicPath));
-  app.get('*', (req: Request, res: Response) => {
+  app.use('*', (req: Request, res: Response) => {
     res.sendFile(path.join(publicPath, 'index.html'));
   });
 }
