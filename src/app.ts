@@ -10,6 +10,8 @@ import paymentsRoutes from './routes/paymentsRoutes.js'
 import supportticketsRoutes from './routes/supportticketsRoutes.js'
 import auditlogRoutes from './routes/auditlogRoutes.js'
 import authRoutes from './routes/authRoutes.js'
+import skillsRoutes from './routes/skillsRoutes.js'
+import profilesRoutes from './routes/profilesRoutes.js'
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -27,6 +29,9 @@ app.get('/api/health', (req: Request, res: Response) => {
 
 
 app.use('/api/auth', authRoutes)
+
+app.use('/api/skills', skillsRoutes)
+app.use('/api/profiles', profilesRoutes)
 
 app.use('/api/users', userRoutes)
 app.use('/api/categories', categoryRoutes)

@@ -8,7 +8,8 @@ type ApiEnvelope<T> = { success: true; data: T } | { success: false; error: { me
 
 export type PublicUser = {
   user_id: number;
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
   main_role: string;
 };
@@ -51,7 +52,8 @@ export class AuthService {
   }
 
   register(payload: {
-    name: string;
+    first_name: string;
+    last_name: string;
     email: string;
     password: string;
     type_name?: 'Employer' | 'Freelancer';

@@ -10,12 +10,12 @@ export const userRepo = {
     },
     
 
-    async create(name: string, email: string, password_hash: string, type_name?: string): Promise<number | null> {
+    async create(first_name: string, last_name: string, email: string, password_hash: string, type_name?: string): Promise<number | null> {
         const main_role: MainRole = 'Regular'; 
         
         const result = await db.connection?.run(
-            `INSERT INTO users (name, email, password_hash, main_role) VALUES (?, ?, ?, ?)`,
-            name, email, password_hash, main_role
+            `INSERT INTO users (first_name, last_name, email, password_hash, main_role) VALUES (?, ?, ?, ?, ?)`,
+            first_name, last_name, email, password_hash, main_role
         );
         
         const userId = result?.lastID;
@@ -39,13 +39,13 @@ export const userRepo = {
 
     async get_all(): Promise<User[]> {
         const result = await db.connection?.all<User[]>(
-            'SELECT user_id, name, email, main_role FROM users'
+            'SELECT user_id, first_name, last_name, email, main_role FROM users'
         );
         return result || [];
     },
     async findById(user_id: number): Promise<User | undefined> {
         return await db.connection?.get<User | undefined>(
-            `SELECT user_id, name, email, main_role FROM users WHERE user_id = ?`,
+            `SELECT user_id, first_name, last_name, email, main_role FROM users WHERE user_id = ?`,
             user_id
         );
     },
@@ -56,13 +56,17 @@ export const userRepo = {
         );
     },
 
-    async update(userId: number, updateData: { name?: string, main_role?: string, type_name?: string }): Promise<boolean> {
+    async update(userId: number, updateData: { first_name?: string, last_name?: string, main_role?: string, type_name?: string }): Promise<boolean> {
         const setClauses: string[] = [];
         const params: (string | number)[] = [];
 
-        if (updateData.name) {
-            setClauses.push('name = ?');
-            params.push(updateData.name);
+        if (updateData.first_name) {
+            setClauses.push('first_name = ?');
+            params.push(updateData.first_name);
+        }
+        if (updateData.last_name) {
+            setClauses.push('last_name = ?');
+            params.push(updateData.last_name);
         }
         if (updateData.main_role) {
             setClauses.push('main_role = ?');

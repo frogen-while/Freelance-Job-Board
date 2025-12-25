@@ -28,15 +28,19 @@ function signToken(payload: JwtUserPayload): string {
 }
 
 export const register = async (req: Request, res: Response) => {
-  const { name, email, password, type_name } = req.body as {
-    name?: unknown;
+  const { first_name, last_name, email, password, type_name } = req.body as {
+    first_name?: unknown;
+    last_name?: unknown;
     email?: unknown;
     password?: unknown;
     type_name?: unknown;
   };
 
-  if (typeof name !== 'string' || name.trim().length === 0) {
-    return sendError(res, 400, 'Name is required.');
+  if (typeof first_name !== 'string' || first_name.trim().length === 0) {
+    return sendError(res, 400, 'First name is required.');
+  }
+  if (typeof last_name !== 'string' || last_name.trim().length === 0) {
+    return sendError(res, 400, 'Last name is required.');
   }
   if (typeof email !== 'string' || !isValidEmail(email)) {
     return sendError(res, 400, 'Valid email is required.');
@@ -56,7 +60,7 @@ export const register = async (req: Request, res: Response) => {
     }
 
     const password_hash = await bcrypt.hash(password, 10);
-    const newUserId = await userRepo.create(name.trim(), normalizedEmail, password_hash, type_name);
+    const newUserId = await userRepo.create(first_name.trim(), last_name.trim(), normalizedEmail, password_hash, type_name);
 
     if (!newUserId) {
       return sendError(res, 500, 'Failed to create user.');

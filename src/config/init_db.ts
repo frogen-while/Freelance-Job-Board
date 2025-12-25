@@ -12,12 +12,23 @@ export async function openDb(): Promise<void> {
     filename: process.env.DBFILE || './db/freelance.sqlite3',
     driver: sqlite3.Database
   });
-  const { user_version } = await db.connection.get('PRAGMA user_version;') 
-  if(!user_version) { // fresh database
-    await db.connection!.exec('PRAGMA user_version = 1;');
+  const { user_version } = await db.connection.get('PRAGMA user_version;')
+
+  if (!user_version) {
+    // fresh database
+    await db.connection!.exec('PRAGMA user_version = 2;');
     console.log('Reinitialize content...');
     await createSchemaAndData();
+    await db.connection.exec('PRAGMA foreign_keys = ON');
+    return;
   }
+
+  if (user_version < 2) {
+    console.log(`Migrating database schema from v${user_version} to v2...`);
+    await migrateToV2();
+    await db.connection!.exec('PRAGMA user_version = 2;');
+  }
+
   await db.connection.exec('PRAGMA foreign_keys = ON');
 }
 
@@ -34,11 +45,48 @@ export const usersTableDef = {
   name: 'users',
   columns: {
     user_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
-    name: { type: 'TEXT', notNull: true },
+    first_name: { type: 'TEXT', notNull: true },
+    last_name: { type: 'TEXT', notNull: true },
     email: { type: 'TEXT', notNull: true, unique: true },
     password_hash: { type: 'TEXT', notNull: true },
     main_role: { type: "TEXT CHECK(main_role IN ('Administrator', 'Management', 'Regular', 'Unregistered'))", notNull: true }
   }
+};
+
+export const skillsTableDef = {
+  name: 'skills',
+  columns: {
+    skill_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
+    name: { type: 'TEXT', notNull: true, unique: true }
+  }
+};
+
+export const profilesTableDef = {
+  name: 'profiles',
+  columns: {
+    user_id: { type: 'INTEGER', primaryKey: true },
+    description: { type: 'TEXT' },
+    photo_url: { type: 'TEXT' },
+    education_info: { type: 'TEXT' },
+    languages: { type: 'TEXT' },
+    completed_orders: { type: 'TEXT' },
+    timezone: { type: 'TEXT' },
+    hourly_rate: { type: 'REAL' }
+  },
+  foreignKeys: [{ column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' }]
+};
+
+export const profileSkillsTableDef = {
+  name: 'profile_skills',
+  columns: {
+    user_id: { type: 'INTEGER', notNull: true },
+    skill_id: { type: 'INTEGER', notNull: true }
+  },
+  primaryKey: ['user_id', 'skill_id'],
+  foreignKeys: [
+    { column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' },
+    { column: 'skill_id', references: 'skills(skill_id) ON DELETE CASCADE' }
+  ]
 };
 
 export const userUserTypesTableDef = {
@@ -210,11 +258,71 @@ function createTableStatement(def: {
   return `CREATE TABLE IF NOT EXISTS ${def.name} (\n ${cols.join(',\n ')} \n);`;
 }
 
+async function migrateToV2(): Promise<void> {
+  if (!db.connection) return;
+
+  await db.connection.exec('PRAGMA foreign_keys = OFF;');
+  await db.connection.exec('BEGIN;');
+
+  try {
+    // Rebuild users table: name -> first_name/last_name
+    const cols = await db.connection.all<{ name: string }[]>(`PRAGMA table_info(users);`);
+    const hasName = cols.some((c) => c.name === 'name');
+    const hasFirst = cols.some((c) => c.name === 'first_name');
+    const hasLast = cols.some((c) => c.name === 'last_name');
+
+    if (hasName || !hasFirst || !hasLast) {
+      await db.connection.exec(`
+        CREATE TABLE IF NOT EXISTS users_new (
+          user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+          first_name TEXT NOT NULL,
+          last_name TEXT NOT NULL,
+          email TEXT NOT NULL UNIQUE,
+          password_hash TEXT NOT NULL,
+          main_role TEXT NOT NULL CHECK(main_role IN ('Administrator', 'Management', 'Regular', 'Unregistered'))
+        );
+      `);
+
+      if (hasName) {
+        await db.connection.exec(`
+          INSERT INTO users_new (user_id, first_name, last_name, email, password_hash, main_role)
+          SELECT user_id, name, '', email, password_hash, main_role
+          FROM users;
+        `);
+      } else {
+        await db.connection.exec(`
+          INSERT INTO users_new (user_id, first_name, last_name, email, password_hash, main_role)
+          SELECT user_id, COALESCE(first_name, ''), COALESCE(last_name, ''), email, password_hash, main_role
+          FROM users;
+        `);
+      }
+
+      await db.connection.exec('DROP TABLE users;');
+      await db.connection.exec('ALTER TABLE users_new RENAME TO users;');
+    }
+
+    // New tables (idempotent)
+    await db.connection.run(createTableStatement(skillsTableDef));
+    await db.connection.run(createTableStatement(profilesTableDef));
+    await db.connection.run(createTableStatement(profileSkillsTableDef));
+
+    await db.connection.exec('COMMIT;');
+  } catch (error) {
+    await db.connection.exec('ROLLBACK;');
+    throw error;
+  } finally {
+    await db.connection.exec('PRAGMA foreign_keys = ON;');
+  }
+}
+
 export async function createSchemaAndData(): Promise<void> {
   const definitions = [
     userTypesTableDef,
     usersTableDef,
     userUserTypesTableDef,
+    skillsTableDef,
+    profilesTableDef,
+    profileSkillsTableDef,
     categoriesTableDef,
     jobsTableDef,
     jobApplicationsTableDef,

@@ -9,7 +9,8 @@ type UserType = 'Employer' | 'Freelancer';
   templateUrl: './register.component.html'
 })
 export class RegisterComponent {
-  name = '';
+  first_name = '';
+  last_name = '';
   email = '';
   password = '';
   type_name: UserType | null = null;
@@ -31,7 +32,8 @@ export class RegisterComponent {
 
     this.auth
       .register({
-        name: this.name,
+        first_name: this.first_name,
+        last_name: this.last_name,
         email: this.email,
         password: this.password,
         type_name: this.type_name

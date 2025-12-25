@@ -5,11 +5,22 @@
     <form (ngSubmit)="submit()" #f="ngForm">
       <div style="display: grid; gap: 12px; max-width: 520px;">
         <label>
-          <div style="font-weight: 600; margin-bottom: 6px;">Name</div>
+          <div style="font-weight: 600; margin-bottom: 6px;">First name</div>
           <input
             type="text"
-            name="name"
-            [(ngModel)]="name"
+            name="first_name"
+            [(ngModel)]="first_name"
+            required
+            style="width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(15,23,42,0.12);"
+          />
+        </label>
+
+        <label>
+          <div style="font-weight: 600; margin-bottom: 6px;">Last name</div>
+          <input
+            type="text"
+            name="last_name"
+            [(ngModel)]="last_name"
             required
             style="width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(15,23,42,0.12);"
           />

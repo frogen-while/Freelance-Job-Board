@@ -6,10 +6,10 @@ import bcrypt from 'bcrypt';
 
 
 export const registerUser = async (req: Request, res: Response) => {
-    const { name, email, password, type_name } = req.body;
+    const { first_name, last_name, email, password, type_name } = req.body;
 
-    if (!name || !email || !password) {
-        return sendError(res, 400, 'Name, email and password are required.');
+    if (!first_name || !last_name || !email || !password) {
+        return sendError(res, 400, 'First name, last name, email and password are required.');
     }
 
     if (typeof password !== 'string' || password.length < 8) {
@@ -29,7 +29,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
 
         const password_hash = await bcrypt.hash(password, 10);
-        const newUserId = await userRepo.create(name, String(email).toLowerCase(), password_hash, type_name);
+        const newUserId = await userRepo.create(String(first_name), String(last_name), String(email).toLowerCase(), password_hash, type_name);
 
         if (newUserId) {
             return sendSuccess(res, { user_id: newUserId, email: String(email).toLowerCase() }, 201);
@@ -95,7 +95,7 @@ export const deleteUser = async(req: Request, res: Response) =>{
 
 export const updateUser = async (req: Request, res: Response) => {
     const userId = parseInt(req.params.id, 10);
-    const { name, main_role, type_name } = req.body; 
+    const { first_name, last_name, main_role, type_name } = req.body; 
 
     if (isNaN(userId)) {
         return sendError(res, 400, 'Invalid user ID format.');
@@ -105,13 +105,14 @@ export const updateUser = async (req: Request, res: Response) => {
         return sendError(res, 400, 'type_name must be one of: Employer, Freelancer, Reviewer, Support.');
     }
 
-    const updateData: { name?: string, main_role?: string, type_name?: string } = {};
-    if (name) updateData.name = name;
+    const updateData: { first_name?: string, last_name?: string, main_role?: string, type_name?: string } = {};
+    if (first_name) updateData.first_name = first_name;
+    if (last_name) updateData.last_name = last_name;
     if (main_role) updateData.main_role = main_role;
     if (type_name) updateData.type_name = type_name;
 
     if (Object.keys(updateData).length === 0) {
-        return sendError(res, 400, 'No valid fields provided for update (allowed: name, main_role, type_name).');
+        return sendError(res, 400, 'No valid fields provided for update (allowed: first_name, last_name, main_role, type_name).');
     }
 
     try {
