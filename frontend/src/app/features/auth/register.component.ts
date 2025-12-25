@@ -1,0 +1,54 @@
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../core/auth.service';
+
+type UserType = 'Employer' | 'Freelancer';
+
+@Component({
+  selector: 'app-register',
+  templateUrl: './register.component.html'
+})
+export class RegisterComponent {
+  name = '';
+  email = '';
+  password = '';
+  type_name: UserType | null = null;
+
+  error: string | null = null;
+  loading = false;
+
+  constructor(private auth: AuthService, private router: Router) {}
+
+  submit() {
+    this.error = null;
+
+    if (!this.type_name) {
+      this.error = 'Please choose an account type.';
+      return;
+    }
+
+    this.loading = true;
+
+    this.auth
+      .register({
+        name: this.name,
+        email: this.email,
+        password: this.password,
+        type_name: this.type_name
+      })
+      .subscribe({
+        next: (res) => {
+          this.loading = false;
+          if (res.success !== true) {
+            this.error = ('error' in res && res.error?.message) ? res.error.message : 'Registration failed.';
+            return;
+          }
+          this.router.navigateByUrl('/');
+        },
+        error: () => {
+          this.loading = false;
+          this.error = 'Registration failed.';
+        }
+      });
+  }
+}

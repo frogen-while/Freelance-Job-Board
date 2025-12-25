@@ -1,0 +1,48 @@
+<div class="content-wrapper">
+  <section class="section-card" style="padding: 24px;">
+    <h2 style="margin-bottom: 16px;">Log in</h2>
+
+    <form (ngSubmit)="submit()" #f="ngForm">
+      <div style="display: grid; gap: 12px; max-width: 420px;">
+        <label>
+          <div style="font-weight: 600; margin-bottom: 6px;">Email</div>
+          <input
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            required
+            style="width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(15,23,42,0.12);"
+          />
+        </label>
+
+        <label>
+          <div style="font-weight: 600; margin-bottom: 6px;">Password</div>
+          <input
+            type="password"
+            name="password"
+            [(ngModel)]="password"
+            required
+            minlength="8"
+            style="width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(15,23,42,0.12);"
+          />
+        </label>
+
+        <div *ngIf="error" style="color: #b91c1c; font-weight: 600;">{{ error }}</div>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <button
+            type="submit"
+            [disabled]="loading || f.invalid"
+            style="padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(15,23,42,0.12); background: #0f172a; color: white; font-weight: 700;"
+          >
+            {{ loading ? '...' : 'Log in' }}
+          </button>
+
+          <a routerLink="/register" style="color: #0f172a; font-weight: 600; text-decoration: none;">
+            No account? Sign up
+          </a>
+        </div>
+      </div>
+    </form>
+  </section>
+</div>

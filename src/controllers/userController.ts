@@ -1,14 +1,19 @@
 import { Request, Response } from 'express';
 import { userRepo } from '../repositories/userRepo.js';
 import { sendError, sendSuccess } from '../utils/http.js';
+import bcrypt from 'bcrypt';
 
 
 
 export const registerUser = async (req: Request, res: Response) => {
-    const { name, email, type_name } = req.body;
+    const { name, email, password, type_name } = req.body;
 
-    if (!name || !email) {
-        return sendError(res, 400, 'Name and email are required.');
+    if (!name || !email || !password) {
+        return sendError(res, 400, 'Name, email and password are required.');
+    }
+
+    if (typeof password !== 'string' || password.length < 8) {
+        return sendError(res, 400, 'Password must be at least 8 characters.');
     }
 
     if (type_name && !['Employer', 'Freelancer', 'Reviewer', 'Support'].includes(type_name)) {
@@ -23,12 +28,11 @@ export const registerUser = async (req: Request, res: Response) => {
         }
 
 
-    const password_hash = '';
-
-        const newUserId = await userRepo.create(name, email, password_hash, type_name);
+        const password_hash = await bcrypt.hash(password, 10);
+        const newUserId = await userRepo.create(name, String(email).toLowerCase(), password_hash, type_name);
 
         if (newUserId) {
-            return sendSuccess(res, { user_id: newUserId, email }, 201);
+            return sendSuccess(res, { user_id: newUserId, email: String(email).toLowerCase() }, 201);
         } else {
             return sendError(res, 500, 'Failed to create user.');
         }

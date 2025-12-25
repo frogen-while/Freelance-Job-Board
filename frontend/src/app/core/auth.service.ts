@@ -1,0 +1,78 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+
+type ApiEnvelope<T> = { success: true; data: T } | { success: false; error: { message: string } };
+
+export type PublicUser = {
+  user_id: number;
+  name: string;
+  email: string;
+  main_role: string;
+};
+
+type AuthResponse = {
+  token: string;
+  user: PublicUser;
+};
+
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private readonly tokenKey = 'token';
+  private readonly userKey = 'auth_user';
+  private readonly base = environment.apiBase;
+
+  constructor(private http: HttpClient) {}
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  getUser(): PublicUser | null {
+    const raw = localStorage.getItem(this.userKey);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as PublicUser;
+    } catch {
+      return null;
+    }
+  }
+
+  login(email: string, password: string): Observable<ApiEnvelope<AuthResponse>> {
+    return this.http
+      .post<ApiEnvelope<AuthResponse>>(`${this.base}/auth/login`, { email, password })
+      .pipe(tap((res) => this.persistIfSuccess(res)));
+  }
+
+  register(payload: {
+    name: string;
+    email: string;
+    password: string;
+    type_name?: 'Employer' | 'Freelancer';
+  }): Observable<ApiEnvelope<AuthResponse>> {
+    return this.http
+      .post<ApiEnvelope<AuthResponse>>(`${this.base}/auth/register`, payload)
+      .pipe(tap((res) => this.persistIfSuccess(res)));
+  }
+
+  logout(): void {
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKey);
+  }
+
+  setToken(token: string) {
+    localStorage.setItem(this.tokenKey, token);
+  }
+
+  private persistIfSuccess(res: ApiEnvelope<AuthResponse>) {
+    if (!('success' in res) || res.success !== true) return;
+    localStorage.setItem(this.tokenKey, res.data.token);
+    localStorage.setItem(this.userKey, JSON.stringify(res.data.user));
+  }
+}

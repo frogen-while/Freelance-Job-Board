@@ -1,0 +1,89 @@
+<div class="content-wrapper">
+  <section class="section-card" style="padding: 24px;">
+    <h2 style="margin-bottom: 16px;">Sign up</h2>
+
+    <form (ngSubmit)="submit()" #f="ngForm">
+      <div style="display: grid; gap: 12px; max-width: 520px;">
+        <label>
+          <div style="font-weight: 600; margin-bottom: 6px;">Name</div>
+          <input
+            type="text"
+            name="name"
+            [(ngModel)]="name"
+            required
+            style="width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(15,23,42,0.12);"
+          />
+        </label>
+
+        <label>
+          <div style="font-weight: 600; margin-bottom: 6px;">Email</div>
+          <input
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            required
+            style="width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(15,23,42,0.12);"
+          />
+        </label>
+
+        <label>
+          <div style="font-weight: 600; margin-bottom: 6px;">Password (min 8 characters)</div>
+          <input
+            type="password"
+            name="password"
+            [(ngModel)]="password"
+            required
+            minlength="8"
+            style="width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(15,23,42,0.12);"
+          />
+        </label>
+
+        <div>
+          <div style="font-weight: 600; margin-bottom: 10px;">Join as a client or freelancer</div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <label
+              style="display: block; padding: 14px; border-radius: 14px; border: 1px solid rgba(15,23,42,0.12); cursor: pointer;"
+              [style.outline]="type_name === 'Employer' ? '2px solid rgba(15,23,42,0.5)' : 'none'"
+            >
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+                <div>
+                  <div style="font-weight: 800;">I'm a client, hiring for a project</div>
+                </div>
+                <input type="radio" name="type_name" [(ngModel)]="type_name" [value]="'Employer'" required />
+              </div>
+            </label>
+
+            <label
+              style="display: block; padding: 14px; border-radius: 14px; border: 1px solid rgba(15,23,42,0.12); cursor: pointer;"
+              [style.outline]="type_name === 'Freelancer' ? '2px solid rgba(15,23,42,0.5)' : 'none'"
+            >
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+                <div>
+                  <div style="font-weight: 800;">I'm a freelancer, looking for work</div>
+                </div>
+                <input type="radio" name="type_name" [(ngModel)]="type_name" [value]="'Freelancer'" required />
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div *ngIf="error" style="color: #b91c1c; font-weight: 600;">{{ error }}</div>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <button
+            type="submit"
+            [disabled]="loading || f.invalid"
+            style="padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(15,23,42,0.12); background: #0f172a; color: white; font-weight: 700;"
+          >
+            {{ loading ? '...' : 'Create account' }}
+          </button>
+
+          <a routerLink="/login" style="color: #0f172a; font-weight: 600; text-decoration: none;">
+            Already have an account? Log in
+          </a>
+        </div>
+      </div>
+    </form>
+  </section>
+</div>

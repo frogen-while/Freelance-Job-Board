@@ -1,5 +1,22 @@
 <header class="headmenu" [class.scrolled]="isScrolled">
   <div class="headmenu-inner">
     <a class="brand" routerLink="/">FJB</a>
+
+    <div class="header-right">
+      <ng-container *ngIf="!auth.isLoggedIn(); else loggedIn">
+        <div class="login-button">
+          <button type="button"><a routerLink="/login">Log in</a></button>
+        </div>
+        <div class="signup-button">
+          <button type="button"><a routerLink="/register">Sign up</a></button>
+        </div>
+      </ng-container>
+
+      <ng-template #loggedIn>
+        <div class="login-button">
+          <button type="button" (click)="logout()">Log out</button>
+        </div>
+      </ng-template>
+    </div>
   </div>
 </header>
