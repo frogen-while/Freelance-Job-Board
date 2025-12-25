@@ -81,7 +81,7 @@ export const jobsTableDef = {
   },
   foreignKeys: [
     { column: 'employer_id', references: 'users(user_id) ON DELETE CASCADE' },
-    { column: 'category_id', references: 'categories(category_id) ON DELETE SET NULL' }
+    { column: 'category_id', references: 'categories(category_id) ON DELETE RESTRICT' }
   ]
 };
 

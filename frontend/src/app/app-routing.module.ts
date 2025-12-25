@@ -7,7 +7,6 @@ const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'categories', component: CategoriesComponent },
   { path: 'jobs', loadChildren: () => import('./features/jobs/jobs.module').then(m => m.JobsModule) },
-  { path: 'login', loadChildren: () => import("./features/auth/auth.module").then(m => m.AuthModule) },
   { path: '**', redirectTo: '' }
 ];
 

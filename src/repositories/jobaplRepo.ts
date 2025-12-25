@@ -25,7 +25,7 @@ export const jobAplRepo = {
             )},
     async update(application_id: number, updateData: { job_id?: number, freelancer_id?: number, bid_amount?:number, proposal_text?:string, status?:status}): Promise<boolean> {
         const setClauses: string[] = [];
-        const params: (string | number | null | Date)[] = [];
+        const params: (string | number | null)[] = [];
 
         if (updateData.job_id !== undefined) {
             setClauses.push('job_id = ?');

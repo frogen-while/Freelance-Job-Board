@@ -5,7 +5,6 @@ import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@ang
 
 getTestBed().initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
 
-import './app/core/auth.service.spec';
 import './app/features/home/home.component.spec';
 import './app/features/jobs/jobs-list.component.spec';
 import './app/features/jobs/job-detail.component.spec';

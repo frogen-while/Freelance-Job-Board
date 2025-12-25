@@ -15,26 +15,34 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Install root deps
-        run: npm ci
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm ci --prefix frontend
+
       - name: Build frontend
+        run: npm run build:frontend
+
+      - name: Run frontend unit tests
+        run: npm --prefix frontend test -- --watch=false --browsers=ChromeHeadless
+
+      - name: Backend smoke test (health)
         run: |
-          cd frontend
-          npm ci
-          npm run build --if-present
-      - name: Run frontend tests
-        run: |
-          cd frontend
-          npm ci
-          npm run test --if-present --silent
+          npm run init-db
+          npm run dev &
+          BACK_PID=$!
+          npx wait-on http://127.0.0.1:3000/api/health
+          curl -sSf http://127.0.0.1:3000/api/health
+          kill $BACK_PID
+
       - name: Run E2E tests (Cypress)
         run: |
-          cd frontend
-          npm ci
-          npm run build --if-present
-          # Serve the built static site in background and wait for it
-          npx http-server ./dist/frontend -p 4200 --silent --cors &
+          npm run init-db
+          npm run dev &
+          BACK_PID=$!
+          npm --prefix frontend run start -- --host 127.0.0.1 --port 4200 &
+          FRONT_PID=$!
           npx wait-on http://127.0.0.1:4200
-          npx cypress run || (echo "Cypress run failed" && exit 1)
-      - name: Build backend
-        run: npm run build:frontend --if-present || echo "No build script"
+          npm --prefix frontend run e2e:run
+          kill $FRONT_PID
+          kill $BACK_PID

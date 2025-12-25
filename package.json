@@ -7,8 +7,8 @@
   "scripts": {
     "init-db": "tsx src/config/init_db.ts",
     "dev": "tsx src/server.ts",
-    "start:frontend": "cd frontend && npm install && ng serve --proxy-config proxy.conf.json --open",
-    "build:frontend": "cd frontend && npm run build"
+    "start:frontend": "npm --prefix frontend install --no-audit --no-fund && npm --prefix frontend run start -- --open",
+    "build:frontend": "npm --prefix frontend run build"
   },
   "author": "",
   "license": "ISC",

@@ -12,11 +12,8 @@
     "e2e": "ng e2e",
     "e2e:run": "cypress run",
     "e2e:open": "cypress open",
-    "e2e:run": "cypress run",
-    "start:static": "http-server ./dist/frontend -p 4200 --silent --cors",
-    "start:spa": "node scripts/spa-server.js",
-    "e2e:ci": "node scripts/spa-server.js & npx wait-on http://127.0.0.1:4200 && npx cypress run",
-    "check:ts": "tsc -p tsconfig.json --noEmit"
+    "e2e:ci": "npx wait-on http://127.0.0.1:4200 && cypress run",
+    "check:ts": "tsc -p tsconfig.app.json --noEmit"
   },
   "dependencies": {
     "@angular/animations": "~16.0.0",
@@ -27,25 +24,26 @@
     "@angular/platform-browser": "~16.0.0",
     "@angular/platform-browser-dynamic": "~16.0.0",
     "@angular/router": "~16.0.0",
+    "freelance-job-board": "file:..",
     "rxjs": "~7.8.0",
     "tslib": "^2.5.0",
     "zone.js": "~0.13.0"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "~16.0.0",
     "@angular/cli": "~16.0.0",
     "@angular/compiler-cli": "~16.0.0",
-    "@angular-devkit/build-angular": "~16.0.0",
     "@cypress/browserify-preprocessor": "^3.0.0",
     "@cypress/webpack-dev-server": "^1.1.0",
     "@types/jasmine": "^4.6.5",
     "@types/node": "^20.19.27",
     "cypress": "^12.0.0",
+    "http-proxy-middleware": "^2.0.6",
     "jasmine-core": "^4.5.0",
     "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage": "^2.2.0",
     "karma-jasmine": "^5.0.0",
     "karma-jasmine-html-reporter": "^2.0.0",
-    "karma-coverage": "^2.2.0",
-    "typescript": "~5.0.0",
-    "http-proxy-middleware": "^2.0.6"
+    "typescript": "~5.0.0"
   }
 }

@@ -1,7 +1,7 @@
 import { db } from '../config/init_db.js';
 import { rating, JobReview } from '../interfaces/Jobreview.js';
 
-export const jobAplRepo = {
+export const jobReviewRepo = {
 
     async get_all(): Promise<JobReview[]> {
                 const result = await db.connection?.all<JobReview[]>(
@@ -25,7 +25,7 @@ export const jobAplRepo = {
             )},
     async update(review_id: number, updateData: { job_id?: number, reviewer_id?: number, rating?:rating, feedback?:string}): Promise<boolean> {
         const setClauses: string[] = [];
-        const params: (string | number | null | Date)[] = [];
+        const params: (string | number | null)[] = [];
 
         if (updateData.job_id !== undefined) {
             setClauses.push('job_id = ?');

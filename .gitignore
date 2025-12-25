@@ -1,8 +1,6 @@
 node_modules/
 db/
 freelance.sqlite3
-
-# Frontend build/cache and test artifacts
 frontend/.angular/
 frontend/dist/
 frontend/cypress/videos/

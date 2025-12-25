@@ -10,7 +10,7 @@ export const jobRepo = {
                 );
                 return result || [];
             },
-    async create(employer_id: number, category_id: number, title: string, description: string, budget: number, status: status, deadline: Date): Promise<number | null> {
+    async create(employer_id: number, category_id: number, title: string, description: string, budget: number, status: status, deadline: string): Promise<number | null> {
         const result = await db.connection?.run(
                 `INSERT INTO jobs (employer_id, category_id, title, description, budget, status, deadline) VALUES (?, ?, ?, ?, ?, ?, ?)`,
                 employer_id, category_id, title, description, budget, status, deadline
@@ -24,9 +24,9 @@ export const jobRepo = {
                 `SELECT * FROM jobs WHERE job_id = ?`,
                 job_id
             )},
-    async update(job_id: number, updateData: { employer_id?: number, category_id?: number, title?: string, description?: string, budget?: number, status?: status, deadline?: Date}): Promise<boolean> {
+    async update(job_id: number, updateData: { employer_id?: number, category_id?: number, title?: string, description?: string, budget?: number, status?: status, deadline?: string}): Promise<boolean> {
         const setClauses: string[] = [];
-        const params: (string | number | null | Date)[] = [];
+        const params: (string | number | null)[] = [];
 
         if (updateData.employer_id !== undefined) {
             setClauses.push('employer_id = ?');

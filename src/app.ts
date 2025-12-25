@@ -12,6 +12,7 @@ import auditlogRoutes from './routes/auditlogRoutes.js'
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { sendError, sendSuccess } from './utils/http.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app: Application = express();
@@ -19,8 +20,8 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
-app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'API is running' });
+app.get('/api/health', (req: Request, res: Response) => {
+  return sendSuccess(res, { status: 'ok' }, 200);
 });
 
 
@@ -34,19 +35,25 @@ app.use('/api/payments', paymentsRoutes)
 app.use('/api/supporttickets', supportticketsRoutes)
 app.use('/api/auditlog', auditlogRoutes)
 
+// API not found (unknown route or unsupported method)
+app.use('/api', (req: Request, res: Response) => {
+  return sendError(res, 404, 'Not Found');
+});
+
 
 const distPath = path.join(__dirname, '..', 'frontend', 'dist', 'frontend');
-const publicPath = path.join(__dirname, '..', 'public');
 
 if (fs.existsSync(distPath)) {
+  const indexHtml = path.join(distPath, 'index.html');
   app.use(express.static(distPath));
-  app.use((req: Request, res: Response) => {
-    res.sendFile(path.join(distPath, 'index.html'));
+
+  // SPA fallback for client-side routes (GET/HEAD only), never for /api/*
+  const spaRoute = /^\/(?!api(?:\/|$)).*/;
+  app.get(spaRoute, (req: Request, res: Response) => {
+    res.sendFile(indexHtml);
   });
-} else if (fs.existsSync(publicPath)) {
-  app.use(express.static(publicPath));
-  app.use((req: Request, res: Response) => {
-    res.sendFile(path.join(publicPath, 'index.html'));
+  app.head(spaRoute, (req: Request, res: Response) => {
+    res.sendFile(indexHtml);
   });
 }
 
