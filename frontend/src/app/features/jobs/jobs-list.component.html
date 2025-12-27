@@ -1,6 +1,55 @@
-<div>
-  <h1>Jobs</h1>
-  <ul>
-    <li *ngFor="let j of jobs"><a [routerLink]="['/jobs', j.job_id]">{{ j.title }}</a> — {{ j.budget }}</li>
-  </ul>
+<div class="jobs-page">
+  <!-- Header Section -->
+  <header class="jobs-header">
+    <h1 class="jobs-title">
+      Find the best {{ selectedCategoryName }} Jobs
+    </h1>
+  </header>
+
+  <!-- Category Navigation -->
+  <nav class="category-nav">
+    <a class="category-link" 
+       *ngFor="let cat of categories" 
+       [routerLink]="['/jobs']" 
+       [queryParams]="{ category: cat.category_id }"
+       [class.active]="selectedCategoryId === cat.category_id">
+      {{ cat.name }}
+    </a>
+  </nav>
+
+  <!-- Loading State -->
+  <div class="loading" *ngIf="isLoading">
+    <p>Loading jobs...</p>
+  </div>
+
+  <!-- Jobs Grid -->
+  <div class="jobs-grid" *ngIf="!isLoading">
+    <article class="job-card" *ngFor="let job of filteredJobs">
+      <div class="job-card-content">
+        <h2 class="job-title">
+          <a [routerLink]="['/jobs', job.job_id]">{{ job.title }}</a>
+        </h2>
+        
+        <div class="job-meta">
+          <span class="job-budget">${{ job.budget }}</span>
+          <span class="job-status" [class]="'status-' + job.status.toLowerCase().replace(' ', '-')">{{ job.status }}</span>
+        </div>
+        
+        <p class="job-description">{{ truncateDescription(job.description, 100) }}</p>
+        
+        <div class="job-footer">
+          <span class="job-category" *ngIf="getCategoryName(job.category_id)">
+            {{ getCategoryName(job.category_id) }}
+          </span>
+          <button class="job-link" (click)="viewJob(job.job_id)">See more</button>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && filteredJobs.length === 0">
+    <p>No jobs found in this category</p>
+    <a routerLink="/jobs" class="view-all-link">View all jobs</a>
+  </div>
 </div>

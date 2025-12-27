@@ -1,53 +1,221 @@
-// =============================================================================
-// JOBS LIST COMPONENT
-// Стили для списка вакансий
-// =============================================================================
-
 @use 'app/shared' as *;
-
-// -----------------------------------------------------------------------------
-// HOST
-// -----------------------------------------------------------------------------
 
 :host {
   display: block;
-  padding: 2rem;
+  min-height: 100vh;
+  background: $bg-page;
+}
+
+.jobs-page {
   max-width: 1200px;
   margin: 0 auto;
+  padding: $space-xl;
 
   @include respond-to(md) {
-    padding: 1rem;
+    padding: $space-lg;
   }
 }
 
-// -----------------------------------------------------------------------------
-// PAGE TITLE
-// -----------------------------------------------------------------------------
 
-h1 {
-  @include title-page;
+.jobs-header {
+  text-align: center;
+  padding: $space-2xl 0;
+  margin-bottom: $space-xl;
+}
+
+.jobs-title {
+  font-size: 2.5rem;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+  margin: 0 0 $space-md 0;
 
   @include respond-to(md) {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
   }
 }
 
-// -----------------------------------------------------------------------------
-// JOBS LIST
-// -----------------------------------------------------------------------------
-
-ul {
-  list-style: none;
-  @include flex-column(1rem);
+.jobs-subtitle {
+  font-size: $font-size-lg;
+  color: $text-secondary;
   margin: 0;
-  padding: 0;
 }
 
-li {
-  @include card-hoverable;
-  padding: 1.5rem;
+.category-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+  padding-bottom: $space-xl;
+  border-bottom: 1px solid $border-light;
+  margin-bottom: $space-xl;
+}
+
+.category-link {
+  padding: $space-sm $space-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $text-secondary;
+  text-decoration: none;
+  border-radius: $radius-full;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: rgba(99, 102, 241, 0.08);
+    color: $accent;
+  }
+
+  &.active {
+    background: $accent;
+    color: $text-white;
+  }
+}
+
+.jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-lg;
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.job-card {
+  background: $bg-white;
+  border-radius: $radius-lg;
+  border: 1px solid $border-light;
+  transition: all $transition-fast;
+  overflow: hidden;
+
+  &:hover {
+    border-color: $border-medium;
+    box-shadow: $shadow-md;
+  }
+}
+
+.job-card-content {
+  padding: $space-xl;
+}
+
+.job-title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  margin: 0 0 $space-md 0;
+  line-height: 1.4;
 
   a {
-    @include link-base;
+    color: $text-primary;
+    text-decoration: none;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $accent;
+    }
+  }
+}
+
+.job-meta {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  margin-bottom: $space-md;
+}
+
+.job-budget {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $success;
+}
+
+.job-status {
+  padding: $space-xs $space-sm;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-full;
+  text-transform: uppercase;
+
+  &.status-open {
+    background: rgba(22, 163, 74, 0.1);
+    color: $success;
+  }
+
+  &.status-assigned,
+  &.status-in-progress {
+    background: rgba(99, 102, 241, 0.1);
+    color: $accent;
+  }
+
+  &.status-completed {
+    background: rgba(107, 114, 128, 0.1);
+    color: $text-secondary;
+  }
+
+  &.status-cancelled {
+    background: rgba(185, 28, 28, 0.1);
+    color: $error;
+  }
+}
+
+.job-description {
+  font-size: $font-size-base;
+  color: $text-secondary;
+  line-height: 1.6;
+  margin: 0 0 $space-lg 0;
+}
+
+.job-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: $space-md;
+  border-top: 1px solid $border-light;
+}
+
+.job-category {
+  padding: $space-xs $space-sm;
+  font-size: $font-size-xs;
+  color: $text-secondary;
+  background: $bg-page;
+  border-radius: $radius-sm;
+}
+
+.job-link {
+  display: inline-flex;
+  align-items: center;
+  padding: $space-sm $space-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $text-white;
+  background: $success;
+  border: none;
+  border-radius: $radius-full;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $success-dark;
+  }
+}
+
+.loading,
+.empty-state {
+  text-align: center;
+  padding: $space-3xl;
+  color: $text-secondary;
+}
+
+.view-all-link {
+  display: inline-block;
+  margin-top: $space-lg;
+  padding: $space-sm $space-xl;
+  color: $accent;
+  text-decoration: none;
+  border: 1px solid $accent;
+  border-radius: $radius-full;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $accent;
+    color: $text-white;
   }
 }

@@ -14,6 +14,10 @@ export class ApiService {
     return this.http.get<ApiResponse<Job[]>>(`${this.base}/jobs`);
   }
 
+  getJobsByCategory(categoryId: number): Observable<ApiResponse<Job[]>> {
+    return this.http.get<ApiResponse<Job[]>>(`${this.base}/jobs?category=${categoryId}`);
+  }
+
   getJobById(id: number): Observable<ApiResponse<Job>> {
     return this.http.get<ApiResponse<Job>>(`${this.base}/jobs/${id}`);
   }
