@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { assignmentRepo } from '../repositories/assignmentRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
-import { status } from '../interfaces/Assignment.js';
+import { AssignmentStatus } from '../interfaces/Assignment.js';
     import { sendError, sendSuccess } from '../utils/http.js';
 
 export const createAssignment = async (req: Request, res: Response) => {
@@ -99,7 +99,7 @@ export const updateAssignment = async (req: Request, res: Response) => {
         return sendError(res, 400, 'Invalid assignment ID format.');
     }
 
-    const updateData: {job_id?: number, freelancer_id?: number, status?: status} = {};
+    const updateData: {job_id?: number, freelancer_id?: number, status?: AssignmentStatus} = {};
     
     if (job_id !== undefined) {
         const job = await jobRepo.findById(job_id);
