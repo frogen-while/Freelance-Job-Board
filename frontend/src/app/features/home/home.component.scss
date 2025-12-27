@@ -1,13 +1,4 @@
-// =============================================================================
-// HOME COMPONENT
-// Centered colored blocks with animations
-// =============================================================================
-
 @use 'app/shared' as *;
-
-// -----------------------------------------------------------------------------
-// HOST & PAGE CONTAINER
-// -----------------------------------------------------------------------------
 
 :host {
   display: block;
@@ -21,11 +12,10 @@
     radial-gradient(ellipse 80% 50% at 0% 70%, rgba(251, 191, 36, 0.025), transparent),
     linear-gradient(180deg, #fffbf5 0%, #fef7ed 30%, #fdf4e7 60%, #faf0e0 100%);
   padding: $space-2xl $space-lg;
-  padding-top: 120px; // Account for fixed header + spacing
+  padding-top: 120px;
   position: relative;
   overflow: hidden;
 
-  // Subtle dot pattern
   &::before {
     content: '';
     position: fixed;
@@ -39,10 +29,6 @@
     z-index: 0;
   }
 }
-
-// -----------------------------------------------------------------------------
-// ANIMATED BACKGROUND SHAPES
-// -----------------------------------------------------------------------------
 
 .bg-shapes {
   position: fixed;
@@ -107,10 +93,6 @@
   animation-delay: -25s;
 }
 
-// -----------------------------------------------------------------------------
-// FLOATING PARTICLES
-// -----------------------------------------------------------------------------
-
 .particles {
   position: fixed;
   top: 0;
@@ -154,10 +136,6 @@
     transform: translate(-20px, 20px) scale(0.98);
   }
 }
-
-// -----------------------------------------------------------------------------
-// BLOCK BASE STYLES
-// -----------------------------------------------------------------------------
 
 .block {
   position: relative;
@@ -204,10 +182,6 @@
     margin-bottom: $space-lg;
   }
 }
-
-// -----------------------------------------------------------------------------
-// HERO BLOCK - Clean white
-// -----------------------------------------------------------------------------
 
 .hero-block {
   background: linear-gradient(145deg, #ffffff 0%, #fffcf7 50%, #fef8f0 100%);
@@ -281,7 +255,6 @@
   }
 }
 
-// Search Box
 .search-box {
   display: flex;
   background: #ffffff;
@@ -382,10 +355,6 @@
   transition: transform $transition-base;
 }
 
-// -----------------------------------------------------------------------------
-// CATEGORIES BLOCK - Warm cream
-// -----------------------------------------------------------------------------
-
 .categories-block {
   background: linear-gradient(145deg, #1c1917 0%, #292524 50%, #1c1917 100%);
   box-shadow: 
@@ -477,10 +446,6 @@
     font-size: $font-size-sm;
   }
 }
-
-// -----------------------------------------------------------------------------
-// HOW IT WORKS BLOCK
-// -----------------------------------------------------------------------------
 
 .how-it-works-block {
   background: linear-gradient(145deg, #fffbf5 0%, #fef7ed 50%, #fef3e2 100%);
@@ -624,10 +589,6 @@
   margin: 0 auto;
   line-height: 1.5;
 }
-
-// -----------------------------------------------------------------------------
-// FEATURES BLOCK - Bento Grid Design
-// -----------------------------------------------------------------------------
 
 .features-block {
   background: linear-gradient(145deg, #fffbf5 0%, #fef7ed 50%, #fef3e2 100%);

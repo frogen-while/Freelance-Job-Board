@@ -1,10 +1,11 @@
+export type Rating = 1 | 2 | 3 | 4 | 5;
 
-export type rating = 1| 2 | 3 | 4 | 5;
-
-export interface JobReview {
-  review_id: number
+export interface Review {
+  review_id: number;
   job_id: number;
   reviewer_id: number;
-  rating: number;
-  feedback: string;
+  reviewee_id: number;
+  rating: Rating;
+  feedback?: string | null;
+  created_at?: string;
 }

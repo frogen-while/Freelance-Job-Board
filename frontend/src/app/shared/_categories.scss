@@ -1,16 +1,6 @@
-// =============================================================================
-// CATEGORIES - MIXINS
-// Миксины для стилизации категорий
-// =============================================================================
-
 @use 'tokens' as *;
 @use 'utilities' as *;
 
-// -----------------------------------------------------------------------------
-// CATEGORY CARD
-// -----------------------------------------------------------------------------
-
-/// Карточка категории
 @mixin category-card {
   background: $bg-card;
   border: 1px solid $border-medium;
@@ -40,7 +30,6 @@
   }
 }
 
-/// Имя категории
 @mixin category-name {
   font-size: $font-size-xl;
   font-weight: 650;
@@ -61,7 +50,6 @@
   }
 }
 
-/// Подсказка категории
 @mixin category-hint {
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
@@ -74,11 +62,6 @@
   }
 }
 
-// -----------------------------------------------------------------------------
-// CATEGORIES GRID
-// -----------------------------------------------------------------------------
-
-/// Сетка категорий
 @mixin categories-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -114,11 +97,6 @@
   }
 }
 
-// -----------------------------------------------------------------------------
-// CATEGORIES SECTION
-// -----------------------------------------------------------------------------
-
-/// Секция категорий
 @mixin categories-section {
   background: $bg-card;
   padding: 80px 40px;
@@ -140,7 +118,6 @@
   }
 }
 
-/// Заголовок категорий
 @mixin categories-title {
   font-size: $font-size-4xl;
   font-weight: $font-weight-semibold;

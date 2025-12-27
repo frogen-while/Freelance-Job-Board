@@ -1,4 +1,3 @@
-/// <reference types="jasmine" />
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { JobDetailComponent } from './job-detail.component';

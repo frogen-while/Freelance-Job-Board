@@ -25,13 +25,11 @@ export class JobsListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Load categories first
     this.api.getCategories().subscribe(res => {
       if (res.success && res.data) {
         this.categories = res.data;
       }
       
-      // Then check for category filter in URL
       this.route.queryParams.subscribe(params => {
         const categoryId = params['category'] ? +params['category'] : null;
         this.selectedCategoryId = categoryId;
@@ -79,7 +77,6 @@ export class JobsListComponent implements OnInit {
     if (this.auth.isLoggedIn()) {
       this.router.navigate(['/jobs', jobId]);
     } else {
-      // Save intended destination and redirect to login
       this.router.navigate(['/login'], { queryParams: { returnUrl: `/jobs/${jobId}` } });
     }
   }

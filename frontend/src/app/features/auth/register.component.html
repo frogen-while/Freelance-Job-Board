@@ -1,10 +1,5 @@
-<!-- =============================================================================
-     REGISTER PAGE - Centered compact card (Apple/Google style)
-============================================================================= -->
-
 <div class="auth-page">
   <div class="auth-card">
-    <!-- Logo -->
     <div class="auth-logo">
       <a routerLink="/">FJB</a>
     </div>
@@ -13,7 +8,6 @@
     <p class="auth-subtitle">Join thousands of professionals</p>
 
     <form (ngSubmit)="submit()" #f="ngForm" class="auth-form">
-      <!-- Name fields in a row -->
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="first_name">First name</label>
@@ -69,7 +63,6 @@
         />
       </div>
 
-      <!-- Account type selector -->
       <div class="form-group">
         <label class="form-label">I want to</label>
         <div class="type-grid">

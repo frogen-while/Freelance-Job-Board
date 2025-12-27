@@ -11,37 +11,16 @@ export async function openDb(): Promise<void> {
     filename: process.env.DBFILE || './db/freelance.sqlite3',
     driver: sqlite3.Database
   });
-  const { user_version } = await db.connection.get('PRAGMA user_version;')
-
-  if (!user_version) {
-    await db.connection!.exec('PRAGMA user_version = 3;');
-    console.log('Reinitialize content...');
-    await createSchemaAndData();
-    await db.connection.exec('PRAGMA foreign_keys = ON');
-    return;
-  }
-
-  if (user_version < 2) {
-    console.log(`Migrating database schema from v${user_version} to v2...`);
-    await migrateToV2();
-    await db.connection!.exec('PRAGMA user_version = 2;');
-  }
-
-  const { user_version: versionAfterV2 } = await db.connection.get('PRAGMA user_version;')
-  if (versionAfterV2 < 3) {
-    console.log(`Migrating database schema from v${versionAfterV2} to v3...`);
-    await migrateToV3();
-    await db.connection!.exec('PRAGMA user_version = 3;');
-  }
-
+  
+  await createSchemaAndData();
   await db.connection.exec('PRAGMA foreign_keys = ON');
+  console.log('Database connected and initialized successfully.');
 }
 
 export const userTypesTableDef = {
   name: 'usertypes',
   columns: {
     type_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
-
     type_name: { type: "TEXT CHECK(type_name IN ('Employer', 'Freelancer', 'Reviewer', 'Support'))", notNull: true }
   }
 };
@@ -54,8 +33,24 @@ export const usersTableDef = {
     last_name: { type: 'TEXT', notNull: true },
     email: { type: 'TEXT', notNull: true, unique: true },
     password_hash: { type: 'TEXT', notNull: true },
-    main_role: { type: "TEXT CHECK(main_role IN ('Administrator', 'Management', 'Regular', 'Unregistered'))", notNull: true }
+    main_role: { type: "TEXT CHECK(main_role IN ('Administrator', 'Management', 'Regular', 'Unregistered'))", notNull: true },
+    status: { type: "TEXT DEFAULT 'active' CHECK(status IN ('active', 'suspended', 'archived'))" },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
+    updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   }
+};
+
+export const userUserTypesTableDef = {
+  name: 'user_usertypes',
+  columns: {
+    user_id: { type: 'INTEGER', notNull: true },
+    type_id: { type: 'INTEGER', notNull: true }
+  },
+  primaryKey: ['user_id', 'type_id'],
+  foreignKeys: [
+    { column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' },
+    { column: 'type_id', references: 'usertypes(type_id) ON DELETE CASCADE' }
+  ]
 };
 
 export const skillsTableDef = {
@@ -71,14 +66,15 @@ export const profilesTableDef = {
   columns: {
     profile_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
     user_id: { type: 'INTEGER', notNull: true, unique: true },
+    display_name: { type: 'TEXT' },
+    headline: { type: 'TEXT' },
     description: { type: 'TEXT' },
     photo_url: { type: 'TEXT' },
-    education_info: { type: 'TEXT' },
-    languages: { type: 'TEXT' },
-    completed_orders: { type: 'TEXT' },
-    timezone: { type: 'TEXT' },
+    location: { type: 'TEXT' },
     hourly_rate: { type: 'REAL' },
-    skills: { type: 'TEXT' }
+    availability_status: { type: "TEXT DEFAULT 'available' CHECK(availability_status IN ('available', 'partially_available', 'not_available'))" },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
+    updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
   foreignKeys: [{ column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' }]
 };
@@ -93,19 +89,6 @@ export const profileSkillsTableDef = {
   foreignKeys: [
     { column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' },
     { column: 'skill_id', references: 'skills(skill_id) ON DELETE CASCADE' }
-  ]
-};
-
-export const userUserTypesTableDef = {
-  name: 'user_usertypes',
-  columns: {
-    user_id: { type: 'INTEGER', notNull: true },
-    type_id: { type: 'INTEGER', notNull: true }
-  },
-  primaryKey: ['user_id', 'type_id'],
-  foreignKeys: [
-    { column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' },
-    { column: 'type_id', references: 'usertypes(type_id) ON DELETE CASCADE' }
   ]
 };
 
@@ -132,11 +115,26 @@ export const jobsTableDef = {
     description: { type: 'TEXT', notNull: true },
     budget: { type: 'REAL' },
     status: { type: "TEXT DEFAULT 'Open' CHECK(status IN ('Open', 'Assigned', 'In Progress', 'Completed', 'Cancelled'))" },
-    deadline: { type: 'TEXT' }
+    deadline: { type: 'TEXT' },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
+    updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
   foreignKeys: [
     { column: 'employer_id', references: 'users(user_id) ON DELETE CASCADE' },
     { column: 'category_id', references: 'categories(category_id) ON DELETE RESTRICT' }
+  ]
+};
+
+export const jobSkillsTableDef = {
+  name: 'job_skills',
+  columns: {
+    job_id: { type: 'INTEGER', notNull: true },
+    skill_id: { type: 'INTEGER', notNull: true }
+  },
+  primaryKey: ['job_id', 'skill_id'],
+  foreignKeys: [
+    { column: 'job_id', references: 'jobs(job_id) ON DELETE CASCADE' },
+    { column: 'skill_id', references: 'skills(skill_id) ON DELETE CASCADE' }
   ]
 };
 
@@ -148,7 +146,8 @@ export const jobApplicationsTableDef = {
     freelancer_id: { type: 'INTEGER', notNull: true },
     bid_amount: { type: 'REAL', notNull: true },
     proposal_text: { type: 'TEXT' },
-    status: { type: "TEXT DEFAULT 'Pending' CHECK(status IN ('Pending', 'Accepted', 'Rejected'))" }
+    status: { type: "TEXT DEFAULT 'Pending' CHECK(status IN ('Pending', 'Accepted', 'Rejected'))" },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
   foreignKeys: [
     { column: 'job_id', references: 'jobs(job_id) ON DELETE CASCADE' },
@@ -162,7 +161,9 @@ export const assignmentsTableDef = {
     assignment_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
     job_id: { type: 'INTEGER', notNull: true },
     freelancer_id: { type: 'INTEGER', notNull: true },
-    status: { type: "TEXT DEFAULT 'Active' CHECK(status IN ('Active', 'Completed', 'Terminated'))" }
+    status: { type: "TEXT DEFAULT 'Active' CHECK(status IN ('Active', 'Completed', 'Terminated'))" },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
+    updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
   foreignKeys: [
     { column: 'job_id', references: 'jobs(job_id) ON DELETE CASCADE' },
@@ -170,18 +171,21 @@ export const assignmentsTableDef = {
   ]
 };
 
-export const jobReviewsTableDef = {
-  name: 'jobreviews',
+export const reviewsTableDef = {
+  name: 'reviews',
   columns: {
     review_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
     job_id: { type: 'INTEGER', notNull: true },
     reviewer_id: { type: 'INTEGER', notNull: true },
-    rating: { type: 'INTEGER CHECK(rating >= 1 AND rating <= 5)' },
-    feedback: { type: 'TEXT' }
+    reviewee_id: { type: 'INTEGER', notNull: true },
+    rating: { type: 'INTEGER CHECK(rating >= 1 AND rating <= 5)', notNull: true },
+    feedback: { type: 'TEXT' },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
   foreignKeys: [
     { column: 'job_id', references: 'jobs(job_id) ON DELETE CASCADE' },
-    { column: 'reviewer_id', references: 'users(user_id) ON DELETE CASCADE' }
+    { column: 'reviewer_id', references: 'users(user_id) ON DELETE CASCADE' },
+    { column: 'reviewee_id', references: 'users(user_id) ON DELETE CASCADE' }
   ]
 };
 
@@ -191,29 +195,34 @@ export const paymentsTableDef = {
     payment_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
     job_id: { type: 'INTEGER', notNull: true },
     payer_id: { type: 'INTEGER', notNull: true },
-    receiver_id: { type: 'INTEGER', notNull: true },
+    payee_id: { type: 'INTEGER', notNull: true },
     amount: { type: 'REAL', notNull: true },
-    status: { type: "TEXT DEFAULT 'Pending' CHECK(status IN ('Pending', 'Paid', 'Failed'))" }
+    status: { type: "TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'completed', 'failed', 'refunded'))" },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
+    completed_at: { type: 'DATETIME' }
   },
   foreignKeys: [
-    { column: 'job_id', references: 'jobs(job_id)' },
-    { column: 'payer_id', references: 'users(user_id)' },
-    { column: 'receiver_id', references: 'users(user_id)' }
+    { column: 'job_id', references: 'jobs(job_id) ON DELETE CASCADE' },
+    { column: 'payer_id', references: 'users(user_id) ON DELETE CASCADE' },
+    { column: 'payee_id', references: 'users(user_id) ON DELETE CASCADE' }
   ]
 };
 
-export const auditLogTableDef = {
-  name: 'auditlog',
+export const messagesTableDef = {
+  name: 'messages',
   columns: {
-    log_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
-    user_id: { type: 'INTEGER' },
-    action: { type: 'TEXT', notNull: true },
-    entity: { type: 'TEXT', notNull: true },
-    entity_id: { type: 'INTEGER' },
-    timestamp: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
+    message_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
+    sender_id: { type: 'INTEGER', notNull: true },
+    receiver_id: { type: 'INTEGER', notNull: true },
+    job_id: { type: 'INTEGER' },
+    body: { type: 'TEXT', notNull: true },
+    is_read: { type: 'INTEGER DEFAULT 0' },
+    sent_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
   foreignKeys: [
-    { column: 'user_id', references: 'users(user_id) ON DELETE SET NULL' }
+    { column: 'sender_id', references: 'users(user_id) ON DELETE CASCADE' },
+    { column: 'receiver_id', references: 'users(user_id) ON DELETE CASCADE' },
+    { column: 'job_id', references: 'jobs(job_id) ON DELETE SET NULL' }
   ]
 };
 
@@ -225,19 +234,19 @@ export const supportTicketsTableDef = {
     support_id: { type: 'INTEGER' },
     subject: { type: 'TEXT', notNull: true },
     message: { type: 'TEXT', notNull: true },
-    status: { type: "TEXT DEFAULT 'Open' CHECK(status IN ('Open', 'In Progress', 'Closed'))" }
+    status: { type: "TEXT DEFAULT 'Open' CHECK(status IN ('Open', 'In Progress', 'Resolved', 'Closed'))" },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
+    updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
   foreignKeys: [
-    { column: 'user_id', references: 'users(user_id)' },
-    { column: 'support_id', references: 'users(user_id)' }
+    { column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' },
+    { column: 'support_id', references: 'users(user_id) ON DELETE SET NULL' }
   ]
 };
 
-
-
 function createTableStatement(def: { 
     name: string;
-    columns: { [key: string]: { type: string; primaryKey?: boolean; autoincrement?: boolean; notNull?: boolean; unique?: boolean; default?: any; foreignKey?: any }},
+    columns: { [key: string]: { type: string; primaryKey?: boolean; autoincrement?: boolean; notNull?: boolean; unique?: boolean; default?: any }},
     primaryKey?: string[];
     foreignKeys?: { column: string; references: string }[];
   }): string {
@@ -265,118 +274,6 @@ function createTableStatement(def: {
   return `CREATE TABLE IF NOT EXISTS ${def.name} (\n ${cols.join(',\n ')} \n);`;
 }
 
-async function migrateToV2(): Promise<void> {
-  if (!db.connection) return;
-
-  await db.connection.exec('PRAGMA foreign_keys = OFF;');
-  await db.connection.exec('BEGIN;');
-
-  try {
-    const cols = await db.connection.all<{ name: string }[]>(`PRAGMA table_info(users);`);
-    const hasName = cols.some((c) => c.name === 'name');
-    const hasFirst = cols.some((c) => c.name === 'first_name');
-    const hasLast = cols.some((c) => c.name === 'last_name');
-
-    if (hasName || !hasFirst || !hasLast) {
-      await db.connection.exec(`
-        CREATE TABLE IF NOT EXISTS users_new (
-          user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-          first_name TEXT NOT NULL,
-          last_name TEXT NOT NULL,
-          email TEXT NOT NULL UNIQUE,
-          password_hash TEXT NOT NULL,
-          main_role TEXT NOT NULL CHECK(main_role IN ('Administrator', 'Management', 'Regular', 'Unregistered'))
-        );
-      `);
-
-      if (hasName) {
-        await db.connection.exec(`
-          INSERT INTO users_new (user_id, first_name, last_name, email, password_hash, main_role)
-          SELECT user_id, name, '', email, password_hash, main_role
-          FROM users;
-        `);
-      } else {
-        await db.connection.exec(`
-          INSERT INTO users_new (user_id, first_name, last_name, email, password_hash, main_role)
-          SELECT user_id, COALESCE(first_name, ''), COALESCE(last_name, ''), email, password_hash, main_role
-          FROM users;
-        `);
-      }
-
-      await db.connection.exec('DROP TABLE users;');
-      await db.connection.exec('ALTER TABLE users_new RENAME TO users;');
-    }
-
-    await db.connection.run(createTableStatement(skillsTableDef));
-    await db.connection.run(createTableStatement(profilesTableDef));
-    await db.connection.run(createTableStatement(profileSkillsTableDef));
-
-    await db.connection.exec('COMMIT;');
-  } catch (error) {
-    await db.connection.exec('ROLLBACK;');
-    throw error;
-  } finally {
-    await db.connection.exec('PRAGMA foreign_keys = ON;');
-  }
-}
-
-async function migrateToV3(): Promise<void> {
-  if (!db.connection) return;
-
-  await db.connection.exec('PRAGMA foreign_keys = OFF;');
-  await db.connection.exec('BEGIN;');
-
-  try {
-    const profileCols = await db.connection.all<{ name: string }>(`PRAGMA table_info(profiles);`).catch(() => [] as { name: string }[]);
-    const hasProfiles = profileCols.length > 0;
-    const hasProfileId = profileCols.some((c) => c.name === 'profile_id');
-    const hasSkills = profileCols.some((c) => c.name === 'skills');
-
-    if (!hasProfiles) {
-      await db.connection.run(createTableStatement(skillsTableDef));
-      await db.connection.run(createTableStatement(profilesTableDef));
-      await db.connection.run(createTableStatement(profileSkillsTableDef));
-    } else if (!hasProfileId || !hasSkills) {
-      await db.connection.exec(`
-        CREATE TABLE IF NOT EXISTS profiles_new (
-          profile_id INTEGER PRIMARY KEY AUTOINCREMENT,
-          user_id INTEGER NOT NULL UNIQUE,
-          description TEXT,
-          photo_url TEXT,
-          education_info TEXT,
-          languages TEXT,
-          completed_orders TEXT,
-          timezone TEXT,
-          hourly_rate REAL,
-          skills TEXT,
-          FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-        );
-      `);
-
-
-      await db.connection.exec(`
-        INSERT INTO profiles_new (user_id, description, photo_url, education_info, languages, completed_orders, timezone, hourly_rate, skills)
-        SELECT user_id, description, photo_url, education_info, languages, completed_orders, timezone, hourly_rate, NULL
-        FROM profiles;
-      `);
-
-      await db.connection.exec('DROP TABLE profiles;');
-      await db.connection.exec('ALTER TABLE profiles_new RENAME TO profiles;');
-    }
-
-    await db.connection.run(createTableStatement(skillsTableDef));
-    await db.connection.run(createTableStatement(profilesTableDef));
-    await db.connection.run(createTableStatement(profileSkillsTableDef));
-
-    await db.connection.exec('COMMIT;');
-  } catch (error) {
-    await db.connection.exec('ROLLBACK;');
-    throw error;
-  } finally {
-    await db.connection.exec('PRAGMA foreign_keys = ON;');
-  }
-}
-
 export async function createSchemaAndData(): Promise<void> {
   const definitions = [
     userTypesTableDef,
@@ -387,27 +284,26 @@ export async function createSchemaAndData(): Promise<void> {
     profileSkillsTableDef,
     categoriesTableDef,
     jobsTableDef,
+    jobSkillsTableDef,
     jobApplicationsTableDef,
     assignmentsTableDef,
-    jobReviewsTableDef,
+    reviewsTableDef,
     paymentsTableDef,
-    auditLogTableDef,
+    messagesTableDef,
     supportTicketsTableDef
   ];
 
   for(const def of definitions) {
     await db.connection!.run(createTableStatement(def));
-    console.log(`${def.name} table created`);
   }
 
-  const types = ['Employer', 'Freelancer', 'Reviewer', 'Support'];
-  for (const t of types) {
-    await db.connection!.run('INSERT INTO usertypes (type_name) VALUES (?)', t);
+  const existingTypes = await db.connection!.get('SELECT COUNT(*) as count FROM usertypes');
+  if (existingTypes.count === 0) {
+    const types = ['Employer', 'Freelancer', 'Reviewer', 'Support'];
+    for (const t of types) {
+      await db.connection!.run('INSERT INTO usertypes (type_name) VALUES (?)', t);
+    }
   }
-  console.log('User types created');
-  console.log('Categories created');
-  console.log('Database initialization complete.');
-
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {

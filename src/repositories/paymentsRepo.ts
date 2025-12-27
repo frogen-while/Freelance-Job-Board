@@ -5,15 +5,15 @@ export const paymentsRepo = {
 
     async get_all(): Promise<Payment[]> {
         const result = await db.connection?.all<Payment[]>(
-            'SELECT payment_id, job_id, payer_id, receiver_id, amount, status FROM payments'
+            'SELECT payment_id, job_id, payer_id, payee_id, amount, status FROM payments'
         );
         return result || [];
     },
     
-    async create(job_id: number, payer_id: number, receiver_id: number, amount: number, status: status): Promise<number | null> {
+    async create(job_id: number, payer_id: number, payee_id: number, amount: number, status: status): Promise<number | null> {
         const result = await db.connection?.run(
-            `INSERT INTO payments (job_id, payer_id, receiver_id, amount, status) VALUES (?, ?, ?, ?, ?)`,
-            job_id, payer_id, receiver_id, amount, status
+            `INSERT INTO payments (job_id, payer_id, payee_id, amount, status) VALUES (?, ?, ?, ?, ?)`,
+            job_id, payer_id, payee_id, amount, status
         );
         
         return result?.lastID ?? null;
@@ -26,7 +26,7 @@ export const paymentsRepo = {
         );
     },
     
-    async update(payment_id: number, updateData: { job_id?: number, payer_id?: number, receiver_id?: number, amount?: number, status?: status}): Promise<boolean> {
+    async update(payment_id: number, updateData: { job_id?: number, payer_id?: number, payee_id?: number, amount?: number, status?: status}): Promise<boolean> {
         const setClauses: string[] = [];
         const params: (string | number)[] = [];
 
@@ -38,9 +38,9 @@ export const paymentsRepo = {
             setClauses.push('payer_id = ?');
             params.push(updateData.payer_id);
         }
-        if (updateData.receiver_id !== undefined) {
-            setClauses.push('receiver_id = ?');
-            params.push(updateData.receiver_id);
+        if (updateData.payee_id !== undefined) {
+            setClauses.push('payee_id = ?');
+            params.push(updateData.payee_id);
         }
         if (updateData.amount !== undefined) {
             setClauses.push('amount = ?');

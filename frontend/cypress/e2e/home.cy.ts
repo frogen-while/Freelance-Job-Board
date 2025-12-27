@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 describe('Home page', () => {
   it('loads and shows hero title and categories', () => {
     cy.visit('/')

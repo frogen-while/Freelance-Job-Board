@@ -1,13 +1,4 @@
-// =============================================================================
-// GLOBAL STYLES
-// Глобальные стили для всего приложения
-// =============================================================================
-
 @use 'app/shared' as tokens;
-
-// -----------------------------------------------------------------------------
-// CSS RESET
-// -----------------------------------------------------------------------------
 
 * {
   margin: 0;
@@ -15,36 +6,24 @@
   box-sizing: border-box;
 }
 
-// -----------------------------------------------------------------------------
-// CSS VARIABLES (для использования в компонентах через var())
-// -----------------------------------------------------------------------------
-
 :root {
-  // Liquid gradient colors (для анимаций)
   --liquid-a: #{tokens.$liquid-a};
   --liquid-b: #{tokens.$liquid-b};
   --liquid-c: #{tokens.$liquid-c};
   --liquid-d: #{tokens.$liquid-d};
 
-  // Primary colors
   --color-primary: #{tokens.$primary};
   --color-accent: #{tokens.$accent};
   --color-success: #{tokens.$success};
   --color-error: #{tokens.$error};
 
-  // Text colors
   --color-text: #{tokens.$text-primary};
   --color-text-secondary: #{tokens.$text-secondary};
   --color-text-muted: #{tokens.$text-muted};
 
-  // Background colors
   --color-bg: #{tokens.$bg-page};
   --color-bg-card: #{tokens.$bg-card};
 }
-
-// -----------------------------------------------------------------------------
-// HTML & BODY
-// -----------------------------------------------------------------------------
 
 html {
   font-size: 16px;
@@ -60,10 +39,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-// -----------------------------------------------------------------------------
-// RESPONSIVE TYPOGRAPHY
-// -----------------------------------------------------------------------------
 
 @media (max-width: tokens.$bp-sm) {
   html {

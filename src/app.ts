@@ -4,14 +4,14 @@ import userRoutes from './routes/userRoutes.js'
 import categoryRoutes from './routes/categoryRoutes.js'
 import jobRoutes from './routes/jobRoutes.js'
 import jobaplRoutes from './routes/jobaplRoutes.js'
-import jobreviewRoutes from './routes/jobreviewRoutes.js'
 import assignmentRoutes from './routes/assignmentsRoutes.js'
 import paymentsRoutes from './routes/paymentsRoutes.js'
 import supportticketsRoutes from './routes/supportticketsRoutes.js'
-import auditlogRoutes from './routes/auditlogRoutes.js'
 import authRoutes from './routes/authRoutes.js'
 import skillsRoutes from './routes/skillsRoutes.js'
 import profilesRoutes from './routes/profilesRoutes.js'
+import messageRoutes from './routes/messageRoutes.js'
+import reviewRoutes from './routes/reviewRoutes.js'
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -37,11 +37,11 @@ app.use('/api/users', userRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/jobs', jobRoutes)
 app.use('/api/jobapplications', jobaplRoutes)
-app.use('/api/jobreviews', jobreviewRoutes)
 app.use('/api/assignments', assignmentRoutes)
 app.use('/api/payments', paymentsRoutes)
 app.use('/api/supporttickets', supportticketsRoutes)
-app.use('/api/auditlog', auditlogRoutes)
+app.use('/api/messages', messageRoutes)
+app.use('/api/reviews', reviewRoutes)
 
 app.use('/api', (req: Request, res: Response) => {
   return sendError(res, 404, 'Not Found');

@@ -3,7 +3,6 @@
     <a class="brand" routerLink="/">FJB</a>
 
     <nav class="main-nav">
-      <!-- Find Work Dropdown -->
       <div class="nav-dropdown" (mouseenter)="openDropdown('findWork')" (mouseleave)="scheduleClose()">
         <button class="nav-dropdown-trigger" [class.active]="activeDropdown === 'findWork'">
           Find work
@@ -27,7 +26,6 @@
         </div>
       </div>
 
-      <!-- Hire Freelancers Dropdown -->
       <div class="nav-dropdown" (mouseenter)="openDropdown('hire')" (mouseleave)="scheduleClose()">
         <button class="nav-dropdown-trigger" [class.active]="activeDropdown === 'hire'">
           Hire freelancers
