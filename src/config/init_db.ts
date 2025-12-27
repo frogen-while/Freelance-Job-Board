@@ -1,4 +1,3 @@
-// open sqlite database and create tables if they do not exist
 import { open, Database } from "sqlite";
 import sqlite3 from "sqlite3"
 import { pathToFileURL } from 'node:url';
@@ -15,8 +14,7 @@ export async function openDb(): Promise<void> {
   const { user_version } = await db.connection.get('PRAGMA user_version;')
 
   if (!user_version) {
-    // fresh database
-    await db.connection!.exec('PRAGMA user_version = 2;');
+    await db.connection!.exec('PRAGMA user_version = 3;');
     console.log('Reinitialize content...');
     await createSchemaAndData();
     await db.connection.exec('PRAGMA foreign_keys = ON');
@@ -27,6 +25,13 @@ export async function openDb(): Promise<void> {
     console.log(`Migrating database schema from v${user_version} to v2...`);
     await migrateToV2();
     await db.connection!.exec('PRAGMA user_version = 2;');
+  }
+
+  const { user_version: versionAfterV2 } = await db.connection.get('PRAGMA user_version;')
+  if (versionAfterV2 < 3) {
+    console.log(`Migrating database schema from v${versionAfterV2} to v3...`);
+    await migrateToV3();
+    await db.connection!.exec('PRAGMA user_version = 3;');
   }
 
   await db.connection.exec('PRAGMA foreign_keys = ON');
@@ -64,14 +69,16 @@ export const skillsTableDef = {
 export const profilesTableDef = {
   name: 'profiles',
   columns: {
-    user_id: { type: 'INTEGER', primaryKey: true },
+    profile_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
+    user_id: { type: 'INTEGER', notNull: true, unique: true },
     description: { type: 'TEXT' },
     photo_url: { type: 'TEXT' },
     education_info: { type: 'TEXT' },
     languages: { type: 'TEXT' },
     completed_orders: { type: 'TEXT' },
     timezone: { type: 'TEXT' },
-    hourly_rate: { type: 'REAL' }
+    hourly_rate: { type: 'REAL' },
+    skills: { type: 'TEXT' }
   },
   foreignKeys: [{ column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' }]
 };
@@ -265,7 +272,6 @@ async function migrateToV2(): Promise<void> {
   await db.connection.exec('BEGIN;');
 
   try {
-    // Rebuild users table: name -> first_name/last_name
     const cols = await db.connection.all<{ name: string }[]>(`PRAGMA table_info(users);`);
     const hasName = cols.some((c) => c.name === 'name');
     const hasFirst = cols.some((c) => c.name === 'first_name');
@@ -301,7 +307,63 @@ async function migrateToV2(): Promise<void> {
       await db.connection.exec('ALTER TABLE users_new RENAME TO users;');
     }
 
-    // New tables (idempotent)
+    await db.connection.run(createTableStatement(skillsTableDef));
+    await db.connection.run(createTableStatement(profilesTableDef));
+    await db.connection.run(createTableStatement(profileSkillsTableDef));
+
+    await db.connection.exec('COMMIT;');
+  } catch (error) {
+    await db.connection.exec('ROLLBACK;');
+    throw error;
+  } finally {
+    await db.connection.exec('PRAGMA foreign_keys = ON;');
+  }
+}
+
+async function migrateToV3(): Promise<void> {
+  if (!db.connection) return;
+
+  await db.connection.exec('PRAGMA foreign_keys = OFF;');
+  await db.connection.exec('BEGIN;');
+
+  try {
+    const profileCols = await db.connection.all<{ name: string }>(`PRAGMA table_info(profiles);`).catch(() => [] as { name: string }[]);
+    const hasProfiles = profileCols.length > 0;
+    const hasProfileId = profileCols.some((c) => c.name === 'profile_id');
+    const hasSkills = profileCols.some((c) => c.name === 'skills');
+
+    if (!hasProfiles) {
+      await db.connection.run(createTableStatement(skillsTableDef));
+      await db.connection.run(createTableStatement(profilesTableDef));
+      await db.connection.run(createTableStatement(profileSkillsTableDef));
+    } else if (!hasProfileId || !hasSkills) {
+      await db.connection.exec(`
+        CREATE TABLE IF NOT EXISTS profiles_new (
+          profile_id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL UNIQUE,
+          description TEXT,
+          photo_url TEXT,
+          education_info TEXT,
+          languages TEXT,
+          completed_orders TEXT,
+          timezone TEXT,
+          hourly_rate REAL,
+          skills TEXT,
+          FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+        );
+      `);
+
+
+      await db.connection.exec(`
+        INSERT INTO profiles_new (user_id, description, photo_url, education_info, languages, completed_orders, timezone, hourly_rate, skills)
+        SELECT user_id, description, photo_url, education_info, languages, completed_orders, timezone, hourly_rate, NULL
+        FROM profiles;
+      `);
+
+      await db.connection.exec('DROP TABLE profiles;');
+      await db.connection.exec('ALTER TABLE profiles_new RENAME TO profiles;');
+    }
+
     await db.connection.run(createTableStatement(skillsTableDef));
     await db.connection.run(createTableStatement(profilesTableDef));
     await db.connection.run(createTableStatement(profileSkillsTableDef));
@@ -343,16 +405,11 @@ export async function createSchemaAndData(): Promise<void> {
     await db.connection!.run('INSERT INTO usertypes (type_name) VALUES (?)', t);
   }
   console.log('User types created');
-
-  const personNum = 20;
-
   console.log('Categories created');
-
   console.log('Database initialization complete.');
 
 }
 
-// Only run initialization when this module is executed directly
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   openDb().catch((error) => {
     console.error('❌ Failed to initialize database:', error);

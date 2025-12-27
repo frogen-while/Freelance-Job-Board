@@ -1,0 +1,13 @@
+<div *ngIf="job">
+  <h1>{{ job.title }}</h1>
+  <p>{{ job.description }}</p>
+  <p>Budget: {{ job.budget }}</p>
+
+  <h3>Apply</h3>
+  <form (submit)="apply($event)">
+    <input placeholder="Freelancer ID" [(ngModel)]="freelancerId" name="freelancerId" />
+    <input placeholder="Bid amount" [(ngModel)]="bidAmount" name="bidAmount" />
+    <textarea placeholder="Proposal" [(ngModel)]="proposalText" name="proposalText"></textarea>
+    <button type="submit">Apply</button>
+  </form>
+</div>

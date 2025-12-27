@@ -13,9 +13,6 @@ type JwtUserPayload = {
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
   if (secret && secret.trim().length > 0) return secret;
-
-  // Dev fallback: keeps local dev working without additional env setup.
-  // For production, set JWT_SECRET.
   return 'dev-insecure-secret';
 }
 

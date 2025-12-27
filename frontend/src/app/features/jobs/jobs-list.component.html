@@ -1,0 +1,6 @@
+<div>
+  <h1>Jobs</h1>
+  <ul>
+    <li *ngFor="let j of jobs"><a [routerLink]="['/jobs', j.job_id]">{{ j.title }}</a> — {{ j.budget }}</li>
+  </ul>
+</div>

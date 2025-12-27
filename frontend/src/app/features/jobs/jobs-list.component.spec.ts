@@ -5,6 +5,8 @@ import { JobsListComponent } from './jobs-list.component';
 import { ApiService } from '../../core/api.service';
 import { of } from 'rxjs';
 
+const jExpect = (globalThis as { expect: <T>(actual: T) => jasmine.Matchers<T> }).expect;
+
 describe('JobsListComponent', () => {
   let component: JobsListComponent;
   let fixture: ComponentFixture<JobsListComponent>;
@@ -12,6 +14,7 @@ describe('JobsListComponent', () => {
 
   beforeEach(async () => {
     mockApi = { getJobs: () => of({ data: [{ job_id: 1, title: 'Test Job', budget: 100 }] }) };
+
     await TestBed.configureTestingModule({
       imports: [RouterTestingModule],
       declarations: [JobsListComponent],
@@ -24,7 +27,7 @@ describe('JobsListComponent', () => {
   });
 
   it('should create and load jobs', () => {
-    expect(component).toBeTruthy();
-    expect(component.jobs.length).toBeGreaterThan(0 as any);
+    jExpect(component).toBeTruthy();
+    jExpect(component.jobs.length).toBeGreaterThan(0);
   });
 });

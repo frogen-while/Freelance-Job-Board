@@ -1,4 +1,5 @@
 export interface Profile {
+  profile_id: number;
   user_id: number;
   description: string | null;
   photo_url: string | null;
@@ -7,4 +8,5 @@ export interface Profile {
   completed_orders: string | null;
   timezone: string | null;
   hourly_rate: number | null;
+  skills: number[] | null;
 }

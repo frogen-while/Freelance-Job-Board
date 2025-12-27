@@ -14,15 +14,16 @@
     "typeRoots": [
       "node_modules/@types"
     ],
-    "types": [],
+    "types": ["jasmine"],
     "lib": [
       "es2020",
       "dom"
-    ]
+    ],
+    "skipLibCheck": true
   },
   "exclude": [
-    "src/**/*.spec.ts",
     "cypress",
-    "cypress/**"
+    "cypress/**",
+    "cypress.config.ts"
   ]
 }

@@ -1,27 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../core/api.service';
+import { Job } from '../../core/models';
 
 @Component({
   selector: 'app-job-detail',
-  template: `
-    <div *ngIf="job">
-      <h1>{{ job.title }}</h1>
-      <p>{{ job.description }}</p>
-      <p>Budget: {{ job.budget }}</p>
-
-      <h3>Apply</h3>
-      <form (submit)="apply($event)">
-        <input placeholder="Freelancer ID" [(ngModel)]="freelancerId" name="freelancerId" />
-        <input placeholder="Bid amount" [(ngModel)]="bidAmount" name="bidAmount" />
-        <textarea placeholder="Proposal" [(ngModel)]="proposalText" name="proposalText"></textarea>
-        <button type="submit">Apply</button>
-      </form>
-    </div>
-  `
+  templateUrl: './job-detail.component.html',
+  styleUrls: ['./job-detail.component.scss']
 })
 export class JobDetailComponent implements OnInit {
-  job: any | null = null;
+  job: Job | null = null;
   freelancerId = '';
   bidAmount = '';
   proposalText = '';
@@ -30,11 +18,13 @@ export class JobDetailComponent implements OnInit {
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.api.getJobById(id).subscribe((res: any) => this.job = res.data);
+    this.api.getJobById(id).subscribe(res => this.job = res.data ?? null);
   }
 
   apply(e: Event) {
     e.preventDefault();
+    if (!this.job) return;
+
     const payload = {
       job_id: this.job.job_id,
       freelancer_id: Number(this.freelancerId),

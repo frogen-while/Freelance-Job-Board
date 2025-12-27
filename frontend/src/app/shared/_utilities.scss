@@ -1,0 +1,272 @@
+// =============================================================================
+// UTILITIES - MIXINS & FUNCTIONS
+// Переиспользуемые миксины для компонентов
+// =============================================================================
+
+@use 'tokens' as *;
+
+// -----------------------------------------------------------------------------
+// GLASS MORPHISM
+// -----------------------------------------------------------------------------
+
+/// Базовый glass-эффект для карточек
+@mixin glass-card {
+  background: $bg-glass;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: $radius-3xl;
+  box-shadow: $shadow-lg;
+  backdrop-filter: blur(18px) saturate(1.25);
+  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+}
+
+/// Glass-эффект для header/navigation
+@mixin glass-nav {
+  background: rgba($bg-page, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/// Glass-эффект для header при скролле
+@mixin glass-nav-scrolled {
+  background: rgba($bg-page, 0.92);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
+}
+
+// -----------------------------------------------------------------------------
+// CARDS
+// -----------------------------------------------------------------------------
+
+/// Базовая карточка
+@mixin card-base {
+  background: $bg-card;
+  border: 1px solid $border-light;
+  border-radius: $radius-2xl;
+  box-shadow: $shadow-sm;
+  transition: transform $transition-fast, box-shadow $transition-fast, border-color $transition-fast;
+}
+
+/// Карточка с hover-эффектом
+@mixin card-hoverable {
+  @include card-base;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+    border-color: $border-accent;
+  }
+}
+
+/// Белая карточка (для форм и т.д.)
+@mixin card-white {
+  background: $bg-white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+}
+
+// -----------------------------------------------------------------------------
+// BUTTONS
+// -----------------------------------------------------------------------------
+
+/// Базовые стили кнопки
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border: none;
+  border-radius: $radius-full;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/// Primary кнопка (тёмная)
+@mixin button-primary {
+  @include button-base;
+  background: $primary;
+  color: $text-white;
+  border: 1px solid $border-strong;
+  box-shadow: $shadow-button;
+
+  &:hover {
+    background: $primary-dark;
+    box-shadow: $shadow-button-hover;
+    transform: translateY(-1px);
+  }
+}
+
+/// Secondary кнопка (светлая)
+@mixin button-secondary {
+  @include button-base;
+  background: rgba(255, 255, 255, 0.65);
+  color: $text-primary;
+  border: 1px solid $border-light;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.88);
+    border-color: $border-medium;
+    transform: translateY(-1px);
+  }
+}
+
+/// Success кнопка (зелёная)
+@mixin button-success {
+  @include button-base;
+  background: $success;
+  color: $text-white;
+  border-radius: $radius-md;
+  box-shadow: $shadow-success;
+
+  &:hover {
+    background: $success-dark;
+    transform: translateY(-1px);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// FORM ELEMENTS
+// -----------------------------------------------------------------------------
+
+/// Базовый input
+@mixin input-base {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid $border-strong;
+  border-radius: $radius-lg;
+  font-size: $font-size-lg;
+  font-family: inherit;
+  transition: border-color $transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: $accent;
+  }
+
+  &::placeholder {
+    color: $text-muted;
+  }
+}
+
+/// Textarea
+@mixin textarea-base {
+  @include input-base;
+  min-height: 120px;
+  resize: vertical;
+}
+
+// -----------------------------------------------------------------------------
+// TYPOGRAPHY
+// -----------------------------------------------------------------------------
+
+/// Page title
+@mixin title-page {
+  color: $text-primary;
+  font-size: 2rem;
+  font-weight: $font-weight-bold;
+  margin-bottom: 2rem;
+}
+
+/// Section title
+@mixin title-section {
+  color: $text-primary;
+  font-size: 1.25rem;
+  font-weight: $font-weight-semibold;
+}
+
+/// Hero title
+@mixin title-hero {
+  font-size: $font-size-5xl;
+  font-weight: $font-weight-extrabold;
+  color: $primary-dark;
+  line-height: 1.05;
+  letter-spacing: $letter-spacing-tight;
+}
+
+// -----------------------------------------------------------------------------
+// LINKS
+// -----------------------------------------------------------------------------
+
+/// Базовая ссылка
+@mixin link-base {
+  color: $text-primary;
+  font-weight: $font-weight-semibold;
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $accent;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// LAYOUT
+// -----------------------------------------------------------------------------
+
+/// Центрированный контейнер
+@mixin container($max-width: 1200px) {
+  max-width: $max-width;
+  margin: 0 auto;
+  padding: 0 clamp(12px, 3.6vw, 40px);
+}
+
+/// Flex column с gap
+@mixin flex-column($gap: $space-lg) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+/// Flex row с gap
+@mixin flex-row($gap: $space-md) {
+  display: flex;
+  align-items: center;
+  gap: $gap;
+}
+
+// -----------------------------------------------------------------------------
+// RESPONSIVE
+// -----------------------------------------------------------------------------
+
+/// Mobile-first media query
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: $bp-xs) { @content; }
+  } @else if $breakpoint == sm {
+    @media (max-width: $bp-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: $bp-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: $bp-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: $bp-xl) { @content; }
+  } @else if $breakpoint == 2xl {
+    @media (max-width: $bp-2xl) { @content; }
+  } @else if $breakpoint == 3xl-up {
+    @media (min-width: $bp-3xl) { @content; }
+  }
+}
+
+/// Reduced motion preference
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// ANIMATIONS
+// -----------------------------------------------------------------------------
+
+/// Hover lift effect
+@mixin hover-lift($distance: -2px) {
+  transition: transform $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    transform: translateY($distance);
+  }
+}

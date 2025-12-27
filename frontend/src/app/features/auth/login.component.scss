@@ -1,0 +1,164 @@
+// =============================================================================
+// LOGIN COMPONENT
+// Centered compact card (Apple/Google style)
+// =============================================================================
+
+@use 'app/shared' as *;
+
+// -----------------------------------------------------------------------------
+// HOST
+// -----------------------------------------------------------------------------
+
+:host {
+  display: block;
+  min-height: calc(100vh - 60px);
+  background: $bg-page;
+}
+
+// -----------------------------------------------------------------------------
+// AUTH PAGE LAYOUT
+// -----------------------------------------------------------------------------
+
+.auth-page {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-xl;
+}
+
+// -----------------------------------------------------------------------------
+// AUTH CARD
+// -----------------------------------------------------------------------------
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  background: $bg-white;
+  border-radius: $radius-2xl;
+  padding: $space-3xl;
+  box-shadow: $shadow-lg;
+  border: 1px solid $border-light;
+
+  @include respond-to(sm) {
+    padding: $space-2xl;
+    border-radius: $radius-xl;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// LOGO
+// -----------------------------------------------------------------------------
+
+.auth-logo {
+  text-align: center;
+  margin-bottom: $space-2xl;
+
+  a {
+    font-size: 1.5rem;
+    font-weight: $font-weight-extrabold;
+    color: $text-primary;
+    text-decoration: none;
+    letter-spacing: $letter-spacing-tight;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// TYPOGRAPHY
+// -----------------------------------------------------------------------------
+
+.auth-title {
+  font-size: 1.75rem;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+  text-align: center;
+  margin-bottom: $space-sm;
+  letter-spacing: $letter-spacing-tight;
+}
+
+.auth-subtitle {
+  font-size: $font-size-base;
+  color: $text-secondary;
+  text-align: center;
+  margin-bottom: $space-2xl;
+}
+
+// -----------------------------------------------------------------------------
+// FORM
+// -----------------------------------------------------------------------------
+
+.auth-form {
+  @include flex-column($space-lg);
+}
+
+.form-group {
+  @include flex-column($space-sm);
+}
+
+.form-label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+}
+
+.form-input {
+  @include input-base;
+  padding: $space-md $space-lg;
+  font-size: $font-size-base;
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
+  }
+}
+
+.form-error {
+  font-size: $font-size-sm;
+  color: $error;
+  text-align: center;
+  padding: $space-md;
+  background: rgba($error, 0.08);
+  border-radius: $radius-md;
+}
+
+// -----------------------------------------------------------------------------
+// SUBMIT BUTTON
+// -----------------------------------------------------------------------------
+
+.auth-btn {
+  @include button-primary;
+  width: 100%;
+  padding: $space-md $space-lg;
+  font-size: $font-size-base;
+  margin-top: $space-sm;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// FOOTER
+// -----------------------------------------------------------------------------
+
+.auth-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: $space-sm;
+  margin-top: $space-2xl;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.auth-link {
+  color: $accent;
+  font-weight: $font-weight-semibold;
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $accent-hover;
+  }
+}

@@ -6,13 +6,19 @@ import { ApiService } from '../../core/api.service';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 
+const jExpect = (globalThis as { expect: <T>(actual: T) => jasmine.Matchers<T> }).expect;
+
 describe('JobDetailComponent', () => {
   let component: JobDetailComponent;
   let fixture: ComponentFixture<JobDetailComponent>;
   let mockApi: Partial<ApiService>;
 
   beforeEach(async () => {
-    mockApi = { getJobById: (id: number) => of({ data: { job_id: id, title: 'Test Job', description: 'Desc', budget: 100 } }), applyToJob: () => of({}) };
+    mockApi = {
+      getJobById: () => of({ data: { job_id: 1, title: 'Test Job', description: 'Desc', budget: 100 } }),
+      applyToJob: () => of({})
+    };
+
     await TestBed.configureTestingModule({
       imports: [FormsModule],
       declarations: [JobDetailComponent],
@@ -28,7 +34,7 @@ describe('JobDetailComponent', () => {
   });
 
   it('should load job detail', () => {
-    expect(component.job).toBeTruthy();
-    expect(component.job.title).toBe('Test Job' as any);
+    jExpect(component.job).toBeTruthy();
+    jExpect(component.job?.title).toBe('Test Job');
   });
 });

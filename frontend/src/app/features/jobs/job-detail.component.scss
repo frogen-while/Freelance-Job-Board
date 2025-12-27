@@ -1,0 +1,78 @@
+// =============================================================================
+// JOB DETAIL COMPONENT
+// Стили для страницы деталей вакансии
+// =============================================================================
+
+@use 'app/shared' as *;
+
+// -----------------------------------------------------------------------------
+// HOST
+// -----------------------------------------------------------------------------
+
+:host {
+  display: block;
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+
+  @include respond-to(md) {
+    padding: 1rem;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// TYPOGRAPHY
+// -----------------------------------------------------------------------------
+
+h1 {
+  @include title-page;
+  margin-bottom: 1rem;
+
+  @include respond-to(md) {
+    font-size: 1.5rem;
+  }
+}
+
+h3 {
+  @include title-section;
+  margin: 2rem 0 1rem;
+}
+
+p {
+  color: $text-secondary;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+// -----------------------------------------------------------------------------
+// APPLICATION FORM
+// -----------------------------------------------------------------------------
+
+form {
+  @include card-white;
+  padding: 2rem;
+  margin-top: 1.5rem;
+
+  @include respond-to(md) {
+    padding: 1.5rem;
+  }
+
+  input,
+  textarea {
+    @include input-base;
+    margin-bottom: 1rem;
+  }
+
+  textarea {
+    @include textarea-base;
+  }
+
+  button {
+    @include button-primary;
+    border-radius: $radius-md;
+
+    &:hover {
+      background: $primary-light;
+    }
+  }
+}

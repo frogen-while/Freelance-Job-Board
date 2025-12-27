@@ -6,7 +6,8 @@ type UserType = 'Employer' | 'Freelancer';
 
 @Component({
   selector: 'app-register',
-  templateUrl: './register.component.html'
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
   first_name = '';

@@ -2,7 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
-    "types": ["jasmine", "node"]
+    "types": ["jasmine"],
+    "skipLibCheck": true
   },
   "files": [
     "src/test.ts",
@@ -12,5 +13,8 @@
     "src/**/*.spec.ts",
     "src/**/*.d.ts"
   ],
-  "exclude": []
+  "exclude": [
+    "cypress",
+    "cypress/**"
+  ]
 }

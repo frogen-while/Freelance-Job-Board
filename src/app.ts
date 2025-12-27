@@ -43,7 +43,6 @@ app.use('/api/payments', paymentsRoutes)
 app.use('/api/supporttickets', supportticketsRoutes)
 app.use('/api/auditlog', auditlogRoutes)
 
-// API not found (unknown route or unsupported method)
 app.use('/api', (req: Request, res: Response) => {
   return sendError(res, 404, 'Not Found');
 });
@@ -55,7 +54,6 @@ if (fs.existsSync(distPath)) {
   const indexHtml = path.join(distPath, 'index.html');
   app.use(express.static(distPath));
 
-  // SPA fallback for client-side routes (GET/HEAD only), never for /api/*
   const spaRoute = /^\/(?!api(?:\/|$)).*/;
   app.get(spaRoute, (req: Request, res: Response) => {
     res.sendFile(indexHtml);
