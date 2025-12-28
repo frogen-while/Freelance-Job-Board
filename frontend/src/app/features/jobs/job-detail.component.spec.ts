@@ -4,6 +4,8 @@ import { JobDetailComponent } from './job-detail.component';
 import { ApiService } from '../../core/api.service';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { Job } from '../../core/models';
+import { ApiResponse } from '../../core/models';
 
 const jExpect = (globalThis as { expect: <T>(actual: T) => jasmine.Matchers<T> }).expect;
 
@@ -14,10 +16,22 @@ describe('JobDetailComponent', () => {
 
   beforeEach(async () => {
     mockApi = {
-      getJobById: () => of({ data: { job_id: 1, title: 'Test Job', description: 'Desc', budget: 100 } }),
-      applyToJob: () => of({})
+      getJobById: () =>
+        of<ApiResponse<Job>>({
+          success: true,
+          data: {
+            job_id: 1,
+            title: 'Test Job',
+            description: 'Desc',
+            budget: 100,
+            employer_id: 1,   
+            category_id: 1,   
+            status: 'Open',   
+            deadline: null      
+          }
+        }),
+      applyToJob: () => of({} as ApiResponse<{ application_id: number }>)
     };
-
     await TestBed.configureTestingModule({
       imports: [FormsModule],
       declarations: [JobDetailComponent],

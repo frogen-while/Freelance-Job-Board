@@ -8,4 +8,3 @@ getTestBed().initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDyn
 import './app/features/home/home.component.spec';
 import './app/features/jobs/jobs-list.component.spec';
 import './app/features/jobs/job-detail.component.spec';
-
