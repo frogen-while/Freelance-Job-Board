@@ -308,7 +308,7 @@ export async function createSchemaAndData(): Promise<void> {
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   openDb().catch((error) => {
-    console.error('❌ Failed to initialize database:', error);
+    console.error('Failed to initialize database:', error);
     process.exit(1);
   });
 }

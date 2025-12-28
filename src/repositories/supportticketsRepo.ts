@@ -1,16 +1,16 @@
 import { db } from '../config/init_db.js';
-import { status, Supportticket } from '../interfaces/Supportticket.js';
+import { TicketStatus, SupportTicket } from '../interfaces/Supportticket.js';
 
 export const supportTicketsRepo = {
 
-    async get_all(): Promise<Supportticket[]> {
-        const result = await db.connection?.all<Supportticket[]>(
+    async get_all(): Promise<SupportTicket[]> {
+        const result = await db.connection?.all<SupportTicket[]>(
             'SELECT ticket_id, user_id, support_id, subject, message, status FROM supporttickets'
         );
         return result || [];
     },
-    
-    async create(user_id: number, support_id: number, subject: string, message: string, status: status): Promise<number | null> {
+
+    async create(user_id: number, support_id: number, subject: string, message: string, status: TicketStatus): Promise<number | null> {
         const result = await db.connection?.run(
             `INSERT INTO supporttickets (user_id, support_id, subject, message, status) VALUES (?, ?, ?, ?, ?)`,
             user_id, support_id, subject, message, status
@@ -18,15 +18,15 @@ export const supportTicketsRepo = {
         
         return result?.lastID ?? null;
     },
-    
-    async findById(ticket_id: number): Promise<Supportticket | undefined> {
-        return await db.connection?.get<Supportticket | undefined>(
+
+    async findById(ticket_id: number): Promise<SupportTicket | undefined> {
+        return await db.connection?.get<SupportTicket | undefined>(
             `SELECT * FROM supporttickets WHERE ticket_id = ?`,
             ticket_id
         );
     },
-    
-    async update(ticket_id: number, updateData: { user_id?: number, support_id?: number, subject?: string, message?: string, status?: status}): Promise<boolean> {
+
+    async update(ticket_id: number, updateData: { user_id?: number, support_id?: number, subject?: string, message?: string, status?: TicketStatus}): Promise<boolean> {
         const setClauses: string[] = [];
         const params: (string | number)[] = [];
 

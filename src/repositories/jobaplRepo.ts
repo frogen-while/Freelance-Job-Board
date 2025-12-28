@@ -1,15 +1,15 @@
 import { db } from '../config/init_db.js';
-import { status, jobApl } from '../interfaces/jobapl.js';
+import { JobApplicationStatus, JobApl } from '../interfaces/jobapl.js';
 
 export const jobAplRepo = {
 
-    async get_all(): Promise<jobApl[]> {
-                const result = await db.connection?.all<jobApl[]>(
+    async get_all(): Promise<JobApl[]> {
+                const result = await db.connection?.all<JobApl[]>(
                     'SELECT application_id, job_id, freelancer_id, bid_amount, proposal_text, status FROM jobapplications'
                 );
                 return result || [];
             },
-    async create(job_id: number, freelancer_id: number, bid_amount:number, proposal_text:string, status:status): Promise<number | null> {
+    async create(job_id: number, freelancer_id: number, bid_amount:number, proposal_text:string, status:JobApplicationStatus): Promise<number | null> {
         const result = await db.connection?.run(
                 `INSERT INTO jobapplications (job_id, freelancer_id, bid_amount, proposal_text, status) VALUES (?, ?, ?, ?, ?)`,
                 job_id, freelancer_id, bid_amount, proposal_text, status
@@ -18,12 +18,12 @@ export const jobAplRepo = {
             return result?.lastID ?? null;
 
     },
-    async findById(application_id: number): Promise<jobApl | undefined> {
-            return await db.connection?.get<jobApl | undefined>(
+    async findById(application_id: number): Promise<JobApl | undefined> {
+            return await db.connection?.get<JobApl | undefined>(
                 `SELECT * FROM jobapplications WHERE application_id = ?`,
                 application_id
             )},
-    async update(application_id: number, updateData: { job_id?: number, freelancer_id?: number, bid_amount?:number, proposal_text?:string, status?:status}): Promise<boolean> {
+    async update(application_id: number, updateData: { job_id?: number, freelancer_id?: number, bid_amount?:number, proposal_text?:string, status?:JobApplicationStatus}): Promise<boolean> {
         const setClauses: string[] = [];
         const params: (string | number | null)[] = [];
 

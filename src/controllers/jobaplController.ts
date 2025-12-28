@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { jobAplRepo } from '../repositories/jobaplRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
-import { status } from '../interfaces/jobapl.js';
+import { JobApplicationStatus } from '../interfaces/jobapl.js';
 import { sendError, sendSuccess } from '../utils/http.js';
 
 export const createJobApplication = async (req: Request, res: Response) => {
@@ -94,7 +94,7 @@ export const updateJobApplication = async (req: Request, res: Response) => {
         return sendError(res, 400, 'Invalid application ID format.');
     }
 
-    const updateData: {job_id?: number, freelancer_id?: number, bid_amount?: number, proposal_text?: string, status?: status} = {};
+    const updateData: {job_id?: number, freelancer_id?: number, bid_amount?: number, proposal_text?: string, status?: JobApplicationStatus} = {};
     
     if (job_id !== undefined) {
         const job = await jobRepo.findById(job_id);

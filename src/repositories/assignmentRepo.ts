@@ -1,5 +1,5 @@
 import { db } from '../config/init_db.js';
-import { status, Assignment } from '../interfaces/Assignment.js';
+import { AssignmentStatus, Assignment } from '../interfaces/Assignment.js';
 
 export const assignmentRepo = {
 
@@ -10,7 +10,7 @@ export const assignmentRepo = {
         return result || [];
     },
     
-    async create(job_id: number, freelancer_id: number, status: status): Promise<number | null> {
+    async create(job_id: number, freelancer_id: number, status: AssignmentStatus): Promise<number | null> {
         const result = await db.connection?.run(
             `INSERT INTO assignments (job_id, freelancer_id, status) VALUES (?, ?, ?)`,
             job_id, freelancer_id, status
@@ -26,7 +26,7 @@ export const assignmentRepo = {
         );
     },
     
-    async update(assignment_id: number, updateData: { job_id?: number, freelancer_id?: number, status?: status}): Promise<boolean> {
+    async update(assignment_id: number, updateData: { job_id?: number, freelancer_id?: number, status?: AssignmentStatus}): Promise<boolean> {
         const setClauses: string[] = [];
         const params: (string | number)[] = [];
 

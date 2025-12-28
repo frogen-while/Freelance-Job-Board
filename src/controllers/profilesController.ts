@@ -111,9 +111,9 @@ export const setProfileSkills = async (req: Request, res: Response) => {
       photo_url: null,
       education_info: null,
       languages: null,
-      completed_orders: null,
       timezone: null,
-      hourly_rate: null,
+      hourly_rate_min: null,
+      hourly_rate_max: null,
       skills: skill_ids as number[]
     });
 

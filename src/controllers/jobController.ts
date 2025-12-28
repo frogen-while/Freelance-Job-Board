@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { jobRepo } from '../repositories/jobRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { categoryRepo } from '../repositories/categoryRepo.js';
-import { status } from '../interfaces/Job.js';
+import { JobStatus } from '../interfaces/Job.js';
 import { sendError, sendSuccess } from '../utils/http.js';
 
 export const createJob = async (req: Request, res: Response) => {
@@ -95,7 +95,7 @@ export const updateJob = async (req: Request, res: Response) => {
         return sendError(res, 400, 'Invalid job ID format.');
     }
 
-    const updateData: {employer_id?: number, category_id?: number, title?: string, description?: string, budget?: number, status?: status, deadline?: string} = {};
+    const updateData: {employer_id?: number, category_id?: number, title?: string, description?: string, budget?: number, status?: JobStatus, deadline?: string} = {};
     if (employer_id !== undefined) {
         const employerUser = await userRepo.findById(employer_id);
         if (!employerUser) {

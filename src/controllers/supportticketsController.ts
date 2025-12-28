@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { supportTicketsRepo } from '../repositories/supportticketsRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
-import { status } from '../interfaces/Supportticket.js';
+import { TicketStatus } from '../interfaces/Supportticket.js';
 import { sendError, sendSuccess } from '../utils/http.js';
 
 export const createSupportTicket = async (req: Request, res: Response) => {
@@ -98,7 +98,7 @@ export const updateSupportTicket = async (req: Request, res: Response) => {
         return sendError(res, 400, 'Invalid ticket ID format.');
     }
 
-    const updateData: {user_id?: number, support_id?: number, subject?: string, message?: string, status?: status} = {};
+    const updateData: {user_id?: number, support_id?: number, subject?: string, message?: string, status?: TicketStatus} = {};
     
     if (user_id !== undefined) {
         const user = await userRepo.findById(user_id);

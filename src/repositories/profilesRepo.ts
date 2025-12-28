@@ -31,14 +31,13 @@ export const profilesRepo = {
     const skillsJson = data.skills ? JSON.stringify(data.skills) : null;
 
     await db.connection?.run(
-      `INSERT INTO profiles (user_id, description, photo_url, education_info, languages, completed_orders, timezone, hourly_rate, skills)
+      `INSERT INTO profiles (user_id, description, photo_url, education_info, languages, timezone, hourly_rate, skills)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(user_id) DO UPDATE SET
          description = excluded.description,
          photo_url = excluded.photo_url,
          education_info = excluded.education_info,
          languages = excluded.languages,
-         completed_orders = excluded.completed_orders,
          timezone = excluded.timezone,
          hourly_rate = excluded.hourly_rate,
          skills = excluded.skills`,
@@ -47,9 +46,9 @@ export const profilesRepo = {
       data.photo_url,
       data.education_info,
       data.languages,
-      data.completed_orders,
       data.timezone,
-      data.hourly_rate,
+      data.hourly_rate_max,
+      data.hourly_rate_min,
       skillsJson
     );
   }
