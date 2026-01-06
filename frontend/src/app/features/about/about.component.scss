@@ -1,11 +1,43 @@
+@use 'app/shared' as *;
+
 .about-page {
-  padding: 3rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   .container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 1rem;
+    width: 100%;
+    margin-top: 70px;
+    padding: 1rem;
+    text-align: center;
   }
 
-  h1 { margin-bottom: 1rem; }
+  h1 { margin-bottom: $space-sm; color: $text-primary; }
+  .lead { color: $text-secondary; max-width: 760px; margin: 0 auto $space-lg; line-height: 1.6; }
+
+  .team-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 100px;
+    margin: 10px;
+  }
+
+  .member {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px
+  }
+
+  .member img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; }
+  .docs{
+    margin: 10px;
+    padding: 10px;
+  }
+  .name { font-weight: $font-weight-semibold; }
+ 
+  a{
+    line-height: 2.5;
+  }
 }
