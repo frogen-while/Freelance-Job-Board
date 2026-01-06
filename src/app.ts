@@ -29,10 +29,8 @@ app.get('/api/health', (req: Request, res: Response) => {
 
 
 app.use('/api/auth', authRoutes)
-
 app.use('/api/skills', skillsRoutes)
 app.use('/api/profiles', profilesRoutes)
-
 app.use('/api/users', userRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/jobs', jobRoutes)
@@ -47,6 +45,13 @@ app.use('/api', (req: Request, res: Response) => {
   return sendError(res, 404, 'Not Found');
 });
 
+const docsPath = path.join(__dirname, '..', 'docs');
+if (fs.existsSync(docsPath)) {
+  console.log('Serving docs from:', docsPath);
+  app.use('/docs', express.static(docsPath));
+} else {
+  console.log('Docs folder not found at:', docsPath);
+}
 
 const distPath = path.join(__dirname, '..', 'frontend', 'dist', 'frontend');
 
