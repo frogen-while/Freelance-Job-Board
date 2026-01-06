@@ -59,15 +59,16 @@
       </ng-container>
 
       <ng-template #loggedIn>
-
+          <a class="profile-link" routerLink="/profile" *ngIf="auth.getUser() as user">
+            <span class="profile-pic">
+              <img *ngIf="user.profile_image_url; else initials" [src]="user.profile_image_url" alt="Profile" />
+              <ng-template #initials>
+                <span class="initials">{{ getInitials(user) }}</span>
+              </ng-template>
+            </span>
+          </a>
         <button class="nav-link profile-logout" (click)="logout()">
-          <span class="profile-pic" *ngIf="auth.getUser() as user">
-            <img *ngIf="user.profile_image_url; else initials" [src]="user.profile_image_url" alt="Profile" />
-            <ng-template #initials>
-              <span class="initials">{{ getInitials(user) }}</span>
-            </ng-template>
-          </span>
-          Log out
+          <img src="/pictures/logout_icon.png" alt="Logout" width="25" height="25"/>
         </button>
       </ng-template>
     </nav>

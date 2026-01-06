@@ -195,6 +195,12 @@
   gap: $space-sm;
 }
 
+.profile-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
 .profile-pic {
   width: 28px;
   height: 28px;

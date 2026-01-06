@@ -1,0 +1,41 @@
+<section class="profile-page">
+  <div class="container">
+    <div *ngIf="loading">Loading...</div>
+
+    <div *ngIf="!loading">
+      <div class="profile-header">
+        <div class="photo">
+          <img *ngIf="profile?.photo_url; else initials" [src]="profile.photo_url" alt="Photo" />
+          <ng-template #initials>
+            <div class="initials">{{ getInitials() }}</div>
+          </ng-template>
+        </div>
+
+        <br><br><br><br><br><br>
+
+        <div class="info">
+          <h1>{{ user?.first_name }} {{ user?.last_name }}</h1>
+          <p class="role">{{ user?.main_role }}</p>
+          <p class="email">{{ user?.email }}</p>
+        </div>
+      </div>
+
+      <div class="profile-body">
+        <h2>About</h2>
+        <p>{{ profile?.description || 'No description yet.' }}</p>
+
+        <div class="meta">
+          <div>
+            <h3>Skills</h3>
+            <p>{{ profile?.skills || '—' }}</p>
+          </div>
+
+          <div>
+            <h3>Hourly rate</h3>
+            <p>{{ profile?.hourly_rate ? ('$' + profile.hourly_rate) : '—' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

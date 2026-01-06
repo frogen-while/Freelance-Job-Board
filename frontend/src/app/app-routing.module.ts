@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from "./features/home/home.component";
 import { CategoriesComponent } from './features/categories/categories.component';
 import { AboutComponent } from './features/about/about.component';
+import { ProfileComponent } from './features/profile/profile.component';
 import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
 
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'categories', component: CategoriesComponent },
   { path: 'about', component: AboutComponent },
+  { path: 'profile', component: ProfileComponent },
   { path: 'jobs', loadChildren: () => import('./features/jobs/jobs.module').then(m => m.JobsModule) },
   { path: '**', redirectTo: '' }
 ];

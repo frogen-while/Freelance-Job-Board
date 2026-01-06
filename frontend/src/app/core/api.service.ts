@@ -26,6 +26,10 @@ export class ApiService {
     return this.http.get<ApiResponse<Category[]>>(`${this.base}/categories`);
   }
 
+  getProfileByUserId(userId: number): Observable<any> {
+    return this.http.get<any>(`${this.base}/profiles/${userId}`);
+  }
+
   applyToJob(payload: {
     job_id: number;
     freelancer_id: number;
