@@ -12,8 +12,8 @@
     text-align: center;
   }
 
-  h1 { margin-bottom: $space-sm; color: $text-primary; }
-  .lead { color: $text-secondary; max-width: 760px; margin: 0 auto $space-lg; line-height: 1.6; }
+  h1 { color: $text-primary; }
+  .project { color: $text-secondary; max-width: 760px; margin: auto; line-height: 1.6; }
 
   .team-grid {
     display: flex;
@@ -27,10 +27,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 10px
+    margin: 10px;
   }
 
-  .member img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; }
+  .member img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 5px;}
   .docs{
     margin: 10px;
     padding: 10px;
