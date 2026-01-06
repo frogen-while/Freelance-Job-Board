@@ -66,4 +66,11 @@ export class HeaderComponent implements OnInit {
     this.auth.logout();
     this.router.navigateByUrl('/');
   }
+
+  getInitials(user: any): string {
+    if (!user) return '';
+    const fn = user.first_name ? user.first_name.charAt(0).toUpperCase() : '';
+    const ln = user.last_name ? user.last_name.charAt(0).toUpperCase() : '';
+    return (fn + ln).trim();
+  }
 }

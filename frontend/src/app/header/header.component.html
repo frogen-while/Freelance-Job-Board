@@ -57,7 +57,16 @@
       </ng-container>
 
       <ng-template #loggedIn>
-        <button class="nav-link" (click)="logout()">Log out</button>
+
+        <button class="nav-link profile-logout" (click)="logout()">
+          <span class="profile-pic" *ngIf="auth.getUser() as user">
+            <img *ngIf="user.profile_image_url; else initials" [src]="user.profile_image_url" alt="Profile" />
+            <ng-template #initials>
+              <span class="initials">{{ getInitials(user) }}</span>
+            </ng-template>
+          </span>
+          Log out
+        </button>
       </ng-template>
     </nav>
   </div>
