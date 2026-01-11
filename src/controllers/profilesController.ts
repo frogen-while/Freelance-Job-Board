@@ -29,22 +29,24 @@ export const upsertProfile = async (req: Request, res: Response) => {
   }
 
   const {
+    display_name = null,
+    headline = null,
     description = null,
     photo_url = null,
-    education_info = null,
-    languages = null,
-    completed_orders = null,
-    timezone = null,
+    location = null,
     hourly_rate = null,
+    availability_status = null,
+    onboarding_completed = null,
     skills = undefined
   } = req.body as {
+    display_name?: unknown;
+    headline?: unknown;
     description?: unknown;
     photo_url?: unknown;
-    education_info?: unknown;
-    languages?: unknown;
-    completed_orders?: unknown;
-    timezone?: unknown;
+    location?: unknown;
     hourly_rate?: unknown;
+    availability_status?: unknown;
+    onboarding_completed?: unknown;
     skills?: unknown;
   };
 
@@ -53,13 +55,14 @@ export const upsertProfile = async (req: Request, res: Response) => {
   }
 
   const payload = {
+    display_name: typeof display_name === 'string' ? display_name : null,
+    headline: typeof headline === 'string' ? headline : null,
     description: typeof description === 'string' ? description : null,
     photo_url: typeof photo_url === 'string' ? photo_url : null,
-    education_info: typeof education_info === 'string' ? education_info : null,
-    languages: typeof languages === 'string' ? languages : null,
-    completed_orders: typeof completed_orders === 'string' ? completed_orders : null,
-    timezone: typeof timezone === 'string' ? timezone : null,
+    location: typeof location === 'string' ? location : null,
     hourly_rate: typeof hourly_rate === 'number' ? hourly_rate : null,
+    availability_status: typeof availability_status === 'string' ? availability_status : null,
+    onboarding_completed: typeof onboarding_completed === 'boolean' ? onboarding_completed : null,
     skills: skills === undefined ? null : (skills as number[])
   };
 
@@ -122,5 +125,38 @@ export const setProfileSkills = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error setting profile skills', error);
     return sendError(res, 500, 'An internal server error occurred while setting profile skills.');
+  }
+};
+
+export const getFreelancers = async (req: Request, res: Response) => {
+  const { skill, limit, offset } = req.query;
+
+  try {
+    const freelancers = await profilesRepo.getFreelancers({
+      skill: typeof skill === 'string' ? skill : undefined,
+      limit: limit ? Number.parseInt(limit as string, 10) : 20,
+      offset: offset ? Number.parseInt(offset as string, 10) : 0
+    });
+    const total = await profilesRepo.countFreelancers();
+
+    return sendSuccess(res, { freelancers, total });
+  } catch (error) {
+    console.error('Error fetching freelancers', error);
+    return sendError(res, 500, 'An internal server error occurred while fetching freelancers.');
+  }
+};
+
+export const getFeaturedFreelancers = async (req: Request, res: Response) => {
+  const { limit } = req.query;
+
+  try {
+    const freelancers = await profilesRepo.getFeaturedFreelancers(
+      limit ? Number.parseInt(limit as string, 10) : 6
+    );
+
+    return sendSuccess(res, freelancers);
+  } catch (error) {
+    console.error('Error fetching featured freelancers', error);
+    return sendError(res, 500, 'An internal server error occurred while fetching featured freelancers.');
   }
 };
