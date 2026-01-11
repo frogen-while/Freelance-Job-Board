@@ -116,7 +116,7 @@
                 ${{ freelancer.hourly_rate }}/hr
               </span>
             </div>
-            <button class="view-profile-btn" routerLink="/profile/{{ freelancer.user_id }}">
+            <button class="view-profile-btn" (click)="onViewProfile(freelancer)">
               View Profile
             </button>
           </div>
@@ -157,3 +157,12 @@
     </aside>
   </div>
 </div>
+
+<!-- Auth Prompt Modal -->
+<app-auth-prompt-modal
+  [show]="showAuthModal"
+  title="Sign in to view profiles"
+  message="Create a free account or log in to view freelancer profiles and contact them about your project."
+  returnUrl="/hire/browse"
+  (closed)="closeAuthModal()">
+</app-auth-prompt-modal>

@@ -224,3 +224,85 @@
   0%, 100% { opacity: 0.4; }
   50% { opacity: 0.7; }
 }
+
+// Guest Sidebar Styles
+.guest-sidebar {
+  padding: $space-xl;
+  text-align: center;
+}
+
+.guest-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-md;
+}
+
+.guest-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  svg {
+    width: 32px;
+    height: 32px;
+    color: #818cf8;
+  }
+}
+
+.guest-title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: white;
+  margin: 0;
+}
+
+.guest-text {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.guest-actions {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: $space-sm;
+  margin-top: $space-sm;
+  
+  .btn-primary, .btn-secondary {
+    display: block;
+    padding: $space-sm $space-md;
+    border-radius: $radius-md;
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-sm;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+  }
+  
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+    }
+  }
+}

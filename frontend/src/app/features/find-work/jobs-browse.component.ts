@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
+import { AuthService } from '../../core/auth.service';
 import { Job, Category } from '../../core/models';
 
 @Component({
@@ -17,14 +18,19 @@ export class JobsBrowseComponent implements OnInit {
   searchQuery = '';
   selectedCategory: number | null = null;
   selectedStatus: string = '';
+  
+  isLoggedIn = false;
+  showAuthModal = false;
 
   constructor(
     private api: ApiService,
+    private auth: AuthService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit() {
+    this.isLoggedIn = this.auth.isLoggedIn();
     this.loadCategories();
     
     this.route.queryParams.subscribe(params => {
@@ -134,5 +140,17 @@ export class JobsBrowseComponent implements OnInit {
   getTimeAgo(date: string): string {
     // Simplified time ago
     return 'Recently posted';
+  }
+
+  onViewJob(job: Job): void {
+    if (this.isLoggedIn) {
+      this.router.navigate(['/jobs', job.job_id]);
+    } else {
+      this.showAuthModal = true;
+    }
+  }
+
+  closeAuthModal(): void {
+    this.showAuthModal = false;
   }
 }

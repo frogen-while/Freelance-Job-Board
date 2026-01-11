@@ -1,4 +1,23 @@
-<div class="profile-sidebar" *ngIf="!loading && user">
+<!-- Guest Sidebar - Show CTA for non-logged in users -->
+<div class="profile-sidebar guest-sidebar" *ngIf="!loading && !isLoggedIn">
+  <div class="guest-content">
+    <div class="guest-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    </div>
+    <h3 class="guest-title">Join Our Platform</h3>
+    <p class="guest-text">Create a free account to apply for jobs or post projects.</p>
+    <div class="guest-actions">
+      <a routerLink="/register" class="btn-primary">Sign Up Free</a>
+      <a routerLink="/login" class="btn-secondary">Log In</a>
+    </div>
+  </div>
+</div>
+
+<!-- Authenticated User Sidebar -->
+<div class="profile-sidebar" *ngIf="!loading && isLoggedIn && user">
   <div class="sidebar-header">
     <div class="avatar">
       <img *ngIf="profile?.photo_url" [src]="profile.photo_url" [alt]="getDisplayName()" />

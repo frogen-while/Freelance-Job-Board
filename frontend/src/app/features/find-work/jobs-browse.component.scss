@@ -255,6 +255,7 @@
   flex-direction: column;
   transition: all $transition-base;
   border: 1px solid transparent;
+  cursor: pointer;
 
   &:hover {
     border-color: rgba(99, 102, 241, 0.2);

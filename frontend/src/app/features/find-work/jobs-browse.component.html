@@ -77,7 +77,7 @@
 
           <!-- Jobs Grid -->
           <div class="jobs-grid" *ngIf="!loading && jobs.length > 0">
-            <a class="job-card" *ngFor="let job of jobs" [routerLink]="['/jobs', job.job_id]">
+            <div class="job-card" *ngFor="let job of jobs" (click)="onViewJob(job)">
               <div class="card-top">
                 <span class="job-category">{{ getCategoryName(job.category_id) }}</span>
                 <span class="job-status" [class]="job.status.toLowerCase().replace(' ', '-')">
@@ -108,7 +108,7 @@
                 </div>
                 <span class="apply-link">View Details →</span>
               </div>
-            </a>
+            </div>
           </div>
         </div>
 
@@ -120,3 +120,12 @@
     </div>
   </div>
 </div>
+
+<!-- Auth Prompt Modal -->
+<app-auth-prompt-modal
+  [show]="showAuthModal"
+  title="Sign in to view job details"
+  message="Create a free account or log in to view job details and apply for this opportunity."
+  returnUrl="/find-work/browse"
+  (closed)="closeAuthModal()">
+</app-auth-prompt-modal>

@@ -21,6 +21,7 @@ export class ProfileSidebarComponent implements OnInit {
   user: PublicUser | null = null;
   profile: ProfileData | null = null;
   isFreelancer = false;
+  isLoggedIn = false;
   loading = true;
 
   constructor(
@@ -29,11 +30,14 @@ export class ProfileSidebarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isLoggedIn = this.auth.isLoggedIn();
     this.user = this.auth.getUser();
     this.isFreelancer = this.auth.isFreelancer();
 
     if (this.user) {
       this.loadProfile();
+    } else {
+      this.loading = false;
     }
   }
 
