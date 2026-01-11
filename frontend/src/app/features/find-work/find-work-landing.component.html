@@ -1,0 +1,175 @@
+<div class="find-work-page">
+  <!-- Hero Section - Full Width Dark -->
+  <section class="hero-section">
+    <div class="hero-bg">
+      <div class="grid-pattern"></div>
+      <div class="glow glow-1"></div>
+      <div class="glow glow-2"></div>
+    </div>
+
+    <div class="hero-content">
+      <span class="hero-label">For Freelancers</span>
+      
+      <h1 class="hero-title">
+        Find work that
+        <span class="highlight">matches your skills</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Browse thousands of projects from clients around the world. 
+        Your next opportunity is just a click away.
+      </p>
+
+      <div class="search-container">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input
+            type="text"
+            class="search-input"
+            [(ngModel)]="searchQuery"
+            placeholder="Search for jobs, e.g. 'React Developer'"
+            (keyup.enter)="onSearch()"
+          />
+          <button class="search-btn" (click)="onSearch()">Search Jobs</button>
+        </div>
+        
+        <div class="popular-searches">
+          <span>Popular:</span>
+          <a routerLink="/find-work/browse" [queryParams]="{q: 'Web Development'}">Web Development</a>
+          <a routerLink="/find-work/browse" [queryParams]="{q: 'Design'}">Design</a>
+          <a routerLink="/find-work/browse" [queryParams]="{q: 'Writing'}">Writing</a>
+          <a routerLink="/find-work/browse" [queryParams]="{q: 'Mobile App'}">Mobile App</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-item" *ngFor="let stat of stats">
+        <span class="stat-value">{{ stat.value }}</span>
+        <span class="stat-label">{{ stat.label }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="categories-section" *ngIf="categories.length > 0">
+    <div class="section-inner">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Explore by category</h2>
+          <p class="section-subtitle">Find projects in your area of expertise</p>
+        </div>
+        <a class="see-all-link" routerLink="/find-work/browse">See all categories →</a>
+      </div>
+
+      <div class="categories-grid">
+        <a class="category-card" 
+           *ngFor="let category of categories" 
+           [routerLink]="['/find-work/browse']"
+           [queryParams]="{ category: category.category_id }">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+          </div>
+          <div class="category-info">
+            <h3 class="category-name">{{ category.name }}</h3>
+            <p class="category-desc">{{ category.description | slice:0:60 }}{{ category.description && category.description.length > 60 ? '...' : '' }}</p>
+          </div>
+          <span class="category-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Jobs Section -->
+  <section class="jobs-section" *ngIf="recentJobs.length > 0">
+    <div class="section-inner">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Latest opportunities</h2>
+          <p class="section-subtitle">Fresh projects posted by clients</p>
+        </div>
+        <a class="see-all-link" routerLink="/find-work/browse">Browse all jobs →</a>
+      </div>
+
+      <div class="jobs-list">
+        <a class="job-card" *ngFor="let job of recentJobs" [routerLink]="['/jobs', job.job_id]">
+          <div class="job-main">
+            <h3 class="job-title">{{ job.title }}</h3>
+            <p class="job-description">{{ job.description | slice:0:150 }}{{ job.description.length > 150 ? '...' : '' }}</p>
+          </div>
+          <div class="job-meta">
+            <span class="job-budget" *ngIf="job.budget">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+              ${{ job.budget }}
+            </span>
+            <span class="job-status" [class]="job.status.toLowerCase().replace(' ', '-')">
+              {{ job.status }}
+            </span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Join Section -->
+  <section class="why-section">
+    <div class="section-inner">
+      <h2 class="section-title centered">Why freelancers choose us</h2>
+      <p class="section-subtitle centered">Join thousands of professionals building their careers</p>
+
+      <div class="why-grid">
+        <div class="why-card" *ngFor="let item of whyJoin">
+          <div class="why-icon">
+            <svg *ngIf="item.icon === 'briefcase'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+            <svg *ngIf="item.icon === 'dollar'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="6" x2="12" y2="18"/>
+              <path d="M9 12h6"/>
+            </svg>
+            <svg *ngIf="item.icon === 'clock'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <svg *ngIf="item.icon === 'trending'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+              <polyline points="17 6 23 6 23 12"/>
+            </svg>
+          </div>
+          <h3 class="why-title">{{ item.title }}</h3>
+          <p class="why-description">{{ item.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="section-inner">
+      <div class="cta-card">
+        <div class="cta-content">
+          <h2 class="cta-title">Ready to start earning?</h2>
+          <p class="cta-subtitle">Create your free profile and start applying to jobs today</p>
+        </div>
+        <div class="cta-actions">
+          <button class="btn-primary" routerLink="/register">Create Profile</button>
+          <button class="btn-ghost" (click)="browseJobs()">Browse Jobs</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
