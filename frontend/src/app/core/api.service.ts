@@ -30,6 +30,14 @@ export class ApiService {
     return this.http.get<any>(`${this.base}/profiles/${userId}`);
   }
 
+  getUserById(userId: number): Observable<ApiResponse<{ user_id: number; first_name: string; last_name: string; email: string }>> {
+    return this.http.get<ApiResponse<{ user_id: number; first_name: string; last_name: string; email: string }>>(`${this.base}/users/${userId}`);
+  }
+
+  getCategoryById(categoryId: number): Observable<ApiResponse<Category>> {
+    return this.http.get<ApiResponse<Category>>(`${this.base}/categories/${categoryId}`);
+  }
+
   getFreelancers(options?: { skill?: string; limit?: number; offset?: number }): Observable<ApiResponse<FreelancersResponse>> {
     let url = `${this.base}/profiles/freelancers`;
     const params: string[] = [];

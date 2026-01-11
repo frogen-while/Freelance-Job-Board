@@ -2,60 +2,519 @@
 
 :host {
   display: block;
-  padding: 2rem;
-  max-width: 900px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+}
+
+.job-detail-page {
+  padding-top: 80px;
+}
+
+// Loading State
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: $space-md;
+  color: rgba(255, 255, 255, 0.6);
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #6366f1;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Not Found State
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: $space-xl;
+
+  .not-found-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: $space-lg;
+
+    svg {
+      width: 40px;
+      height: 40px;
+      color: #f87171;
+    }
+  }
+
+  h2 {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: #fff;
+    margin-bottom: $space-sm;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: $space-xl;
+  }
+}
+
+// Job Content
+.job-content {
+  max-width: 1200px;
   margin: 0 auto;
+  padding: $space-xl;
+}
 
-  @include respond-to(md) {
-    padding: 1rem;
+// Back Button
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: $font-size-sm;
+  cursor: pointer;
+  padding: $space-sm 0;
+  margin-bottom: $space-xl;
+  transition: color 0.2s;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    color: #fff;
   }
 }
 
-h1 {
-  @include title-page;
-  margin-bottom: 1rem;
+// Content Grid
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: $space-2xl;
 
-  @include respond-to(md) {
-    font-size: 1.5rem;
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
   }
 }
 
-h3 {
-  @include title-section;
-  margin: 2rem 0 1rem;
+// Main Section
+.main-section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
 }
 
-p {
-  color: $text-secondary;
-  line-height: 1.6;
-  margin-bottom: 1rem;
+// Job Header
+.job-header {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $radius-xl;
+  padding: $space-2xl;
 }
 
-form {
-  @include card-white;
-  padding: 2rem;
-  margin-top: 1.5rem;
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  margin-bottom: $space-md;
+}
 
-  @include respond-to(md) {
-    padding: 1.5rem;
+.job-category {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: #818cf8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: $space-xs $space-sm;
+  background: rgba(99, 102, 241, 0.15);
+  border-radius: $radius-md;
+}
+
+.job-status {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  padding: $space-xs $space-sm;
+  border-radius: $radius-full;
+
+  &.open {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
   }
 
-  input,
-  textarea {
-    @include input-base;
-    margin-bottom: 1rem;
+  &.assigned, &.in-progress {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
   }
 
-  textarea {
-    @include textarea-base;
+  &.completed {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
   }
 
-  button {
-    @include button-primary;
+  &.cancelled {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+  }
+}
+
+.job-title {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: $space-lg;
+
+  @media (max-width: 768px) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-lg;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  font-size: $font-size-md;
+  color: rgba(255, 255, 255, 0.7);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+  }
+}
+
+// Job Description
+.job-description {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $radius-xl;
+  padding: $space-2xl;
+
+  h2 {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: #fff;
+    margin-bottom: $space-lg;
+  }
+
+  p {
+    font-size: $font-size-md;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+}
+
+// Category Info
+.category-info {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $radius-xl;
+  padding: $space-2xl;
+
+  h2 {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: #fff;
+    margin-bottom: $space-lg;
+  }
+}
+
+.category-card {
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: $radius-lg;
+  padding: $space-lg;
+
+  h3 {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: #818cf8;
+    margin-bottom: $space-xs;
+  }
+
+  p {
+    font-size: $font-size-sm;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.5;
+  }
+}
+
+// Sidebar
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+
+  @media (max-width: 1024px) {
+    order: -1;
+  }
+}
+
+// Employer Card
+.employer-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $radius-xl;
+  padding: $space-xl;
+
+  h3 {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: $space-lg;
+  }
+}
+
+.employer-info {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+}
+
+.employer-avatar {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .avatar-initials {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: #fff;
+  }
+}
+
+.employer-details {
+  flex: 1;
+}
+
+.employer-name {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: #fff;
+  margin-bottom: $space-xs;
+}
+
+.employer-label {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+// Apply Card
+.apply-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $radius-xl;
+  padding: $space-xl;
+}
+
+// Applied State
+.applied-state {
+  text-align: center;
+  padding: $space-lg 0;
+
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    background: rgba(34, 197, 94, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto $space-lg;
+
+    svg {
+      width: 32px;
+      height: 32px;
+      color: #4ade80;
+    }
+  }
+
+  h3 {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: #4ade80;
+    margin-bottom: $space-sm;
+  }
+
+  p {
+    font-size: $font-size-sm;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.5;
+  }
+}
+
+// Apply Form
+.apply-form {
+  h3 {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: #fff;
+    margin-bottom: $space-xl;
+  }
+}
+
+.form-group {
+  margin-bottom: $space-lg;
+
+  label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: $space-sm;
+  }
+
+  input, textarea {
+    width: 100%;
+    padding: $space-md;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: $radius-md;
+    color: #fff;
+    font-size: $font-size-md;
+    transition: all 0.2s;
 
-    &:hover {
-      background: $primary-light;
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.5;
+  }
+}
+
+.btn-apply {
+  width: 100%;
+  padding: $space-md $space-lg;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border: none;
+  border-radius: $radius-lg;
+  color: #fff;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Closed State
+.closed-state, .employer-view, .guest-view {
+  text-align: center;
+  padding: $space-lg 0;
+
+  h3 {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: #fff;
+    margin-bottom: $space-sm;
+  }
+
+  p {
+    font-size: $font-size-sm;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.5;
+    margin-bottom: $space-lg;
+  }
+}
+
+.btn-secondary {
+  padding: $space-sm $space-lg;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: $radius-md;
+  color: #fff;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.btn-primary {
+  padding: $space-sm $space-lg;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border: none;
+  border-radius: $radius-md;
+  color: #fff;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+  }
+}
+
+// Guest View
+.guest-view {
+  .login-link {
+    margin-top: $space-lg;
+    margin-bottom: 0;
+    font-size: $font-size-sm;
+    color: rgba(255, 255, 255, 0.5);
+
+    a {
+      color: #818cf8;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }
