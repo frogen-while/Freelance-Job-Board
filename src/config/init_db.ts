@@ -1,6 +1,12 @@
 import { open, Database } from "sqlite";
 import sqlite3 from "sqlite3"
 import { pathToFileURL } from 'node:url';
+import { readFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export const db: { connection: Database | null} = {
   connection: null
@@ -73,6 +79,7 @@ export const profilesTableDef = {
     location: { type: 'TEXT' },
     hourly_rate: { type: 'REAL' },
     availability_status: { type: "TEXT DEFAULT 'available' CHECK(availability_status IN ('available', 'partially_available', 'not_available'))" },
+    onboarding_completed: { type: "BOOLEAN DEFAULT 0" },
     created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
     updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
@@ -303,6 +310,53 @@ export async function createSchemaAndData(): Promise<void> {
     for (const t of types) {
       await db.connection!.run('INSERT INTO usertypes (type_name) VALUES (?)', t);
     }
+  }
+
+  await seedSkills();
+  await seedCategories();
+}
+
+async function seedSkills(): Promise<void> {
+  const existingSkills = await db.connection!.get('SELECT COUNT(*) as count FROM skills');
+  if (existingSkills.count > 0) {
+    return; 
+  }
+
+  try {
+    const skillsPath = join(__dirname, '../../db/skills.json');
+    const skillsData = readFileSync(skillsPath, 'utf-8');
+    const skills: string[] = JSON.parse(skillsData);
+
+    for (const skillName of skills) {
+      await db.connection!.run('INSERT INTO skills (name) VALUES (?)', skillName);
+    }
+    console.log(`Seeded ${skills.length} skills from skills.json`);
+  } catch (error) {
+    console.error('Failed to seed skills:', error);
+  }
+}
+
+async function seedCategories(): Promise<void> {
+  const existingCategories = await db.connection!.get('SELECT COUNT(*) as count FROM categories');
+  if (existingCategories.count > 0) {
+    return
+  } 
+
+  try {
+    const categoriesPath = join(__dirname, '../../db/categories.json');
+    const categoriesData = readFileSync(categoriesPath, 'utf-8');
+    const categories: { [key: string]: string } = JSON.parse(categoriesData);
+
+    for (const [name, description] of Object.entries(categories)) {
+      await db.connection!.run(
+        'INSERT INTO categories (name, description) VALUES (?, ?)',
+        name,
+        description
+      );
+    }
+    console.log(`Seeded ${Object.keys(categories).length} categories from categories.json`);
+  } catch (error) {
+    console.error('Failed to seed categories:', error);
   }
 }
 

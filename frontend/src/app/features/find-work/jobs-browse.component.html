@@ -1,0 +1,122 @@
+<div class="browse-page">
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-inner">
+      <div class="header-text">
+        <h1 class="page-title">Find Your Next Project</h1>
+        <p class="page-subtitle">{{ jobs.length }} job{{ jobs.length !== 1 ? 's' : '' }} available</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-body">
+    <div class="page-inner">
+      <div class="content-layout">
+        <!-- Main Content -->
+        <div class="main-content">
+          <!-- Filters Bar -->
+          <div class="filters-bar">
+            <div class="search-wrapper">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="M21 21l-4.35-4.35"/>
+              </svg>
+              <input 
+                type="text" 
+                class="search-input"
+                [(ngModel)]="searchQuery"
+                placeholder="Search jobs..."
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+
+            <div class="filter-group">
+              <select class="filter-select" 
+                      [ngModel]="selectedCategory" 
+                      (ngModelChange)="onCategoryChange($event)">
+                <option [ngValue]="null">All Categories</option>
+                <option *ngFor="let cat of categories" [ngValue]="cat.category_id">
+                  {{ cat.name }}
+                </option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <select class="filter-select" 
+                      [(ngModel)]="selectedStatus" 
+                      (ngModelChange)="onStatusChange($event)">
+                <option value="">All Status</option>
+                <option value="Open">Open</option>
+                <option value="In Progress">In Progress</option>
+              </select>
+            </div>
+
+            <button class="clear-btn" *ngIf="searchQuery || selectedCategory || selectedStatus" (click)="clearFilters()">
+              Clear
+            </button>
+          </div>
+
+          <!-- Loading -->
+          <div class="loading-state" *ngIf="loading">
+            <div class="spinner"></div>
+            <p>Loading jobs...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" *ngIf="!loading && jobs.length === 0">
+            <div class="empty-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+            </div>
+            <h3>No jobs found</h3>
+            <p>Try adjusting your search or filters to find more opportunities</p>
+            <button class="btn-primary" (click)="clearFilters()">Clear Filters</button>
+          </div>
+
+          <!-- Jobs Grid -->
+          <div class="jobs-grid" *ngIf="!loading && jobs.length > 0">
+            <a class="job-card" *ngFor="let job of jobs" [routerLink]="['/jobs', job.job_id]">
+              <div class="card-top">
+                <span class="job-category">{{ getCategoryName(job.category_id) }}</span>
+                <span class="job-status" [class]="job.status.toLowerCase().replace(' ', '-')">
+                  {{ job.status }}
+                </span>
+              </div>
+
+              <h3 class="job-title">{{ job.title }}</h3>
+              
+              <p class="job-description">
+                {{ job.description | slice:0:180 }}{{ job.description.length > 180 ? '...' : '' }}
+              </p>
+
+              <div class="card-bottom">
+                <div class="job-info">
+                  <span class="info-item budget" *ngIf="job.budget">
+                    {{ formatBudget(job.budget) }}
+                  </span>
+                  <span class="info-item deadline" *ngIf="job.deadline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                      <line x1="16" y1="2" x2="16" y2="6"/>
+                      <line x1="8" y1="2" x2="8" y2="6"/>
+                      <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    {{ job.deadline | date:'MMM d' }}
+                  </span>
+                </div>
+                <span class="apply-link">View Details →</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Profile Sidebar -->
+        <aside class="profile-sidebar-wrapper">
+          <app-profile-sidebar></app-profile-sidebar>
+        </aside>
+      </div>
+    </div>
+  </div>
+</div>

@@ -44,10 +44,30 @@ export const userRepo = {
         return result || [];
     },
     async findById(user_id: number): Promise<User | undefined> {
-        return await db.connection?.get<User | undefined>(
+        const user = await db.connection?.get<User | undefined>(
             `SELECT user_id, first_name, last_name, email, main_role FROM users WHERE user_id = ?`,
             user_id
         );
+        
+        if (user) {
+            // Get user types
+            const types = await db.connection?.all<{type_name: string}[]>(
+                `SELECT ut.type_name FROM usertypes ut 
+                 JOIN user_usertypes uut ON ut.type_id = uut.type_id 
+                 WHERE uut.user_id = ?`,
+                user_id
+            );
+            (user as any).user_types = types?.map(t => t.type_name) || [];
+            
+            // Get onboarding status
+            const profile = await db.connection?.get<{onboarding_completed: number}>(
+                `SELECT onboarding_completed FROM profiles WHERE user_id = ?`,
+                user_id
+            );
+            (user as any).onboarding_completed = profile?.onboarding_completed === 1;
+        }
+        
+        return user;
     },
     async deleteByID(user_id: number): Promise<void> {
         await db.connection?.run(

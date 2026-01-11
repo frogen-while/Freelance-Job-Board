@@ -1,39 +1,161 @@
-<section class="profile-page">
+<div class="profile-page">
   <div class="container">
-    <div *ngIf="loading">Loading...</div>
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Loading profile...</p>
+    </div>
 
-    <div *ngIf="!loading">
+    <div class="profile-content" *ngIf="!loading && user">
+      <!-- Header Section -->
       <div class="profile-header">
-        <div class="photo">
-          <img *ngIf="profile?.photo_url; else initials" [src]="profile.photo_url" alt="Photo" />
-          <ng-template #initials>
-            <div class="initials">{{ getInitials() }}</div>
-          </ng-template>
+        <div class="header-left">
+          <div class="avatar">
+            <img *ngIf="profileData.photo_url" [src]="profileData.photo_url" alt="Profile" />
+            <span *ngIf="!profileData.photo_url" class="initials">{{ getInitials() }}</span>
+          </div>
+          <div class="header-info">
+            <h1 class="name">{{ profileData.display_name || (user.first_name + ' ' + user.last_name) }}</h1>
+            <p class="headline" *ngIf="profileData.headline">{{ profileData.headline }}</p>
+            <p class="email">{{ user.email }}</p>
+            <div class="availability-badge" *ngIf="isFreelancer" [ngClass]="profileData.availability_status">
+              <span class="dot"></span>
+              {{ getAvailabilityLabel() }}
+            </div>
+          </div>
         </div>
-
-        <div class="info">
-          <h1>{{ user?.first_name }} {{ user?.last_name }}</h1>
-          <p class="role">{{ user?.main_role }}</p>
-          <p class="email">{{ user?.email }}</p>
+        <div class="header-right">
+          <button class="btn-edit" (click)="toggleEdit()" *ngIf="!editMode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Edit Profile
+          </button>
         </div>
       </div>
 
-      <div class="profile-body">
-        <h2>About</h2>
-        <p>{{ profile?.description || 'No description yet.' }}</p>
+      <!-- Success/Error Messages -->
+      <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
+      <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-        <div class="meta">
-          <div>
-            <h3>Skills</h3>
-            <p>{{ profile?.skills || '—' }}</p>
+      <!-- View Mode -->
+      <div class="profile-body" *ngIf="!editMode">
+        <div class="info-section">
+          <h2>About</h2>
+          <p class="description">{{ profileData.description || 'No description yet.' }}</p>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item" *ngIf="profileData.location">
+            <span class="label">Location</span>
+            <span class="value">{{ profileData.location }}</span>
+          </div>
+          <div class="info-item" *ngIf="isFreelancer && profileData.hourly_rate">
+            <span class="label">Hourly Rate</span>
+            <span class="value rate">${{ profileData.hourly_rate }}/hr</span>
+          </div>
+        </div>
+
+        <div class="info-section" *ngIf="isFreelancer && selectedSkills.length > 0">
+          <h2>Skills</h2>
+          <div class="skills-list">
+            <span class="skill-tag" *ngFor="let skillId of selectedSkills">
+              {{ getSkillName(skillId) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Mode -->
+      <div class="profile-edit" *ngIf="editMode">
+        <div class="form-section">
+          <h2>Basic Information</h2>
+          
+          <div class="form-group">
+            <label for="display_name">Display Name</label>
+            <input type="text" id="display_name" [(ngModel)]="profileData.display_name" maxlength="100" />
           </div>
 
-          <div>
-            <h3>Hourly rate</h3>
-            <p>{{ profile?.hourly_rate ? ('$' + profile.hourly_rate) : '—' }}</p>
+          <div class="form-group">
+            <label for="headline">Professional Title</label>
+            <input type="text" id="headline" [(ngModel)]="profileData.headline" 
+                   placeholder="e.g., Full Stack Developer" maxlength="255" />
           </div>
+
+          <div class="form-group">
+            <label for="photo_url">Photo URL</label>
+            <input type="url" id="photo_url" [(ngModel)]="profileData.photo_url" 
+                   placeholder="https://example.com/photo.jpg" />
+          </div>
+
+          <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" [(ngModel)]="profileData.location" 
+                   placeholder="City, Country" maxlength="255" />
+          </div>
+
+          <div class="form-group">
+            <label for="description">About</label>
+            <textarea id="description" [(ngModel)]="profileData.description" 
+                      placeholder="Tell us about yourself..." rows="5" maxlength="2000"></textarea>
+            <span class="char-count">{{ profileData.description.length }} / 2000</span>
+          </div>
+        </div>
+
+        <!-- Freelancer-only fields -->
+        <div class="form-section" *ngIf="isFreelancer">
+          <h2>Freelancer Settings</h2>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label for="hourly_rate">Hourly Rate ($)</label>
+              <input type="number" id="hourly_rate" [(ngModel)]="profileData.hourly_rate" 
+                     min="1" max="999" placeholder="25" />
+            </div>
+
+            <div class="form-group half">
+              <label for="availability">Availability</label>
+              <select id="availability" [(ngModel)]="profileData.availability_status">
+                <option value="available">Available</option>
+                <option value="partially_available">Partially Available</option>
+                <option value="not_available">Not Available</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Skills (up to 15)</label>
+            
+            <div class="selected-skills" *ngIf="selectedSkills.length > 0">
+              <span class="skill-tag selected" *ngFor="let skillId of selectedSkills">
+                {{ getSkillName(skillId) }}
+                <button type="button" class="remove-skill" (click)="removeSkill(skillId)">×</button>
+              </span>
+            </div>
+
+            <input type="text" [(ngModel)]="skillSearch" (input)="filterSkills()"
+                   placeholder="Search skills..." class="skill-search" />
+
+            <div class="skills-grid">
+              <button type="button" *ngFor="let skill of filteredSkills" 
+                      class="skill-option" 
+                      [class.selected]="isSkillSelected(skill.skill_id)"
+                      (click)="toggleSkill(skill.skill_id)">
+                {{ skill.name }}
+              </button>
+            </div>
+            <span class="hint">{{ selectedSkills.length }} / 15 skills selected</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-cancel" (click)="cancelEdit()">Cancel</button>
+          <button class="btn-save" (click)="saveProfile()" [disabled]="saving">
+            {{ saving ? 'Saving...' : 'Save Changes' }}
+          </button>
         </div>
       </div>
     </div>
   </div>
-</section>
+</div>
