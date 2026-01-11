@@ -35,12 +35,22 @@ export class LoginComponent implements OnInit {
           this.error = ('error' in res && res.error?.message) ? res.error.message : 'Login failed.';
           return;
         }
-        this.router.navigateByUrl(this.returnUrl);
+        this.redirectAfterAuth();
       },
       error: () => {
         this.loading = false;
         this.error = 'Login failed.';
       }
     });
+  }
+
+  private redirectAfterAuth() {
+    if (this.auth.needsOnboarding()) {
+      this.router.navigate(['/onboarding']);
+    } else if (this.auth.isFreelancer()) {
+      this.router.navigate(['/find-work/browse']);
+    } else {
+      this.router.navigate(['/hire/browse']);
+    }
   }
 }
