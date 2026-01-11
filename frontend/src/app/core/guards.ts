@@ -44,13 +44,11 @@ export class GuestGuard implements CanActivate {
       return true;
     }
 
-    // Logged in users go to their respective browse page
+    // Logged in users go to dashboard
     if (this.auth.needsOnboarding()) {
       this.router.navigate(['/onboarding']);
-    } else if (this.auth.isFreelancer()) {
-      this.router.navigate(['/find-work/browse']);
     } else {
-      this.router.navigate(['/hire/browse']);
+      this.router.navigate(['/dashboard']);
     }
     
     return false;
@@ -69,11 +67,45 @@ export class OnboardingPageGuard implements CanActivate {
 
     // If already completed onboarding, redirect to appropriate page
     if (!this.auth.needsOnboarding()) {
-      if (this.auth.isFreelancer()) {
-        this.router.navigate(['/find-work/browse']);
-      } else {
-        this.router.navigate(['/hire/browse']);
-      }
+      this.router.navigate(['/dashboard']);
+      return false;
+    }
+
+    return true;
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class FreelancerGuard implements CanActivate {
+  constructor(private auth: AuthService, private router: Router) {}
+
+  canActivate(): boolean {
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return false;
+    }
+
+    if (!this.auth.isFreelancer()) {
+      this.router.navigate(['/dashboard']);
+      return false;
+    }
+
+    return true;
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class EmployerGuard implements CanActivate {
+  constructor(private auth: AuthService, private router: Router) {}
+
+  canActivate(): boolean {
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return false;
+    }
+
+    if (!this.auth.isEmployer()) {
+      this.router.navigate(['/dashboard']);
       return false;
     }
 

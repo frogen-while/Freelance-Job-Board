@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { FindWorkLandingComponent } from './find-work-landing.component';
 import { JobsBrowseComponent } from './jobs-browse.component';
 import { SharedModule } from '../../shared/shared.module';
+import { AuthGuard, OnboardingGuard } from '../../core/guards';
 
 @NgModule({
   declarations: [FindWorkLandingComponent, JobsBrowseComponent],
@@ -14,7 +15,7 @@ import { SharedModule } from '../../shared/shared.module';
     SharedModule,
     RouterModule.forChild([
       { path: '', component: FindWorkLandingComponent },
-      { path: 'browse', component: JobsBrowseComponent }
+      { path: 'browse', component: JobsBrowseComponent, canActivate: [AuthGuard, OnboardingGuard] }
     ])
   ]
 })

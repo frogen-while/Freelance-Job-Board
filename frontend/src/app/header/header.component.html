@@ -3,11 +3,19 @@
     <a class="brand" routerLink="/">FJB</a>
 
     <nav class="main-nav">
-      <a class="nav-link" routerLink="/find-work">Find work</a>
-
-      <a class="nav-link" routerLink="/hire">Hire freelancers</a>
-
-      <a class="nav-link" routerLink="/about">About us</a>
+      <ng-container *ngIf="auth.isLoggedIn(); else guestNav">
+        <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <a class="nav-link" *ngIf="auth.isFreelancer()" routerLink="/find-work/browse" routerLinkActive="active">Find Work</a>
+        <a class="nav-link" *ngIf="auth.isFreelancer()" routerLink="/my-proposals" routerLinkActive="active">My Proposals</a>
+        <a class="nav-link" *ngIf="auth.isEmployer()" routerLink="/hire/browse" routerLinkActive="active">Find Talent</a>
+        <a class="nav-link" *ngIf="auth.isEmployer()" routerLink="/my-jobs" routerLinkActive="active">My Jobs</a>
+      </ng-container>
+      
+      <ng-template #guestNav>
+        <a class="nav-link" routerLink="/find-work">Find Work</a>
+        <a class="nav-link" routerLink="/hire">Hire Freelancers</a>
+        <a class="nav-link" routerLink="/about">About Us</a>
+      </ng-template>
     </nav>
 
     <nav class="header-nav">
