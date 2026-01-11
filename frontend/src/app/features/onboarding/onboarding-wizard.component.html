@@ -1,0 +1,192 @@
+<div class="onboarding-page">
+  <div class="wizard-container">
+    <div class="wizard-header">
+      <h1>Complete Your Profile</h1>
+      <p class="subtitle" *ngIf="isFreelancer">Set up your freelancer profile to start finding work</p>
+      <p class="subtitle" *ngIf="!isFreelancer">Set up your profile to start hiring talent</p>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="(currentStep / totalSteps) * 100"></div>
+    </div>
+
+    <div class="step-indicators">
+      <div *ngFor="let step of [].constructor(totalSteps); let i = index" 
+           class="step-dot" 
+           [class.active]="currentStep === i + 1"
+           [class.completed]="currentStep > i + 1">
+        {{ i + 1 }}
+      </div>
+    </div>
+
+    <div class="wizard-body">
+      <!-- Step 1: Basic Info -->
+      <div class="step" *ngIf="currentStep === 1">
+        <h2>👋 Welcome, {{ user?.first_name }}!</h2>
+        <p class="step-desc">Let's start with your display name and photo</p>
+
+        <div class="form-group">
+          <label for="display_name">Display Name</label>
+          <input 
+            type="text" 
+            id="display_name" 
+            [(ngModel)]="data.display_name" 
+            placeholder="How should we call you?"
+            maxlength="100">
+          <span class="hint">This is how clients will see your name</span>
+        </div>
+
+        <div class="form-group">
+          <label for="photo_url">Profile Photo URL (optional)</label>
+          <input 
+            type="url" 
+            id="photo_url" 
+            [(ngModel)]="data.photo_url" 
+            placeholder="https://example.com/your-photo.jpg">
+          <span class="hint">Add a professional photo to stand out</span>
+        </div>
+
+        <div class="form-group">
+          <label for="location">Location (optional)</label>
+          <input 
+            type="text" 
+            id="location" 
+            [(ngModel)]="data.location" 
+            placeholder="City, Country"
+            maxlength="255">
+        </div>
+      </div>
+
+      <!-- Step 2: Professional Title -->
+      <div class="step" *ngIf="currentStep === 2">
+        <h2>💼 Professional Title</h2>
+        <p class="step-desc">What do you do? This appears on your profile card</p>
+
+        <div class="form-group">
+          <label for="headline">Your Title / Headline</label>
+          <input 
+            type="text" 
+            id="headline" 
+            [(ngModel)]="data.headline" 
+            [placeholder]="isFreelancer ? 'e.g., Full Stack Developer | React & Node.js Expert' : 'e.g., Product Manager at Tech Startup'"
+            maxlength="255">
+          <span class="hint">Be specific about what you do</span>
+        </div>
+
+        <div class="headline-examples" *ngIf="isFreelancer">
+          <p>Examples:</p>
+          <ul>
+            <li>Senior UI/UX Designer with 5+ years experience</li>
+            <li>WordPress Developer | E-commerce Specialist</li>
+            <li>Content Writer & SEO Expert</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Step 3: Description -->
+      <div class="step" *ngIf="currentStep === 3">
+        <h2>📝 About You</h2>
+        <p class="step-desc" *ngIf="isFreelancer">Tell clients about your experience and skills</p>
+        <p class="step-desc" *ngIf="!isFreelancer">Tell freelancers about your company or project needs</p>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea 
+            id="description" 
+            [(ngModel)]="data.description" 
+            [placeholder]="isFreelancer ? 'Describe your expertise, experience, and what makes you unique...' : 'Describe your company or the type of projects you typically work on...'"
+            rows="6"
+            maxlength="2000"></textarea>
+          <span class="char-count">{{ data.description.length }} / 2000</span>
+        </div>
+      </div>
+
+      <!-- Step 4: Skills & Rate (Freelancer only) -->
+      <div class="step" *ngIf="currentStep === 4 && isFreelancer">
+        <h2>🛠️ Skills & Rate</h2>
+        <p class="step-desc">Set your hourly rate and select your skills</p>
+
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="hourly_rate">Hourly Rate ($)</label>
+            <input 
+              type="number" 
+              id="hourly_rate" 
+              [(ngModel)]="data.hourly_rate" 
+              placeholder="25"
+              min="1"
+              max="999">
+          </div>
+
+          <div class="form-group half">
+            <label for="availability">Availability</label>
+            <select id="availability" [(ngModel)]="data.availability_status">
+              <option value="available">Available</option>
+              <option value="partially_available">Partially Available</option>
+              <option value="not_available">Not Available</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Skills (select up to 15)</label>
+          
+          <div class="selected-skills" *ngIf="data.skills.length > 0">
+            <span class="skill-tag" *ngFor="let skillId of data.skills">
+              {{ getSkillName(skillId) }}
+              <button type="button" class="remove-skill" (click)="removeSkill(skillId)">×</button>
+            </span>
+          </div>
+
+          <input 
+            type="text" 
+            [(ngModel)]="skillSearch" 
+            (input)="filterSkills()"
+            placeholder="Search skills..."
+            class="skill-search">
+
+          <div class="skills-grid">
+            <button 
+              type="button"
+              *ngFor="let skill of filteredSkills" 
+              class="skill-option"
+              [class.selected]="isSkillSelected(skill.skill_id)"
+              (click)="toggleSkill(skill.skill_id)">
+              {{ skill.name }}
+            </button>
+          </div>
+          <span class="hint">{{ data.skills.length }} / 15 skills selected</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-message" *ngIf="error">{{ error }}</div>
+
+    <div class="wizard-footer">
+      <button 
+        type="button" 
+        class="btn-secondary" 
+        (click)="prevStep()" 
+        *ngIf="currentStep > 1">
+        ← Back
+      </button>
+      <div class="spacer"></div>
+      <button 
+        type="button" 
+        class="btn-primary" 
+        (click)="nextStep()" 
+        [disabled]="!canProceed()"
+        *ngIf="currentStep < totalSteps">
+        Continue →
+      </button>
+      <button 
+        type="button" 
+        class="btn-submit" 
+        (click)="submit()" 
+        [disabled]="!canProceed() || loading"
+        *ngIf="currentStep === totalSteps">
+        {{ loading ? 'Saving...' : 'Complete Profile' }}
+      </button>
+    </div>
+  </div>
+</div>

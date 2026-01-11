@@ -8,15 +8,10 @@ export interface Profile {
   headline?: string | null;
   description?: string | null;
   photo_url?: string | null;
-  education_info?: string | null;
-  languages?: string | null;
   location?: string | null;
-  timezone?: string | null;
-  hourly_rate_min?: number | null;
-  hourly_rate_max?: number | null;
-  currency?: string;
+  hourly_rate?: number | null;
   availability_status?: AvailabilityStatus;
-  profile_visibility?: ProfileVisibility;
+  onboarding_completed?: boolean;
   created_at?: string;
   updated_at?: string;
   skills?: number[] | null;

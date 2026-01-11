@@ -1,0 +1,159 @@
+<div class="browse-page">
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Find Freelancers</h1>
+      <p class="page-subtitle">Browse our network of talented professionals</p>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <!-- Filters Sidebar -->
+    <aside class="filters-sidebar">
+      <div class="filter-section">
+        <h3 class="filter-title">Search</h3>
+        <div class="search-input-wrapper">
+          <input 
+            type="text" 
+            class="filter-search"
+            [(ngModel)]="searchQuery"
+            placeholder="Search by skill..."
+            (keyup.enter)="onSearch()"
+          />
+          <button class="search-btn" (click)="onSearch()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="M21 21l-4.35-4.35"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <h3 class="filter-title">Categories</h3>
+        <div class="category-filters">
+          <button 
+            class="category-filter-btn" 
+            [class.active]="selectedCategory === null"
+            (click)="onCategoryChange(null)">
+            All Categories
+          </button>
+          <button 
+            class="category-filter-btn" 
+            *ngFor="let cat of categories"
+            [class.active]="selectedCategory === cat.category_id"
+            (click)="onCategoryChange(cat.category_id)">
+            {{ cat.name }}
+          </button>
+        </div>
+      </div>
+
+      <button class="clear-filters-btn" (click)="clearFilters()" *ngIf="searchQuery || selectedCategory">
+        Clear all filters
+      </button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="results-header">
+        <p class="results-count" *ngIf="!loading">
+          {{ total }} freelancer{{ total !== 1 ? 's' : '' }} found
+        </p>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-state" *ngIf="loading">
+        <div class="loading-spinner"></div>
+        <p>Loading freelancers...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="!loading && freelancers.length === 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        <h3>No freelancers found</h3>
+        <p>Try adjusting your search or filters</p>
+        <button class="btn-primary" (click)="clearFilters()">Clear Filters</button>
+      </div>
+
+      <!-- Freelancers Grid -->
+      <div class="freelancers-grid" *ngIf="!loading && freelancers.length > 0">
+        <div class="freelancer-card" *ngFor="let freelancer of freelancers">
+          <div class="card-header">
+            <div class="freelancer-avatar">
+              <img *ngIf="freelancer.photo_url" [src]="freelancer.photo_url" [alt]="getDisplayName(freelancer)" />
+              <span *ngIf="!freelancer.photo_url" class="avatar-initials">{{ getInitials(freelancer) }}</span>
+              <span class="availability-dot" [class.available]="freelancer.availability_status === 'available'"></span>
+            </div>
+            <div class="freelancer-basic">
+              <h3 class="freelancer-name">{{ getDisplayName(freelancer) }}</h3>
+              <p class="freelancer-headline">{{ freelancer.headline || 'Freelancer' }}</p>
+            </div>
+          </div>
+
+          <p class="freelancer-description" *ngIf="freelancer.description">
+            {{ freelancer.description | slice:0:120 }}{{ freelancer.description.length > 120 ? '...' : '' }}
+          </p>
+
+          <div class="freelancer-skills" *ngIf="freelancer.skills?.length">
+            <span class="skill-tag" *ngFor="let skill of freelancer.skills.slice(0, 4)">{{ skill }}</span>
+            <span class="skill-more" *ngIf="freelancer.skills.length > 4">+{{ freelancer.skills.length - 4 }}</span>
+          </div>
+
+          <div class="card-footer">
+            <div class="freelancer-meta">
+              <span class="meta-item" *ngIf="freelancer.location">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                {{ freelancer.location }}
+              </span>
+              <span class="meta-item rate" *ngIf="freelancer.hourly_rate">
+                ${{ freelancer.hourly_rate }}/hr
+              </span>
+            </div>
+            <button class="view-profile-btn" routerLink="/profile/{{ freelancer.user_id }}">
+              View Profile
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" *ngIf="totalPages > 1">
+        <button 
+          class="page-btn" 
+          [disabled]="currentPage === 1"
+          (click)="goToPage(currentPage - 1)">
+          ← Previous
+        </button>
+        
+        <div class="page-numbers">
+          <button 
+            class="page-num" 
+            *ngFor="let page of [].constructor(totalPages); let i = index"
+            [class.active]="currentPage === i + 1"
+            (click)="goToPage(i + 1)">
+            {{ i + 1 }}
+          </button>
+        </div>
+
+        <button 
+          class="page-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="goToPage(currentPage + 1)">
+          Next →
+        </button>
+      </div>
+    </main>
+
+    <!-- Profile Sidebar -->
+    <aside class="profile-sidebar-wrapper">
+      <app-profile-sidebar></app-profile-sidebar>
+    </aside>
+  </div>
+</div>

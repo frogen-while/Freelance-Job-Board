@@ -1,0 +1,208 @@
+<div class="hire-page">
+  <div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span>Trusted by thousands of businesses</span>
+      </div>
+
+      <h1 class="hero-title">
+        Build your business with
+        <span class="gradient-text">top freelancers</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Post a job and connect with independent talent today. 
+        Find the perfect professional for any project.
+      </p>
+
+      <div class="search-box">
+        <input
+          type="text"
+          class="search-input"
+          [(ngModel)]="searchQuery"
+          placeholder="Search for skills, e.g. 'Web Development'"
+          (keyup.enter)="onSearch()"
+        />
+        <button class="search-btn" (click)="onSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <span>Find Talent</span>
+        </button>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-primary" (click)="browseTalent()">Browse Freelancers</button>
+        <button class="btn-secondary" routerLink="/login">Post a Job</button>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="floating-cards" *ngIf="featuredFreelancers.length > 0">
+        <div class="floating-card card-1" *ngIf="featuredFreelancers[0] as f">
+          <div class="card-avatar">
+            <img *ngIf="f.photo_url" [src]="f.photo_url" [alt]="getDisplayName(f)" />
+            <span *ngIf="!f.photo_url" class="avatar-initials">{{ getInitials(f) }}</span>
+          </div>
+          <div class="card-info">
+            <span class="card-name">{{ getDisplayName(f) }}</span>
+            <span class="card-title">{{ f.headline || 'Freelancer' }}</span>
+          </div>
+        </div>
+
+        <div class="floating-card card-2" *ngIf="featuredFreelancers[1] as f">
+          <div class="card-avatar">
+            <img *ngIf="f.photo_url" [src]="f.photo_url" [alt]="getDisplayName(f)" />
+            <span *ngIf="!f.photo_url" class="avatar-initials">{{ getInitials(f) }}</span>
+          </div>
+          <div class="card-info">
+            <span class="card-name">{{ getDisplayName(f) }}</span>
+            <span class="card-title">{{ f.headline || 'Freelancer' }}</span>
+          </div>
+        </div>
+
+        <div class="floating-card card-3" *ngIf="featuredFreelancers[2] as f">
+          <div class="card-avatar">
+            <img *ngIf="f.photo_url" [src]="f.photo_url" [alt]="getDisplayName(f)" />
+            <span *ngIf="!f.photo_url" class="avatar-initials">{{ getInitials(f) }}</span>
+          </div>
+          <div class="card-info">
+            <span class="card-name">{{ getDisplayName(f) }}</span>
+            <span class="card-title">{{ f.headline || 'Freelancer' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="benefits-section">
+    <div class="section-inner">
+      <h2 class="section-title">Safe and secure hiring, for any size of work</h2>
+      
+      <div class="benefits-grid">
+        <div class="benefit-card" *ngFor="let benefit of benefits">
+          <div class="benefit-icon">
+            <svg *ngIf="benefit.icon === 'star'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            <svg *ngIf="benefit.icon === 'shield'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+            <svg *ngIf="benefit.icon === 'users'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <h3 class="benefit-title">{{ benefit.title }}</h3>
+          <p class="benefit-description">{{ benefit.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section">
+    <div class="section-inner">
+      <h2 class="section-title">How it works</h2>
+      <p class="section-subtitle">Get your project done in three easy steps</p>
+
+      <div class="steps-grid">
+        <div class="step-card" *ngFor="let step of howItWorks">
+          <div class="step-number">{{ step.step }}</div>
+          <h3 class="step-title">{{ step.title }}</h3>
+          <p class="step-description">{{ step.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Freelancers Section -->
+  <section class="featured-section" *ngIf="featuredFreelancers.length > 0">
+    <div class="section-inner">
+      <div class="section-header">
+        <h2 class="section-title">Top talent ready to work</h2>
+        <a class="view-all-link" routerLink="/hire/browse">View all freelancers →</a>
+      </div>
+
+      <div class="freelancers-grid">
+        <div class="freelancer-card" *ngFor="let freelancer of featuredFreelancers">
+          <div class="freelancer-avatar">
+            <img *ngIf="freelancer.photo_url" [src]="freelancer.photo_url" [alt]="getDisplayName(freelancer)" />
+            <span *ngIf="!freelancer.photo_url" class="avatar-initials large">{{ getInitials(freelancer) }}</span>
+            <span class="availability-dot" [class.available]="freelancer.availability_status === 'available'"></span>
+          </div>
+          
+          <div class="freelancer-info">
+            <h3 class="freelancer-name">{{ getDisplayName(freelancer) }}</h3>
+            <p class="freelancer-headline">{{ freelancer.headline || 'Freelancer' }}</p>
+            
+            <div class="freelancer-skills" *ngIf="freelancer.skills?.length">
+              <span class="skill-tag" *ngFor="let skill of freelancer.skills.slice(0, 3)">{{ skill }}</span>
+              <span class="skill-more" *ngIf="freelancer.skills.length > 3">+{{ freelancer.skills.length - 3 }}</span>
+            </div>
+
+            <div class="freelancer-meta">
+              <span class="meta-item" *ngIf="freelancer.location">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                {{ freelancer.location }}
+              </span>
+              <span class="meta-item" *ngIf="freelancer.hourly_rate">
+                ${{ freelancer.hourly_rate }}/hr
+              </span>
+            </div>
+          </div>
+
+          <button class="view-profile-btn" routerLink="/profile/{{ freelancer.user_id }}">View Profile</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="categories-section" *ngIf="categories.length > 0">
+    <div class="section-inner">
+      <h2 class="section-title">Browse by category</h2>
+      <p class="section-subtitle">Find specialized talent in any field</p>
+
+      <div class="categories-grid">
+        <a class="category-card" 
+           *ngFor="let category of categories" 
+           [routerLink]="['/hire/browse']"
+           [queryParams]="{ category: category.category_id }">
+          <span class="category-name">{{ category.name }}</span>
+          <span class="category-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="section-inner">
+      <div class="cta-content">
+        <h2 class="cta-title">Ready to get started?</h2>
+        <p class="cta-subtitle">Join thousands of businesses finding talent on our platform</p>
+        <div class="cta-actions">
+          <button class="btn-primary large" (click)="browseTalent()">Find Freelancers</button>
+          <button class="btn-secondary large" routerLink="/register">Create Account</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

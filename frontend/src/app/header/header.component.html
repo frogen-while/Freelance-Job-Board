@@ -3,51 +3,9 @@
     <a class="brand" routerLink="/">FJB</a>
 
     <nav class="main-nav">
-      <div class="nav-dropdown" (mouseenter)="openDropdown('findWork')" (mouseleave)="scheduleClose()">
-        <button class="nav-dropdown-trigger" [class.active]="activeDropdown === 'findWork'">
-          Find work
-          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-        
-        <div class="dropdown-menu" *ngIf="activeDropdown === 'findWork'" (mouseenter)="cancelClose()" (mouseleave)="scheduleClose()">
-          <div class="dropdown-content" [class.single-column]="categories.length <= 2">
-            <a class="category-item" *ngFor="let category of categories" 
-               [routerLink]="['/jobs']" 
-               [queryParams]="{ category: category.category_id }" 
-               (click)="closeDropdown()">
-              {{ category.name }} Jobs
-            </a>
-          </div>
-          <div class="dropdown-empty" *ngIf="categories.length === 0">
-            <p>No categories available</p>
-          </div>
-        </div>
-      </div>
+      <a class="nav-link" routerLink="/find-work">Find work</a>
 
-      <div class="nav-dropdown" (mouseenter)="openDropdown('hire')" (mouseleave)="scheduleClose()">
-        <button class="nav-dropdown-trigger" [class.active]="activeDropdown === 'hire'">
-          Hire freelancers
-          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-        
-        <div class="dropdown-menu" *ngIf="activeDropdown === 'hire'" (mouseenter)="cancelClose()" (mouseleave)="scheduleClose()">
-          <div class="dropdown-content" [class.single-column]="categories.length <= 2">
-            <a class="category-item" *ngFor="let category of categories" 
-               [routerLink]="['/jobs']" 
-               [queryParams]="{ category: category.category_id }" 
-               (click)="closeDropdown()">
-              {{ category.name }}
-            </a>
-          </div>
-          <div class="dropdown-empty" *ngIf="categories.length === 0">
-            <p>No categories available</p>
-          </div>
-        </div>
-      </div>
+      <a class="nav-link" routerLink="/hire">Hire freelancers</a>
 
       <a class="nav-link" routerLink="/about">About us</a>
     </nav>

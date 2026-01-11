@@ -21,3 +21,28 @@ export interface Category {
   description: string;
   manager_id: number | null;
 }
+
+export interface FreelancerProfile {
+  profile_id: number;
+  user_id: number;
+  display_name: string | null;
+  headline: string | null;
+  description: string | null;
+  photo_url: string | null;
+  location: string | null;
+  hourly_rate: number | null;
+  availability_status: string | null;
+  first_name: string;
+  last_name: string;
+  skills: string[];
+}
+
+export interface FreelancersResponse {
+  freelancers: FreelancerProfile[];
+  total: number;
+}
+
+export interface Skill {
+  skill_id: number;
+  name: string;
+}
