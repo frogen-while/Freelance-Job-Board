@@ -9,8 +9,6 @@ export interface Profile {
   description?: string | null;
   photo_url?: string | null;
   location?: string | null;
-  hourly_rate?: number | null;
-  availability_status?: AvailabilityStatus;
   onboarding_completed?: boolean;
   created_at?: string;
   updated_at?: string;

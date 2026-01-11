@@ -77,9 +77,49 @@ export const profilesTableDef = {
     description: { type: 'TEXT' },
     photo_url: { type: 'TEXT' },
     location: { type: 'TEXT' },
+    onboarding_completed: { type: "BOOLEAN DEFAULT 0" },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
+    updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
+  },
+  foreignKeys: [{ column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' }]
+};
+
+// Freelancer-specific profile data
+export const freelancerProfilesTableDef = {
+  name: 'freelancer_profiles',
+  columns: {
+    id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
+    user_id: { type: 'INTEGER', notNull: true, unique: true },
+    title: { type: 'TEXT' }, // Professional title/specialization
     hourly_rate: { type: 'REAL' },
     availability_status: { type: "TEXT DEFAULT 'available' CHECK(availability_status IN ('available', 'partially_available', 'not_available'))" },
-    onboarding_completed: { type: "BOOLEAN DEFAULT 0" },
+    experience_level: { type: "TEXT CHECK(experience_level IN ('entry', 'intermediate', 'expert'))" },
+    github_url: { type: 'TEXT' },
+    linkedin_url: { type: 'TEXT' },
+    jobs_completed: { type: 'INTEGER DEFAULT 0' },
+    rating: { type: 'REAL DEFAULT 0' },
+    reviews_count: { type: 'INTEGER DEFAULT 0' },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
+    updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
+  },
+  foreignKeys: [{ column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' }]
+};
+
+// Employer-specific profile data
+export const employerProfilesTableDef = {
+  name: 'employer_profiles',
+  columns: {
+    id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
+    user_id: { type: 'INTEGER', notNull: true, unique: true },
+    company_name: { type: 'TEXT' },
+    company_description: { type: 'TEXT' },
+    company_website: { type: 'TEXT' },
+    company_size: { type: "TEXT CHECK(company_size IN ('1-10', '11-50', '51-200', '201-500', '500+'))" },
+    industry: { type: 'TEXT' },
+    jobs_posted: { type: 'INTEGER DEFAULT 0' },
+    total_spent: { type: 'REAL DEFAULT 0' },
+    rating: { type: 'REAL DEFAULT 0' },
+    reviews_count: { type: 'INTEGER DEFAULT 0' },
     created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
     updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
@@ -123,6 +163,11 @@ export const jobsTableDef = {
     budget: { type: 'REAL' },
     status: { type: "TEXT DEFAULT 'Open' CHECK(status IN ('Open', 'Assigned', 'In Progress', 'Completed', 'Cancelled'))" },
     deadline: { type: 'TEXT' },
+    experience_level: { type: "TEXT CHECK(experience_level IN ('entry', 'intermediate', 'expert'))" },
+    job_type: { type: "TEXT DEFAULT 'fixed' CHECK(job_type IN ('fixed', 'hourly'))" },
+    duration_estimate: { type: "TEXT CHECK(duration_estimate IN ('less_than_week', '1_2_weeks', '2_4_weeks', '1_3_months', '3_6_months', 'more_than_6_months'))" },
+    is_remote: { type: 'BOOLEAN DEFAULT 1' },
+    location: { type: 'TEXT' },
     created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
     updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
@@ -288,6 +333,8 @@ export async function createSchemaAndData(): Promise<void> {
     userUserTypesTableDef,
     skillsTableDef,
     profilesTableDef,
+    freelancerProfilesTableDef,
+    employerProfilesTableDef,
     profileSkillsTableDef,
     categoriesTableDef,
     jobsTableDef,

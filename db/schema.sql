@@ -1,4 +1,6 @@
-
+-- NOTE: This schema file is for MySQL documentation/reference purposes only.
+-- The actual database uses SQLite and is created via src/config/init_db.ts
+-- Please refer to init_db.ts for the authoritative schema definition.
 
 DROP DATABASE IF EXISTS freelance_job_board;
 
@@ -40,6 +42,7 @@ CREATE TABLE skills (
   name VARCHAR(100) NOT NULL UNIQUE
 ) ENGINE=InnoDB;
 
+-- Base profile (shared by all users)
 CREATE TABLE profiles (
   profile_id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL UNIQUE,
@@ -48,9 +51,43 @@ CREATE TABLE profiles (
   description TEXT,
   photo_url VARCHAR(500),
   location VARCHAR(255),
+  onboarding_completed BOOLEAN DEFAULT FALSE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Freelancer-specific profile data
+CREATE TABLE freelancer_profiles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL UNIQUE,
+  title VARCHAR(255),
   hourly_rate DECIMAL(10,2),
   availability_status ENUM('available', 'partially_available', 'not_available') DEFAULT 'available',
-  onboarding_completed BOOLEAN DEFAULT FALSE,
+  experience_level ENUM('entry', 'intermediate', 'expert'),
+  github_url VARCHAR(500),
+  linkedin_url VARCHAR(500),
+  jobs_completed INT DEFAULT 0,
+  rating DECIMAL(3,2) DEFAULT 0,
+  reviews_count INT DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Employer-specific profile data
+CREATE TABLE employer_profiles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL UNIQUE,
+  company_name VARCHAR(255),
+  company_description TEXT,
+  company_website VARCHAR(500),
+  company_size ENUM('1-10', '11-50', '51-200', '201-500', '500+'),
+  industry VARCHAR(100),
+  jobs_posted INT DEFAULT 0,
+  total_spent DECIMAL(12,2) DEFAULT 0,
+  rating DECIMAL(3,2) DEFAULT 0,
+  reviews_count INT DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
@@ -82,6 +119,11 @@ CREATE TABLE jobs (
   budget DECIMAL(10,2),
   status ENUM('Open', 'Assigned', 'In Progress', 'Completed', 'Cancelled') DEFAULT 'Open',
   deadline DATE,
+  experience_level ENUM('entry', 'intermediate', 'expert'),
+  job_type ENUM('fixed', 'hourly') DEFAULT 'fixed',
+  duration_estimate ENUM('less_than_week', '1_2_weeks', '2_4_weeks', '1_3_months', '3_6_months', 'more_than_6_months'),
+  is_remote BOOLEAN DEFAULT TRUE,
+  location VARCHAR(255),
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (employer_id) REFERENCES users(user_id) ON DELETE CASCADE,

@@ -13,6 +13,8 @@ interface FreelancerProfileRow {
   location: string | null;
   hourly_rate: number | null;
   availability_status: string | null;
+  rating: number | null;
+  jobs_completed: number | null;
   first_name: string;
   last_name: string;
   skill_names: string | null;
@@ -28,6 +30,8 @@ export interface FreelancerProfile {
   location: string | null;
   hourly_rate: number | null;
   availability_status: string | null;
+  rating: number | null;
+  jobs_completed: number | null;
   first_name: string;
   last_name: string;
   skills: string[];
@@ -47,7 +51,7 @@ function parseSkills(skills: string | null): number[] | null {
 export const profilesRepo = {
   async findByUserId(user_id: number): Promise<Profile | undefined> {
     const row = await db.connection?.get<ProfileRow | undefined>(
-      `SELECT profile_id, user_id, display_name, headline, description, photo_url, location, hourly_rate, availability_status, onboarding_completed
+      `SELECT profile_id, user_id, display_name, headline, description, photo_url, location, onboarding_completed
        FROM profiles
        WHERE user_id = ?`,
       user_id
@@ -63,22 +67,18 @@ export const profilesRepo = {
     description?: string | null;
     photo_url?: string | null;
     location?: string | null;
-    hourly_rate?: number | null;
-    availability_status?: string | null;
     onboarding_completed?: boolean | null;
     skills?: number[] | null;
   }): Promise<void> {
     await db.connection?.run(
-      `INSERT INTO profiles (user_id, display_name, headline, description, photo_url, location, hourly_rate, availability_status, onboarding_completed)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `INSERT INTO profiles (user_id, display_name, headline, description, photo_url, location, onboarding_completed)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(user_id) DO UPDATE SET
          display_name = COALESCE(excluded.display_name, profiles.display_name),
          headline = COALESCE(excluded.headline, profiles.headline),
          description = COALESCE(excluded.description, profiles.description),
          photo_url = COALESCE(excluded.photo_url, profiles.photo_url),
          location = COALESCE(excluded.location, profiles.location),
-         hourly_rate = COALESCE(excluded.hourly_rate, profiles.hourly_rate),
-         availability_status = COALESCE(excluded.availability_status, profiles.availability_status),
          onboarding_completed = COALESCE(excluded.onboarding_completed, profiles.onboarding_completed),
          updated_at = CURRENT_TIMESTAMP`,
       user_id,
@@ -87,8 +87,6 @@ export const profilesRepo = {
       data.description,
       data.photo_url,
       data.location,
-      data.hourly_rate,
-      data.availability_status,
       data.onboarding_completed ? 1 : 0
     );
   },
@@ -111,8 +109,10 @@ export const profilesRepo = {
         p.description,
         p.photo_url,
         p.location,
-        p.hourly_rate,
-        p.availability_status,
+        fp.hourly_rate,
+        fp.availability_status,
+        fp.rating,
+        fp.jobs_completed,
         u.first_name,
         u.last_name,
         GROUP_CONCAT(s.name) as skill_names
@@ -120,6 +120,7 @@ export const profilesRepo = {
       INNER JOIN users u ON p.user_id = u.user_id
       INNER JOIN user_usertypes ut ON u.user_id = ut.user_id
       INNER JOIN usertypes utype ON ut.type_id = utype.type_id AND utype.type_name = 'Freelancer'
+      LEFT JOIN freelancer_profiles fp ON p.user_id = fp.user_id
       LEFT JOIN profile_skills ps ON p.user_id = ps.user_id
       LEFT JOIN skills s ON ps.skill_id = s.skill_id
       WHERE u.status = 'active'
@@ -149,6 +150,8 @@ export const profilesRepo = {
       location: row.location,
       hourly_rate: row.hourly_rate,
       availability_status: row.availability_status,
+      rating: row.rating,
+      jobs_completed: row.jobs_completed,
       first_name: row.first_name,
       last_name: row.last_name,
       skills: row.skill_names ? row.skill_names.split(',') : []
@@ -165,8 +168,10 @@ export const profilesRepo = {
         p.description,
         p.photo_url,
         p.location,
-        p.hourly_rate,
-        p.availability_status,
+        fp.hourly_rate,
+        fp.availability_status,
+        fp.rating,
+        fp.jobs_completed,
         u.first_name,
         u.last_name,
         GROUP_CONCAT(s.name) as skill_names
@@ -174,9 +179,10 @@ export const profilesRepo = {
       INNER JOIN users u ON p.user_id = u.user_id
       INNER JOIN user_usertypes ut ON u.user_id = ut.user_id
       INNER JOIN usertypes utype ON ut.type_id = utype.type_id AND utype.type_name = 'Freelancer'
+      LEFT JOIN freelancer_profiles fp ON p.user_id = fp.user_id
       LEFT JOIN profile_skills ps ON p.user_id = ps.user_id
       LEFT JOIN skills s ON ps.skill_id = s.skill_id
-      WHERE u.status = 'active' AND p.availability_status = 'available'
+      WHERE u.status = 'active' AND fp.availability_status = 'available'
       GROUP BY p.profile_id
       ORDER BY RANDOM()
       LIMIT ?
@@ -196,6 +202,8 @@ export const profilesRepo = {
       location: row.location,
       hourly_rate: row.hourly_rate,
       availability_status: row.availability_status,
+      rating: row.rating,
+      jobs_completed: row.jobs_completed,
       first_name: row.first_name,
       last_name: row.last_name,
       skills: row.skill_names ? row.skill_names.split(',') : []

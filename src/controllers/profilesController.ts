@@ -2,6 +2,8 @@ import type { Request, Response } from 'express';
 import { sendError, sendSuccess } from '../utils/http.js';
 import { profilesRepo } from '../repositories/profilesRepo.js';
 import { profileSkillsRepo } from '../repositories/profileSkillsRepo.js';
+import { freelancerProfilesRepo } from '../repositories/freelancerProfilesRepo.js';
+import { employerProfilesRepo } from '../repositories/employerProfilesRepo.js';
 
 export const getProfileByUserId = async (req: Request, res: Response) => {
   const userId = Number.parseInt(req.params.userId, 10);
@@ -34,8 +36,6 @@ export const upsertProfile = async (req: Request, res: Response) => {
     description = null,
     photo_url = null,
     location = null,
-    hourly_rate = null,
-    availability_status = null,
     onboarding_completed = null,
     skills = undefined
   } = req.body as {
@@ -44,8 +44,6 @@ export const upsertProfile = async (req: Request, res: Response) => {
     description?: unknown;
     photo_url?: unknown;
     location?: unknown;
-    hourly_rate?: unknown;
-    availability_status?: unknown;
     onboarding_completed?: unknown;
     skills?: unknown;
   };
@@ -60,8 +58,6 @@ export const upsertProfile = async (req: Request, res: Response) => {
     description: typeof description === 'string' ? description : null,
     photo_url: typeof photo_url === 'string' ? photo_url : null,
     location: typeof location === 'string' ? location : null,
-    hourly_rate: typeof hourly_rate === 'number' ? hourly_rate : null,
-    availability_status: typeof availability_status === 'string' ? availability_status : null,
     onboarding_completed: typeof onboarding_completed === 'boolean' ? onboarding_completed : null,
     skills: skills === undefined ? null : (skills as number[])
   };
@@ -151,5 +147,138 @@ export const getFeaturedFreelancers = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error fetching featured freelancers', error);
     return sendError(res, 500, 'An internal server error occurred while fetching featured freelancers.');
+  }
+};
+
+// Freelancer-specific profile endpoints
+export const getFreelancerProfile = async (req: Request, res: Response) => {
+  const userId = Number.parseInt(req.params.userId, 10);
+  if (Number.isNaN(userId)) {
+    return sendError(res, 400, 'Invalid user ID format.');
+  }
+
+  try {
+    const profile = await freelancerProfilesRepo.findFullByUserId(userId);
+    if (!profile) {
+      return sendError(res, 404, 'Freelancer profile not found.');
+    }
+
+    return sendSuccess(res, profile);
+  } catch (error) {
+    console.error('Error fetching freelancer profile', error);
+    return sendError(res, 500, 'An internal server error occurred while fetching freelancer profile.');
+  }
+};
+
+export const upsertFreelancerProfile = async (req: Request, res: Response) => {
+  const userId = Number.parseInt(req.params.userId, 10);
+  if (Number.isNaN(userId)) {
+    return sendError(res, 400, 'Invalid user ID format.');
+  }
+
+  const {
+    title,
+    hourly_rate,
+    availability_status,
+    experience_level,
+    github_url,
+    linkedin_url
+  } = req.body as {
+    title?: string;
+    hourly_rate?: number;
+    availability_status?: string;
+    experience_level?: string;
+    github_url?: string;
+    linkedin_url?: string;
+  };
+
+  try {
+    await freelancerProfilesRepo.upsert(userId, {
+      title: title ?? null,
+      hourly_rate: hourly_rate ?? null,
+      availability_status: availability_status as 'available' | 'partially_available' | 'not_available' ?? null,
+      experience_level: experience_level as 'entry' | 'intermediate' | 'expert' ?? null,
+      github_url: github_url ?? null,
+      linkedin_url: linkedin_url ?? null
+    });
+
+    const profile = await freelancerProfilesRepo.findByUserId(userId);
+    return sendSuccess(res, profile, 200);
+  } catch (error) {
+    console.error('Error upserting freelancer profile', error);
+    return sendError(res, 500, 'An internal server error occurred while updating freelancer profile.');
+  }
+};
+
+// Employer-specific profile endpoints
+export const getEmployerProfile = async (req: Request, res: Response) => {
+  const userId = Number.parseInt(req.params.userId, 10);
+  if (Number.isNaN(userId)) {
+    return sendError(res, 400, 'Invalid user ID format.');
+  }
+
+  try {
+    const profile = await employerProfilesRepo.findFullByUserId(userId);
+    if (!profile) {
+      return sendError(res, 404, 'Employer profile not found.');
+    }
+
+    return sendSuccess(res, profile);
+  } catch (error) {
+    console.error('Error fetching employer profile', error);
+    return sendError(res, 500, 'An internal server error occurred while fetching employer profile.');
+  }
+};
+
+export const upsertEmployerProfile = async (req: Request, res: Response) => {
+  const userId = Number.parseInt(req.params.userId, 10);
+  if (Number.isNaN(userId)) {
+    return sendError(res, 400, 'Invalid user ID format.');
+  }
+
+  const {
+    company_name,
+    company_description,
+    company_website,
+    company_size,
+    industry
+  } = req.body as {
+    company_name?: string;
+    company_description?: string;
+    company_website?: string;
+    company_size?: string;
+    industry?: string;
+  };
+
+  try {
+    await employerProfilesRepo.upsert(userId, {
+      company_name: company_name ?? null,
+      company_description: company_description ?? null,
+      company_website: company_website ?? null,
+      company_size: company_size as '1-10' | '11-50' | '51-200' | '201-500' | '500+' ?? null,
+      industry: industry ?? null
+    });
+
+    const profile = await employerProfilesRepo.findByUserId(userId);
+    return sendSuccess(res, profile, 200);
+  } catch (error) {
+    console.error('Error upserting employer profile', error);
+    return sendError(res, 500, 'An internal server error occurred while updating employer profile.');
+  }
+};
+
+export const getEmployers = async (req: Request, res: Response) => {
+  const { limit, offset } = req.query;
+
+  try {
+    const employers = await employerProfilesRepo.getAll({
+      limit: limit ? Number.parseInt(limit as string, 10) : 20,
+      offset: offset ? Number.parseInt(offset as string, 10) : 0
+    });
+
+    return sendSuccess(res, employers);
+  } catch (error) {
+    console.error('Error fetching employers', error);
+    return sendError(res, 500, 'An internal server error occurred while fetching employers.');
   }
 };
