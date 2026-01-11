@@ -1,0 +1,62 @@
+<div class="profile-sidebar" *ngIf="!loading && user">
+  <div class="sidebar-header">
+    <div class="avatar">
+      <img *ngIf="profile?.photo_url" [src]="profile.photo_url" [alt]="getDisplayName()" />
+      <span *ngIf="!profile?.photo_url" class="initials">{{ getInitials() }}</span>
+    </div>
+    <div class="user-info">
+      <h3 class="name">{{ getDisplayName() }}</h3>
+      <p class="headline" *ngIf="profile?.headline">{{ profile.headline }}</p>
+    </div>
+  </div>
+
+  <div class="sidebar-body">
+    <!-- Availability badge -->
+    <div class="availability-badge" [ngClass]="getAvailabilityClass()">
+      <span class="dot"></span>
+      {{ getAvailabilityLabel() }}
+    </div>
+
+    <!-- Hourly rate (freelancer only) -->
+    <div class="stat-item" *ngIf="isFreelancer && profile?.hourly_rate">
+      <span class="stat-value">${{ profile.hourly_rate }}/hr</span>
+      <span class="stat-label">Hourly Rate</span>
+    </div>
+
+    <!-- Location -->
+    <div class="info-item" *ngIf="profile?.location">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+        <circle cx="12" cy="10" r="3"/>
+      </svg>
+      <span>{{ profile.location }}</span>
+    </div>
+
+    <!-- Skills (freelancer only) -->
+    <div class="skills-section" *ngIf="isFreelancer && profile?.skills?.length">
+      <h4>Skills</h4>
+      <div class="skills-list">
+        <span class="skill-tag" *ngFor="let skill of profile.skills?.slice(0, 5)">{{ skill }}</span>
+        <span class="skill-more" *ngIf="profile.skills && profile.skills.length > 5">
+          +{{ profile.skills.length - 5 }} more
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <a routerLink="/profile" class="edit-profile-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      </svg>
+      Edit Profile
+    </a>
+  </div>
+</div>
+
+<div class="profile-sidebar skeleton" *ngIf="loading">
+  <div class="skeleton-avatar"></div>
+  <div class="skeleton-line"></div>
+  <div class="skeleton-line short"></div>
+</div>
