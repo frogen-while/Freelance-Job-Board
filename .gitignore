@@ -1,7 +1,7 @@
 node_modules/
-db/
 freelance.sqlite3
 frontend/.angular/
 frontend/dist/
 frontend/cypress/videos/
 frontend/cypress/screenshots/
+frontend/*lock*
