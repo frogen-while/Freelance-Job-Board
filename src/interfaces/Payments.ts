@@ -1,7 +1,5 @@
 export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded';
 
-export type status = PaymentStatus;
-
 export interface Payment {
   payment_id: number;
   job_id: number;
