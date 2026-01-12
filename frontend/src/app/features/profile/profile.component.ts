@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, PublicUser } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
+import { ExperienceLevel, AvailabilityStatus, CompanySize } from '../../core/models';
 
 interface ProfileData {
   display_name: string;
@@ -9,8 +10,29 @@ interface ProfileData {
   description: string;
   photo_url: string;
   location: string;
+}
+
+interface FreelancerData {
   hourly_rate: number | null;
-  availability_status: string;
+  availability_status: AvailabilityStatus;
+  experience_level: ExperienceLevel | null;
+  github_url: string;
+  linkedin_url: string;
+  jobs_completed: number;
+  rating: number | null;
+  reviews_count: number;
+}
+
+interface EmployerData {
+  company_name: string;
+  company_description: string;
+  company_website: string;
+  company_size: CompanySize | null;
+  industry: string;
+  jobs_posted: number;
+  total_spent: number;
+  rating: number | null;
+  reviews_count: number;
 }
 
 interface Skill {
@@ -28,20 +50,49 @@ export class ProfileComponent implements OnInit {
   loading = true;
   saving = false;
   isFreelancer = false;
+  isEmployer = false;
   editMode = false;
   successMessage = '';
   errorMessage = '';
 
-  // Profile data
+  // Base profile data
   profileData: ProfileData = {
     display_name: '',
     headline: '',
     description: '',
     photo_url: '',
-    location: '',
-    hourly_rate: null,
-    availability_status: 'available'
+    location: ''
   };
+
+  // Freelancer-specific data
+  freelancerData: FreelancerData = {
+    hourly_rate: null,
+    availability_status: 'available',
+    experience_level: null,
+    github_url: '',
+    linkedin_url: '',
+    jobs_completed: 0,
+    rating: null,
+    reviews_count: 0
+  };
+
+  // Employer-specific data
+  employerData: EmployerData = {
+    company_name: '',
+    company_description: '',
+    company_website: '',
+    company_size: null,
+    industry: '',
+    jobs_posted: 0,
+    total_spent: 0,
+    rating: null,
+    reviews_count: 0
+  };
+
+  industries = [
+    'Technology', 'Finance', 'Healthcare', 'Education', 'E-commerce',
+    'Marketing', 'Media', 'Manufacturing', 'Real Estate', 'Consulting', 'Other'
+  ];
 
   // Skills
   allSkills: Skill[] = [];
@@ -63,10 +114,14 @@ export class ProfileComponent implements OnInit {
     }
 
     this.isFreelancer = this.auth.isFreelancer();
+    this.isEmployer = !this.isFreelancer;
     this.loadProfile();
     
     if (this.isFreelancer) {
       this.loadSkills();
+      this.loadFreelancerProfile();
+    } else {
+      this.loadEmployerProfile();
     }
   }
 
@@ -82,9 +137,7 @@ export class ProfileComponent implements OnInit {
             headline: profile.headline || '',
             description: profile.description || '',
             photo_url: profile.photo_url || '',
-            location: profile.location || '',
-            hourly_rate: profile.hourly_rate || null,
-            availability_status: profile.availability_status || 'available'
+            location: profile.location || ''
           };
           
           // Load selected skills for freelancers
@@ -96,6 +149,51 @@ export class ProfileComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
+      }
+    });
+  }
+
+  loadFreelancerProfile(): void {
+    if (!this.user) return;
+
+    this.api.getFreelancerProfile(this.user.user_id).subscribe({
+      next: (res: any) => {
+        if (res.success && res.data) {
+          const fp = res.data;
+          this.freelancerData = {
+            hourly_rate: fp.hourly_rate || null,
+            availability_status: fp.availability_status || 'available',
+            experience_level: fp.experience_level || null,
+            github_url: fp.github_url || '',
+            linkedin_url: fp.linkedin_url || '',
+            jobs_completed: fp.jobs_completed || 0,
+            rating: fp.rating || null,
+            reviews_count: fp.reviews_count || 0
+          };
+        }
+      }
+    });
+  }
+
+  loadEmployerProfile(): void {
+    if (!this.user) return;
+
+    this.api.getEmployerProfile(this.user.user_id).subscribe({
+      next: (res: any) => {
+        if (res.success && res.data) {
+          const ep = res.data;
+          this.employerData = {
+            company_name: ep.company_name || '',
+            company_description: ep.company_description || '',
+            company_website: ep.company_website || '',
+            company_size: ep.company_size || null,
+            industry: ep.industry || '',
+            jobs_posted: ep.jobs_posted || 0,
+            total_spent: ep.total_spent || 0,
+            rating: ep.rating || null,
+            reviews_count: ep.reviews_count || 0
+          };
+        }
       }
     });
   }
@@ -164,12 +262,26 @@ export class ProfileComponent implements OnInit {
   }
 
   getAvailabilityLabel(): string {
-    switch (this.profileData.availability_status) {
+    switch (this.freelancerData.availability_status) {
       case 'available': return 'Available';
       case 'partially_available': return 'Partially Available';
       case 'not_available': return 'Not Available';
       default: return 'Available';
     }
+  }
+
+  getExperienceLevelLabel(): string {
+    switch (this.freelancerData.experience_level) {
+      case 'entry': return 'Entry Level';
+      case 'intermediate': return 'Intermediate';
+      case 'expert': return 'Expert';
+      default: return '';
+    }
+  }
+
+  formatRating(rating: number | null): string {
+    if (!rating) return 'No rating';
+    return rating.toFixed(1);
   }
 
   toggleEdit(): void {
@@ -185,7 +297,8 @@ export class ProfileComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    const payload: any = {
+    // Step 1: Save base profile
+    const basePayload: any = {
       display_name: this.profileData.display_name,
       headline: this.profileData.headline,
       description: this.profileData.description,
@@ -194,18 +307,16 @@ export class ProfileComponent implements OnInit {
     };
 
     if (this.isFreelancer) {
-      payload.hourly_rate = this.profileData.hourly_rate;
-      payload.availability_status = this.profileData.availability_status;
-      payload.skills = this.selectedSkills;
+      basePayload.skills = this.selectedSkills;
     }
 
-    this.api.updateProfile(this.user.user_id, payload).subscribe({
+    this.api.updateProfile(this.user.user_id, basePayload).subscribe({
       next: (res) => {
-        this.saving = false;
         if (res.success) {
-          this.successMessage = 'Profile updated successfully!';
-          this.editMode = false;
+          // Step 2: Save type-specific profile
+          this.saveTypeSpecificProfile();
         } else {
+          this.saving = false;
           this.errorMessage = res.error?.message || 'Failed to update profile';
         }
       },
@@ -216,8 +327,61 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  private saveTypeSpecificProfile(): void {
+    if (!this.user) return;
+
+    if (this.isFreelancer) {
+      const freelancerPayload = {
+        hourly_rate: this.freelancerData.hourly_rate,
+        availability_status: this.freelancerData.availability_status,
+        experience_level: this.freelancerData.experience_level,
+        github_url: this.freelancerData.github_url || null,
+        linkedin_url: this.freelancerData.linkedin_url || null
+      };
+
+      this.api.updateFreelancerProfile(this.user.user_id, freelancerPayload).subscribe({
+        next: () => {
+          this.saving = false;
+          this.successMessage = 'Profile updated successfully!';
+          this.editMode = false;
+        },
+        error: () => {
+          this.saving = false;
+          this.successMessage = 'Profile updated (some data may not have saved).';
+          this.editMode = false;
+        }
+      });
+    } else {
+      const employerPayload = {
+        company_name: this.employerData.company_name || null,
+        company_description: this.employerData.company_description || null,
+        company_website: this.employerData.company_website || null,
+        company_size: this.employerData.company_size,
+        industry: this.employerData.industry || null
+      };
+
+      this.api.updateEmployerProfile(this.user.user_id, employerPayload).subscribe({
+        next: () => {
+          this.saving = false;
+          this.successMessage = 'Profile updated successfully!';
+          this.editMode = false;
+        },
+        error: () => {
+          this.saving = false;
+          this.successMessage = 'Profile updated (some data may not have saved).';
+          this.editMode = false;
+        }
+      });
+    }
+  }
+
   cancelEdit(): void {
     this.editMode = false;
     this.loadProfile();
+    if (this.isFreelancer) {
+      this.loadFreelancerProfile();
+    } else {
+      this.loadEmployerProfile();
+    }
   }
 }

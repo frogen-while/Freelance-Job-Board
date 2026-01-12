@@ -41,19 +41,65 @@
               </select>
             </div>
 
-            <div class="filter-group">
-              <select class="filter-select" 
-                      [(ngModel)]="selectedStatus" 
-                      (ngModelChange)="onStatusChange($event)">
-                <option value="">All Status</option>
-                <option value="Open">Open</option>
-                <option value="In Progress">In Progress</option>
-              </select>
-            </div>
-
-            <button class="clear-btn" *ngIf="searchQuery || selectedCategory || selectedStatus" (click)="clearFilters()">
-              Clear
+            <button class="filter-toggle-btn" (click)="toggleFilters()" [class.active]="showFilters">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+              Filters
+              <span class="filter-count" *ngIf="getActiveFilterCount() > 0">{{ getActiveFilterCount() }}</span>
             </button>
+
+            <button class="clear-btn" *ngIf="hasActiveFilters()" (click)="clearFilters()">
+              Clear All
+            </button>
+          </div>
+
+          <!-- Extended Filters Panel -->
+          <div class="filters-panel" *ngIf="showFilters">
+            <div class="filter-row">
+              <div class="filter-group">
+                <label>Status</label>
+                <select class="filter-select" 
+                        [(ngModel)]="selectedStatus" 
+                        (ngModelChange)="onStatusChange($event)">
+                  <option value="">All Status</option>
+                  <option value="Open">Open</option>
+                  <option value="In Progress">In Progress</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label>Experience Level</label>
+                <select class="filter-select" 
+                        [(ngModel)]="selectedExperience" 
+                        (ngModelChange)="onExperienceChange($event)">
+                  <option value="">Any Level</option>
+                  <option value="entry">Entry Level</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label>Project Type</label>
+                <select class="filter-select" 
+                        [(ngModel)]="selectedJobType" 
+                        (ngModelChange)="onJobTypeChange($event)">
+                  <option value="">Any Type</option>
+                  <option value="one_time">One-time</option>
+                  <option value="ongoing">Ongoing</option>
+                  <option value="contract">Contract</option>
+                </select>
+              </div>
+
+              <div class="filter-group checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" [(ngModel)]="remoteOnly" (ngModelChange)="onRemoteChange($event)" />
+                  <span class="checkmark"></span>
+                  Remote Only
+                </label>
+              </div>
+            </div>
           </div>
 
           <!-- Loading -->
@@ -80,9 +126,12 @@
             <div class="job-card" *ngFor="let job of jobs" (click)="onViewJob(job)">
               <div class="card-top">
                 <span class="job-category">{{ getCategoryName(job.category_id) }}</span>
-                <span class="job-status" [class]="job.status.toLowerCase().replace(' ', '-')">
-                  {{ job.status }}
-                </span>
+                <div class="card-badges">
+                  <span class="remote-badge" *ngIf="job.is_remote">🌍 Remote</span>
+                  <span class="job-status" [class]="job.status.toLowerCase().replace(' ', '-')">
+                    {{ job.status }}
+                  </span>
+                </div>
               </div>
 
               <h3 class="job-title">{{ job.title }}</h3>
@@ -91,10 +140,25 @@
                 {{ job.description | slice:0:180 }}{{ job.description.length > 180 ? '...' : '' }}
               </p>
 
+              <!-- Job Tags -->
+              <div class="job-tags" *ngIf="job.experience_level || job.job_type || (job.skills && job.skills.length)">
+                <span class="tag experience" *ngIf="job.experience_level">{{ getExperienceLabel(job.experience_level) }}</span>
+                <span class="tag job-type" *ngIf="job.job_type">{{ getJobTypeLabel(job.job_type) }}</span>
+                <span class="tag skill" *ngFor="let skillId of (job.skills || []).slice(0, 3)">
+                  {{ getSkillName(skillId) }}
+                </span>
+                <span class="tag more" *ngIf="job.skills && job.skills.length > 3">
+                  +{{ job.skills.length - 3 }} more
+                </span>
+              </div>
+
               <div class="card-bottom">
                 <div class="job-info">
                   <span class="info-item budget" *ngIf="job.budget">
                     {{ formatBudget(job.budget) }}
+                  </span>
+                  <span class="info-item location" *ngIf="job.location && !job.is_remote">
+                    📍 {{ job.location }}
                   </span>
                   <span class="info-item deadline" *ngIf="job.deadline">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

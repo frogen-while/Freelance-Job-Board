@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { AuthService, PublicUser } from '../../core/auth.service';
-import { Job, Category } from '../../core/models';
+import { Job, Category, Skill } from '../../core/models';
 
 interface EmployerInfo {
   user_id: number;
@@ -21,6 +21,8 @@ export class JobDetailComponent implements OnInit {
   employer: EmployerInfo | null = null;
   category: Category | null = null;
   currentUser: PublicUser | null = null;
+  skills: Skill[] = [];
+  jobSkillNames: string[] = [];
   
   loading = true;
   applying = false;
@@ -45,8 +47,38 @@ export class JobDetailComponent implements OnInit {
     this.isFreelancer = this.auth.isFreelancer();
     this.currentUser = this.auth.getUser();
     
+    this.loadSkills();
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loadJob(id);
+  }
+
+  loadSkills() {
+    this.api.getSkills().subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.skills = res.data;
+          this.mapJobSkills();
+        }
+      }
+    });
+  }
+
+  mapJobSkills() {
+    if (!this.job?.skills || !this.job.skills.length) return;
+    
+    // If skills are already strings (skill names), use them directly
+    // If they are IDs, map them to names
+    if (typeof this.job.skills[0] === 'string') {
+      this.jobSkillNames = this.job.skills as string[];
+    } else {
+      // Skills are IDs - map to names
+      this.jobSkillNames = (this.job.skills as unknown as number[])
+        .map(skillId => {
+          const skill = this.skills.find(s => s.skill_id === skillId);
+          return skill?.name || '';
+        })
+        .filter(name => name);
+    }
   }
 
   loadJob(id: number) {
@@ -57,6 +89,7 @@ export class JobDetailComponent implements OnInit {
           this.job = res.data;
           this.loadEmployer(this.job.employer_id);
           this.loadCategory(this.job.category_id);
+          this.mapJobSkills();
         }
         this.loading = false;
       },
@@ -149,6 +182,38 @@ export class JobDetailComponent implements OnInit {
   getStatusClass(): string {
     if (!this.job) return '';
     return this.job.status.toLowerCase().replace(' ', '-');
+  }
+
+  getExperienceLevelLabel(): string {
+    if (!this.job?.experience_level) return '';
+    const labels: Record<string, string> = {
+      'entry': 'Entry Level',
+      'intermediate': 'Intermediate',
+      'expert': 'Expert'
+    };
+    return labels[this.job.experience_level] || '';
+  }
+
+  getJobTypeLabel(): string {
+    if (!this.job?.job_type) return '';
+    const labels: Record<string, string> = {
+      'one_time': 'One-time project',
+      'ongoing': 'Ongoing project',
+      'contract': 'Contract'
+    };
+    return labels[this.job.job_type] || '';
+  }
+
+  getDurationLabel(): string {
+    if (!this.job?.duration_estimate) return '';
+    const labels: Record<string, string> = {
+      'less_than_week': 'Less than a week',
+      '1_to_4_weeks': '1 to 4 weeks',
+      '1_to_3_months': '1 to 3 months',
+      '3_to_6_months': '3 to 6 months',
+      'more_than_6_months': 'More than 6 months'
+    };
+    return labels[this.job.duration_estimate] || '';
   }
 
   goBack() {

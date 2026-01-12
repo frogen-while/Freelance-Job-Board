@@ -1,0 +1,209 @@
+<div class="job-create-page">
+  <div class="container">
+    <!-- Header -->
+    <div class="page-header">
+      <h1 class="page-title">Post a New Job</h1>
+      <p class="page-subtitle">Find the perfect freelancer for your project</p>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+      <div class="step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+        <div class="step-number">1</div>
+        <span class="step-label">Basics</span>
+      </div>
+      <div class="step-line" [class.active]="currentStep > 1"></div>
+      <div class="step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
+        <div class="step-number">2</div>
+        <span class="step-label">Details</span>
+      </div>
+      <div class="step-line" [class.active]="currentStep > 2"></div>
+      <div class="step" [class.active]="currentStep >= 3">
+        <div class="step-number">3</div>
+        <span class="step-label">Skills</span>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
+    <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <!-- Form -->
+    <div class="form-container">
+      <!-- Step 1: Basics -->
+      <div class="form-step" *ngIf="currentStep === 1">
+        <h2 class="step-title">Job Basics</h2>
+        <p class="step-description">Tell us about your project</p>
+
+        <div class="form-group">
+          <label for="title">Job Title *</label>
+          <input type="text" id="title" [(ngModel)]="title" 
+                 placeholder="e.g., Build a responsive e-commerce website" maxlength="255" />
+        </div>
+
+        <div class="form-group">
+          <label for="category">Category *</label>
+          <select id="category" [(ngModel)]="category_id">
+            <option [ngValue]="null">Select a category</option>
+            <option *ngFor="let cat of categories" [ngValue]="cat.category_id">
+              {{ cat.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Job Description *</label>
+          <textarea id="description" [(ngModel)]="description" 
+                    placeholder="Describe what you need done, including any specific requirements or deliverables..."
+                    rows="8" maxlength="5000"></textarea>
+          <span class="char-count">{{ description.length }} / 5000</span>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-secondary" routerLink="/hire">Cancel</button>
+          <button class="btn-primary" (click)="nextStep()" [disabled]="!canProceedStep1()">
+            Continue
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Details -->
+      <div class="form-step" *ngIf="currentStep === 2">
+        <h2 class="step-title">Project Details</h2>
+        <p class="step-description">Set your budget and timeline</p>
+
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="budget">Budget ($) *</label>
+            <input type="number" id="budget" [(ngModel)]="budget" 
+                   placeholder="e.g., 500" min="1" />
+          </div>
+          <div class="form-group half">
+            <label for="deadline">Deadline</label>
+            <input type="date" id="deadline" [(ngModel)]="deadline" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="job_type">Project Type</label>
+            <select id="job_type" [(ngModel)]="job_type">
+              <option value="">Select type</option>
+              <option value="one_time">One-time project</option>
+              <option value="ongoing">Ongoing project</option>
+              <option value="contract">Contract position</option>
+            </select>
+          </div>
+          <div class="form-group half">
+            <label for="duration">Estimated Duration</label>
+            <select id="duration" [(ngModel)]="duration_estimate">
+              <option value="">Select duration</option>
+              <option value="less_than_week">Less than a week</option>
+              <option value="1_to_4_weeks">1 to 4 weeks</option>
+              <option value="1_to_3_months">1 to 3 months</option>
+              <option value="3_to_6_months">3 to 6 months</option>
+              <option value="more_than_6_months">More than 6 months</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="experience_level">Experience Level Required</label>
+          <select id="experience_level" [(ngModel)]="experience_level">
+            <option value="">Any level</option>
+            <option value="entry">Entry Level</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="expert">Expert</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group checkbox-wrapper">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="is_remote" />
+              <span class="checkmark"></span>
+              This is a remote position
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="!is_remote">
+          <label for="location">Location</label>
+          <input type="text" id="location" [(ngModel)]="location" 
+                 placeholder="e.g., New York, USA" maxlength="255" />
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-secondary" (click)="prevStep()">Back</button>
+          <button class="btn-primary" (click)="nextStep()" [disabled]="!canProceedStep2()">
+            Continue
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Skills -->
+      <div class="form-step" *ngIf="currentStep === 3">
+        <h2 class="step-title">Required Skills</h2>
+        <p class="step-description">Select skills that freelancers should have (optional)</p>
+
+        <div class="form-group">
+          <label>Selected Skills</label>
+          <div class="selected-skills" *ngIf="selectedSkills.length > 0">
+            <span class="skill-tag selected" *ngFor="let skillId of selectedSkills">
+              {{ getSkillName(skillId) }}
+              <button type="button" class="remove-skill" (click)="removeSkill(skillId)">×</button>
+            </span>
+          </div>
+          <p class="no-skills" *ngIf="selectedSkills.length === 0">No skills selected yet</p>
+        </div>
+
+        <div class="form-group">
+          <label>Search & Add Skills</label>
+          <input type="text" [(ngModel)]="skillSearch" (input)="filterSkills()"
+                 placeholder="Search skills..." class="skill-search" />
+
+          <div class="skills-grid">
+            <button type="button" *ngFor="let skill of filteredSkills.slice(0, 30)" 
+                    class="skill-option" 
+                    [class.selected]="isSkillSelected(skill.skill_id)"
+                    (click)="toggleSkill(skill.skill_id)">
+              {{ skill.name }}
+            </button>
+          </div>
+          <span class="hint">{{ selectedSkills.length }} / 10 skills selected</span>
+        </div>
+
+        <!-- Summary -->
+        <div class="job-summary">
+          <h3>Job Summary</h3>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="label">Title</span>
+              <span class="value">{{ title }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Budget</span>
+              <span class="value">${{ budget }}</span>
+            </div>
+            <div class="summary-item" *ngIf="deadline">
+              <span class="label">Deadline</span>
+              <span class="value">{{ deadline }}</span>
+            </div>
+            <div class="summary-item" *ngIf="is_remote">
+              <span class="label">Location</span>
+              <span class="value">🌍 Remote</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-secondary" (click)="prevStep()">Back</button>
+          <button class="btn-primary submit" (click)="submitJob()" 
+                  [disabled]="!canSubmit() || saving">
+            {{ saving ? 'Posting...' : 'Post Job' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

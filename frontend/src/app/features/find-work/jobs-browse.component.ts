@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { AuthService } from '../../core/auth.service';
-import { Job, Category } from '../../core/models';
+import { Job, Category, Skill, JobFilters, ExperienceLevel, JobType } from '../../core/models';
 
 @Component({
   selector: 'app-jobs-browse',
@@ -13,11 +13,19 @@ export class JobsBrowseComponent implements OnInit {
   jobs: Job[] = [];
   allJobs: Job[] = [];
   categories: Category[] = [];
+  skills: Skill[] = [];
   loading = true;
   
   searchQuery = '';
   selectedCategory: number | null = null;
   selectedStatus: string = '';
+  selectedExperience: ExperienceLevel | '' = '';
+  selectedJobType: JobType | '' = '';
+  remoteOnly = false;
+  selectedSkills: number[] = [];
+  budgetMin: number | null = null;
+  budgetMax: number | null = null;
+  showFilters = false;
   
   isLoggedIn = false;
   showAuthModal = false;
@@ -32,11 +40,15 @@ export class JobsBrowseComponent implements OnInit {
   ngOnInit() {
     this.isLoggedIn = this.auth.isLoggedIn();
     this.loadCategories();
+    this.loadSkills();
     
     this.route.queryParams.subscribe(params => {
       this.searchQuery = params['q'] || '';
       this.selectedCategory = params['category'] ? Number(params['category']) : null;
       this.selectedStatus = params['status'] || '';
+      this.selectedExperience = params['experience'] || '';
+      this.selectedJobType = params['job_type'] || '';
+      this.remoteOnly = params['remote'] === 'true';
       this.loadJobs();
     });
   }
@@ -51,14 +63,29 @@ export class JobsBrowseComponent implements OnInit {
     });
   }
 
+  loadSkills() {
+    this.api.getSkills().subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.skills = res.data;
+        }
+      }
+    });
+  }
+
   loadJobs() {
     this.loading = true;
 
-    const fetchJobs = this.selectedCategory 
-      ? this.api.getJobsByCategory(this.selectedCategory)
-      : this.api.getJobs();
+    const filters: JobFilters = {};
+    if (this.selectedCategory) filters.category_id = this.selectedCategory;
+    if (this.selectedExperience) filters.experience_level = this.selectedExperience;
+    if (this.selectedJobType) filters.job_type = this.selectedJobType;
+    if (this.remoteOnly) filters.is_remote = true;
+    if (this.budgetMin) filters.budget_min = this.budgetMin;
+    if (this.budgetMax) filters.budget_max = this.budgetMax;
+    if (this.selectedSkills.length) filters.skills = this.selectedSkills;
 
-    fetchJobs.subscribe({
+    this.api.getJobs(filters).subscribe({
       next: (res) => {
         if (res.success && res.data) {
           this.allJobs = res.data;
@@ -105,11 +132,36 @@ export class JobsBrowseComponent implements OnInit {
     this.updateQueryParams();
   }
 
+  onExperienceChange(exp: ExperienceLevel | '') {
+    this.selectedExperience = exp;
+    this.loadJobs();
+    this.updateQueryParams();
+  }
+
+  onJobTypeChange(jobType: JobType | '') {
+    this.selectedJobType = jobType;
+    this.loadJobs();
+    this.updateQueryParams();
+  }
+
+  onRemoteChange(remote: boolean) {
+    this.remoteOnly = remote;
+    this.loadJobs();
+    this.updateQueryParams();
+  }
+
+  toggleFilters() {
+    this.showFilters = !this.showFilters;
+  }
+
   updateQueryParams() {
     const params: any = {};
     if (this.searchQuery) params.q = this.searchQuery;
     if (this.selectedCategory) params.category = this.selectedCategory;
     if (this.selectedStatus) params.status = this.selectedStatus;
+    if (this.selectedExperience) params.experience = this.selectedExperience;
+    if (this.selectedJobType) params.job_type = this.selectedJobType;
+    if (this.remoteOnly) params.remote = 'true';
 
     this.router.navigate([], {
       relativeTo: this.route,
@@ -122,7 +174,51 @@ export class JobsBrowseComponent implements OnInit {
     this.searchQuery = '';
     this.selectedCategory = null;
     this.selectedStatus = '';
+    this.selectedExperience = '';
+    this.selectedJobType = '';
+    this.remoteOnly = false;
+    this.selectedSkills = [];
+    this.budgetMin = null;
+    this.budgetMax = null;
     this.router.navigate(['/find-work/browse']);
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.selectedCategory || this.selectedStatus || this.selectedExperience || 
+              this.selectedJobType || this.remoteOnly || this.searchQuery);
+  }
+
+  getActiveFilterCount(): number {
+    let count = 0;
+    if (this.selectedCategory) count++;
+    if (this.selectedStatus) count++;
+    if (this.selectedExperience) count++;
+    if (this.selectedJobType) count++;
+    if (this.remoteOnly) count++;
+    return count;
+  }
+
+  getExperienceLabel(exp: string): string {
+    const labels: Record<string, string> = {
+      'entry': 'Entry Level',
+      'intermediate': 'Intermediate',
+      'expert': 'Expert'
+    };
+    return labels[exp] || '';
+  }
+
+  getJobTypeLabel(type: string): string {
+    const labels: Record<string, string> = {
+      'one_time': 'One-time',
+      'ongoing': 'Ongoing',
+      'contract': 'Contract'
+    };
+    return labels[type] || '';
+  }
+
+  getSkillName(skillId: number): string {
+    const skill = this.skills.find(s => s.skill_id === skillId);
+    return skill?.name || '';
   }
 
   getCategoryName(categoryId: number): string {

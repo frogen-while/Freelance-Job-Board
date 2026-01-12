@@ -108,20 +108,53 @@
   }
 }
 
+// Stats Grid
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-md;
+  margin-bottom: $space-md;
+}
+
 .stat-item {
   display: flex;
   flex-direction: column;
-  margin-bottom: $space-md;
 
   .stat-value {
-    font-size: $font-size-xl;
+    font-size: $font-size-lg;
     font-weight: $font-weight-bold;
     color: #22c55e;
+
+    &.experience {
+      font-size: $font-size-sm;
+      color: #818cf8;
+    }
   }
 
   .stat-label {
     font-size: $font-size-xs;
     color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+// Employer Company Info
+.company-info {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: $space-md;
+  padding-bottom: $space-md;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  .company-name {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: white;
+  }
+
+  .company-industry {
+    font-size: $font-size-xs;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: $space-xs;
   }
 }
 

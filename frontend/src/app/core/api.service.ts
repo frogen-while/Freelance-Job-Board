@@ -2,7 +2,23 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { ApiResponse, Job, Category, FreelancerProfile, FreelancersResponse, Skill } from './models';
+import { 
+  ApiResponse, 
+  Job, 
+  Category, 
+  FreelancerProfile, 
+  FreelancersResponse, 
+  Skill,
+  EmployerProfile,
+  EmployersResponse,
+  FreelancerProfileData,
+  EmployerProfileData,
+  JobFilters,
+  CreateJobPayload,
+  ExperienceLevel,
+  AvailabilityStatus,
+  CompanySize
+} from './models';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -10,8 +26,25 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  getJobs(): Observable<ApiResponse<Job[]>> {
-    return this.http.get<ApiResponse<Job[]>>(`${this.base}/jobs`);
+  // ============ JOBS ============
+
+  getJobs(filters?: JobFilters): Observable<ApiResponse<Job[]>> {
+    let url = `${this.base}/jobs`;
+    const params: string[] = [];
+    
+    if (filters?.q) params.push(`q=${encodeURIComponent(filters.q)}`);
+    if (filters?.category_id) params.push(`category=${filters.category_id}`);
+    if (filters?.status) params.push(`status=${encodeURIComponent(filters.status)}`);
+    if (filters?.experience_level) params.push(`experience_level=${filters.experience_level}`);
+    if (filters?.job_type) params.push(`job_type=${filters.job_type}`);
+    if (filters?.is_remote !== undefined) params.push(`is_remote=${filters.is_remote}`);
+    if (filters?.budget_min) params.push(`budget_min=${filters.budget_min}`);
+    if (filters?.budget_max) params.push(`budget_max=${filters.budget_max}`);
+    if (filters?.skills && filters.skills.length > 0) params.push(`skills=${filters.skills.join(',')}`);
+    
+    if (params.length > 0) url += `?${params.join('&')}`;
+    
+    return this.http.get<ApiResponse<Job[]>>(url);
   }
 
   getJobsByCategory(categoryId: number): Observable<ApiResponse<Job[]>> {
@@ -22,20 +55,63 @@ export class ApiService {
     return this.http.get<ApiResponse<Job>>(`${this.base}/jobs/${id}`);
   }
 
+  createJob(payload: CreateJobPayload): Observable<ApiResponse<{ job_id: number }>> {
+    return this.http.post<ApiResponse<{ job_id: number }>>(`${this.base}/jobs`, payload);
+  }
+
+  updateJob(jobId: number, data: Partial<CreateJobPayload>): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(`${this.base}/jobs/${jobId}`, data);
+  }
+
+  // ============ CATEGORIES ============
+
   getCategories(): Observable<ApiResponse<Category[]>> {
     return this.http.get<ApiResponse<Category[]>>(`${this.base}/categories`);
   }
 
-  getProfileByUserId(userId: number): Observable<any> {
-    return this.http.get<any>(`${this.base}/profiles/${userId}`);
+  getCategoryById(categoryId: number): Observable<ApiResponse<Category>> {
+    return this.http.get<ApiResponse<Category>>(`${this.base}/categories/${categoryId}`);
   }
+
+  // ============ USERS ============
 
   getUserById(userId: number): Observable<ApiResponse<{ user_id: number; first_name: string; last_name: string; email: string }>> {
     return this.http.get<ApiResponse<{ user_id: number; first_name: string; last_name: string; email: string }>>(`${this.base}/users/${userId}`);
   }
 
-  getCategoryById(categoryId: number): Observable<ApiResponse<Category>> {
-    return this.http.get<ApiResponse<Category>>(`${this.base}/categories/${categoryId}`);
+  // ============ BASE PROFILES ============
+
+  getProfileByUserId(userId: number): Observable<ApiResponse<any>> {
+    return this.http.get<ApiResponse<any>>(`${this.base}/profiles/${userId}`);
+  }
+
+  updateProfile(userId: number, data: {
+    display_name?: string;
+    headline?: string;
+    description?: string;
+    photo_url?: string | null;
+    location?: string | null;
+    skills?: number[];
+    onboarding_completed?: boolean;
+  }): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(`${this.base}/profiles/${userId}`, data);
+  }
+
+  // ============ FREELANCER PROFILES ============
+
+  getFreelancerProfile(userId: number): Observable<ApiResponse<FreelancerProfileData>> {
+    return this.http.get<ApiResponse<FreelancerProfileData>>(`${this.base}/profiles/${userId}/freelancer`);
+  }
+
+  updateFreelancerProfile(userId: number, data: {
+    title?: string | null;
+    hourly_rate?: number | null;
+    availability_status?: AvailabilityStatus | null;
+    experience_level?: ExperienceLevel | null;
+    github_url?: string | null;
+    linkedin_url?: string | null;
+  }): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(`${this.base}/profiles/${userId}/freelancer`, data);
   }
 
   getFreelancers(options?: { skill?: string; limit?: number; offset?: number }): Observable<ApiResponse<FreelancersResponse>> {
@@ -55,6 +131,36 @@ export class ApiService {
     return this.http.get<ApiResponse<FreelancerProfile[]>>(`${this.base}/profiles/freelancers/featured?limit=${limit}`);
   }
 
+  // ============ EMPLOYER PROFILES ============
+
+  getEmployerProfile(userId: number): Observable<ApiResponse<EmployerProfileData>> {
+    return this.http.get<ApiResponse<EmployerProfileData>>(`${this.base}/profiles/${userId}/employer`);
+  }
+
+  updateEmployerProfile(userId: number, data: {
+    company_name?: string | null;
+    company_description?: string | null;
+    company_website?: string | null;
+    company_size?: CompanySize | null;
+    industry?: string | null;
+  }): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(`${this.base}/profiles/${userId}/employer`, data);
+  }
+
+  getEmployers(options?: { limit?: number; offset?: number }): Observable<ApiResponse<EmployersResponse>> {
+    let url = `${this.base}/profiles/employers`;
+    const params: string[] = [];
+    
+    if (options?.limit) params.push(`limit=${options.limit}`);
+    if (options?.offset) params.push(`offset=${options.offset}`);
+    
+    if (params.length > 0) url += `?${params.join('&')}`;
+    
+    return this.http.get<ApiResponse<EmployersResponse>>(url);
+  }
+
+  // ============ SKILLS ============
+
   getSkills(): Observable<ApiResponse<Skill[]>> {
     return this.http.get<ApiResponse<Skill[]>>(`${this.base}/skills`);
   }
@@ -62,6 +168,8 @@ export class ApiService {
   getProfileSkills(userId: number): Observable<ApiResponse<Skill[]>> {
     return this.http.get<ApiResponse<Skill[]>>(`${this.base}/profiles/${userId}/skills`);
   }
+
+  // ============ JOB APPLICATIONS ============
 
   applyToJob(payload: {
     job_id: number;
@@ -71,19 +179,5 @@ export class ApiService {
     status: string;
   }): Observable<ApiResponse<{ application_id: number }>> {
     return this.http.post<ApiResponse<{ application_id: number }>>(`${this.base}/jobapplications`, payload);
-  }
-
-  updateProfile(userId: number, data: {
-    display_name?: string;
-    headline?: string;
-    description?: string;
-    photo_url?: string | null;
-    location?: string | null;
-    hourly_rate?: number | null;
-    availability_status?: string;
-    skills?: number[];
-    onboarding_completed?: boolean;
-  }): Observable<ApiResponse<any>> {
-    return this.http.put<ApiResponse<any>>(`${this.base}/profiles/${userId}`, data);
   }
 }

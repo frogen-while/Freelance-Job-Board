@@ -176,6 +176,74 @@
   }
 }
 
+.remote-badge {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  padding: $space-xs $space-sm;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-radius: $radius-full;
+}
+
+// Job Details Grid
+.job-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: $space-md;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $radius-xl;
+  padding: $space-xl;
+}
+
+.detail-item {
+  .detail-label {
+    display: block;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: $space-xs;
+  }
+
+  .detail-value {
+    font-size: $font-size-md;
+    font-weight: $font-weight-medium;
+    color: #fff;
+  }
+}
+
+// Skills
+.job-skills {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $radius-xl;
+  padding: $space-2xl;
+
+  h2 {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: #fff;
+    margin-bottom: $space-md;
+  }
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+}
+
+.skill-tag {
+  padding: $space-xs $space-md;
+  background: rgba(99, 102, 241, 0.15);
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: #818cf8;
+}
+
 .job-title {
   font-size: $font-size-3xl;
   font-weight: $font-weight-bold;

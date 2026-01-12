@@ -36,6 +36,7 @@
           <div class="header-top">
             <span class="job-category" *ngIf="category">{{ category.name }}</span>
             <span class="job-status" [class]="getStatusClass()">{{ job.status }}</span>
+            <span class="remote-badge" *ngIf="job.is_remote">🌍 Remote</span>
           </div>
           <h1 class="job-title">{{ job.title }}</h1>
           <div class="job-meta">
@@ -55,6 +56,37 @@
               </svg>
               Due {{ job.deadline | date:'MMM d, y' }}
             </span>
+            <span class="meta-item" *ngIf="job.location">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              {{ job.location }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Job Details Grid -->
+        <div class="job-details-grid" *ngIf="job.experience_level || job.job_type || job.duration_estimate">
+          <div class="detail-item" *ngIf="job.experience_level">
+            <span class="detail-label">Experience Level</span>
+            <span class="detail-value">{{ getExperienceLevelLabel() }}</span>
+          </div>
+          <div class="detail-item" *ngIf="job.job_type">
+            <span class="detail-label">Project Type</span>
+            <span class="detail-value">{{ getJobTypeLabel() }}</span>
+          </div>
+          <div class="detail-item" *ngIf="job.duration_estimate">
+            <span class="detail-label">Estimated Duration</span>
+            <span class="detail-value">{{ getDurationLabel() }}</span>
+          </div>
+        </div>
+
+        <!-- Required Skills -->
+        <div class="job-skills" *ngIf="jobSkillNames.length > 0">
+          <h2>Required Skills</h2>
+          <div class="skills-list">
+            <span class="skill-tag" *ngFor="let skillName of jobSkillNames">{{ skillName }}</span>
           </div>
         </div>
 

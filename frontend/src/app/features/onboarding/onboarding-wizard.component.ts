@@ -2,16 +2,28 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, PublicUser } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
+import { ExperienceLevel, AvailabilityStatus, CompanySize } from '../../core/models';
 
 interface OnboardingData {
+  // Base profile
   display_name: string;
   headline: string;
   description: string;
   photo_url: string;
   location: string;
+  // Freelancer-specific
   hourly_rate: number | null;
-  availability_status: 'available' | 'partially_available' | 'not_available';
+  availability_status: AvailabilityStatus;
+  experience_level: ExperienceLevel | null;
+  github_url: string;
+  linkedin_url: string;
   skills: number[];
+  // Employer-specific
+  company_name: string;
+  company_description: string;
+  company_website: string;
+  company_size: CompanySize | null;
+  industry: string;
 }
 
 interface Skill {
@@ -26,7 +38,7 @@ interface Skill {
 })
 export class OnboardingWizardComponent implements OnInit {
   currentStep = 1;
-  totalSteps = 3;
+  totalSteps = 4;
   isFreelancer = false;
   user: PublicUser | null = null;
   loading = false;
@@ -36,6 +48,11 @@ export class OnboardingWizardComponent implements OnInit {
   filteredSkills: Skill[] = [];
   skillSearch = '';
 
+  industries = [
+    'Technology', 'Finance', 'Healthcare', 'Education', 'E-commerce',
+    'Marketing', 'Media', 'Manufacturing', 'Real Estate', 'Consulting', 'Other'
+  ];
+
   data: OnboardingData = {
     display_name: '',
     headline: '',
@@ -44,7 +61,15 @@ export class OnboardingWizardComponent implements OnInit {
     location: '',
     hourly_rate: null,
     availability_status: 'available',
-    skills: []
+    experience_level: null,
+    github_url: '',
+    linkedin_url: '',
+    skills: [],
+    company_name: '',
+    company_description: '',
+    company_website: '',
+    company_size: null,
+    industry: ''
   };
 
   constructor(
@@ -61,7 +86,7 @@ export class OnboardingWizardComponent implements OnInit {
     }
 
     this.isFreelancer = this.auth.isFreelancer();
-    this.totalSteps = this.isFreelancer ? 4 : 3;
+    this.totalSteps = 4; // Both freelancer and employer have 4 steps
 
     // Pre-fill display name
     this.data.display_name = `${this.user.first_name} ${this.user.last_name}`;
@@ -142,7 +167,11 @@ export class OnboardingWizardComponent implements OnInit {
         }
         return this.data.description.trim().length >= 10;
       case 4:
-        return this.isFreelancer && this.data.skills.length >= 1 && this.data.hourly_rate !== null && this.data.hourly_rate > 0;
+        if (this.isFreelancer) {
+          return this.data.skills.length >= 1 && this.data.hourly_rate !== null && this.data.hourly_rate > 0;
+        }
+        // Employer: company name is required
+        return this.data.company_name.trim().length >= 2;
       default:
         return true;
     }
@@ -154,7 +183,8 @@ export class OnboardingWizardComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
-    const payload: any = {
+    // Step 1: Save base profile
+    const basePayload: any = {
       display_name: this.data.display_name,
       headline: this.data.headline,
       description: this.data.description,
@@ -164,24 +194,14 @@ export class OnboardingWizardComponent implements OnInit {
     };
 
     if (this.isFreelancer) {
-      payload.hourly_rate = this.data.hourly_rate;
-      payload.availability_status = this.data.availability_status;
-      payload.skills = this.data.skills;
+      basePayload.skills = this.data.skills;
     }
 
-    this.api.updateProfile(this.user.user_id, payload).subscribe({
+    this.api.updateProfile(this.user.user_id, basePayload).subscribe({
       next: (res) => {
         if (res.success) {
-          // Update local user
-          const updatedUser = { ...this.user!, onboarding_completed: true };
-          this.auth.updateUser(updatedUser);
-
-          // Redirect based on user type
-          if (this.isFreelancer) {
-            this.router.navigate(['/find-work/browse']);
-          } else {
-            this.router.navigate(['/hire/browse']);
-          }
+          // Step 2: Save type-specific profile
+          this.saveTypeSpecificProfile();
         } else {
           this.error = res.error?.message || 'Failed to save profile';
           this.loading = false;
@@ -192,5 +212,50 @@ export class OnboardingWizardComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  private saveTypeSpecificProfile(): void {
+    if (!this.user) return;
+
+    if (this.isFreelancer) {
+      const freelancerPayload = {
+        hourly_rate: this.data.hourly_rate,
+        availability_status: this.data.availability_status,
+        experience_level: this.data.experience_level,
+        github_url: this.data.github_url || null,
+        linkedin_url: this.data.linkedin_url || null
+      };
+
+      this.api.updateFreelancerProfile(this.user.user_id, freelancerPayload).subscribe({
+        next: () => this.onSuccess(),
+        error: () => this.onSuccess() // Still redirect on partial success
+      });
+    } else {
+      const employerPayload = {
+        company_name: this.data.company_name || null,
+        company_description: this.data.company_description || null,
+        company_website: this.data.company_website || null,
+        company_size: this.data.company_size,
+        industry: this.data.industry || null
+      };
+
+      this.api.updateEmployerProfile(this.user.user_id, employerPayload).subscribe({
+        next: () => this.onSuccess(),
+        error: () => this.onSuccess() // Still redirect on partial success
+      });
+    }
+  }
+
+  private onSuccess(): void {
+    // Update local user
+    const updatedUser = { ...this.user!, onboarding_completed: true };
+    this.auth.updateUser(updatedUser);
+
+    // Redirect based on user type
+    if (this.isFreelancer) {
+      this.router.navigate(['/find-work/browse']);
+    } else {
+      this.router.navigate(['/hire/browse']);
+    }
   }
 }

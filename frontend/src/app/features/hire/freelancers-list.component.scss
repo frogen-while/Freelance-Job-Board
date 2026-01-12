@@ -354,12 +354,80 @@
   text-overflow: ellipsis;
 }
 
+.freelancer-rating {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  margin-top: $space-xs;
+  font-size: $font-size-sm;
+
+  .star {
+    font-size: $font-size-xs;
+  }
+
+  .rating-value {
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+  }
+
+  .reviews-count {
+    color: $text-muted;
+  }
+}
+
 .freelancer-description {
   font-size: $font-size-sm;
   color: $text-secondary;
   line-height: 1.5;
   margin-bottom: $space-md;
   flex: 1;
+}
+
+.freelancer-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-md;
+  padding: $space-sm 0;
+  margin-bottom: $space-sm;
+  border-top: 1px solid $border-light;
+  border-bottom: 1px solid $border-light;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .stat-label {
+    font-size: $font-size-xs;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .stat-value {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-primary;
+
+    &.available {
+      color: #16a34a;
+    }
+
+    &.partially_available {
+      color: #d97706;
+    }
+
+    &.not_available {
+      color: #dc2626;
+    }
+  }
+}
+
+.availability-dot {
+  &.partial {
+    background: #fbbf24 !important;
+  }
 }
 
 .freelancer-skills {

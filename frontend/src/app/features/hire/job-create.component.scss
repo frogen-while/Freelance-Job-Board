@@ -1,0 +1,412 @@
+@use 'app/shared' as *;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.job-create-page {
+  padding: 100px $space-xl $space-3xl;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+// Header
+.page-header {
+  text-align: center;
+  margin-bottom: $space-2xl;
+}
+
+.page-title {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: white;
+  margin-bottom: $space-sm;
+}
+
+.page-subtitle {
+  font-size: $font-size-lg;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+// Progress Steps
+.progress-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $space-2xl;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-sm;
+
+  .step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: $font-weight-bold;
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+  }
+
+  .step-label {
+    font-size: $font-size-sm;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  &.active {
+    .step-number {
+      background: #6366f1;
+      border-color: #6366f1;
+      color: white;
+    }
+    .step-label {
+      color: white;
+    }
+  }
+
+  &.completed {
+    .step-number {
+      background: #22c55e;
+      border-color: #22c55e;
+    }
+  }
+}
+
+.step-line {
+  width: 60px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 0 $space-sm;
+  margin-bottom: 20px;
+
+  &.active {
+    background: #6366f1;
+  }
+}
+
+// Messages
+.message {
+  padding: $space-md $space-lg;
+  border-radius: $radius-lg;
+  margin-bottom: $space-lg;
+  font-weight: $font-weight-medium;
+  text-align: center;
+
+  &.success {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+  }
+
+  &.error {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+  }
+}
+
+// Form Container
+.form-container {
+  background: white;
+  border-radius: $radius-2xl;
+  padding: $space-2xl;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.form-step {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.step-title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+  margin-bottom: $space-xs;
+}
+
+.step-description {
+  font-size: $font-size-md;
+  color: $text-secondary;
+  margin-bottom: $space-xl;
+}
+
+// Form Groups
+.form-group {
+  margin-bottom: $space-lg;
+
+  label {
+    display: block;
+    font-weight: $font-weight-medium;
+    color: $text-primary;
+    margin-bottom: $space-sm;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    padding: $space-md;
+    border: 2px solid $border-light;
+    border-radius: $radius-lg;
+    font-size: $font-size-md;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #6366f1;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 150px;
+  }
+
+  .char-count {
+    display: block;
+    text-align: right;
+    font-size: $font-size-xs;
+    color: $text-muted;
+    margin-top: $space-xs;
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: $space-lg;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.form-group.half {
+  flex: 1;
+}
+
+// Checkbox
+.checkbox-wrapper {
+  margin-top: $space-md;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  cursor: pointer;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+
+  input {
+    width: 20px;
+    height: 20px;
+    accent-color: #6366f1;
+  }
+}
+
+// Skills
+.selected-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+  margin-bottom: $space-md;
+  min-height: 40px;
+  padding: $space-md;
+  background: #f8fafc;
+  border-radius: $radius-lg;
+}
+
+.no-skills {
+  color: $text-muted;
+  font-size: $font-size-sm;
+  padding: $space-md;
+  background: #f8fafc;
+  border-radius: $radius-lg;
+  text-align: center;
+}
+
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  padding: $space-sm $space-md;
+  background: #6366f1;
+  color: white;
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+
+  .remove-skill {
+    background: none;
+    border: none;
+    color: white;
+    font-size: $font-size-lg;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.skill-search {
+  margin-bottom: $space-md;
+}
+
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: $space-md;
+  background: #f8fafc;
+  border-radius: $radius-lg;
+}
+
+.skill-option {
+  padding: $space-sm $space-md;
+  background: white;
+  border: 1px solid $border-light;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #6366f1;
+    color: #6366f1;
+  }
+
+  &.selected {
+    background: #6366f1;
+    border-color: #6366f1;
+    color: white;
+  }
+}
+
+.hint {
+  display: block;
+  font-size: $font-size-xs;
+  color: $text-muted;
+  margin-top: $space-sm;
+}
+
+// Job Summary
+.job-summary {
+  background: #f8fafc;
+  border-radius: $radius-xl;
+  padding: $space-xl;
+  margin-top: $space-xl;
+
+  h3 {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin-bottom: $space-md;
+  }
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-md;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.summary-item {
+  .label {
+    display: block;
+    font-size: $font-size-xs;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: $space-xs;
+  }
+
+  .value {
+    font-size: $font-size-md;
+    font-weight: $font-weight-medium;
+    color: $text-primary;
+  }
+}
+
+// Form Actions
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: $space-md;
+  margin-top: $space-2xl;
+  padding-top: $space-xl;
+  border-top: 1px solid $border-light;
+}
+
+.btn-secondary {
+  padding: $space-md $space-xl;
+  background: #f1f5f9;
+  border: none;
+  border-radius: $radius-lg;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+
+  &:hover {
+    background: #e2e8f0;
+    color: $text-primary;
+  }
+}
+
+.btn-primary {
+  padding: $space-md $space-2xl;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border: none;
+  border-radius: $radius-lg;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.submit {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+    }
+  }
+}

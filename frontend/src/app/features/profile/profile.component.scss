@@ -230,6 +230,66 @@
   }
 }
 
+// Profile Links Section
+.links-section {
+  h2 {
+    margin-bottom: $space-sm;
+  }
+}
+
+.links-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+}
+
+.profile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  padding: $space-sm $space-md;
+  border-radius: $radius-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  text-decoration: none;
+  transition: all 0.2s ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &.github {
+    background: #24292e;
+    color: white;
+
+    &:hover {
+      background: #1a1e22;
+    }
+  }
+
+  &.linkedin {
+    background: #0077b5;
+    color: white;
+
+    &:hover {
+      background: #006097;
+    }
+  }
+}
+
+.company-website-link {
+  display: inline-block;
+  margin-top: $space-sm;
+  color: #6366f1;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .skills-list {
   display: flex;
   flex-wrap: wrap;

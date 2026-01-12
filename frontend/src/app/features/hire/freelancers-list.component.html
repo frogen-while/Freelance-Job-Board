@@ -86,17 +86,41 @@
             <div class="freelancer-avatar">
               <img *ngIf="freelancer.photo_url" [src]="freelancer.photo_url" [alt]="getDisplayName(freelancer)" />
               <span *ngIf="!freelancer.photo_url" class="avatar-initials">{{ getInitials(freelancer) }}</span>
-              <span class="availability-dot" [class.available]="freelancer.availability_status === 'available'"></span>
+              <span class="availability-dot" [class.available]="freelancer.availability_status === 'available'"
+                    [class.partial]="freelancer.availability_status === 'partially_available'"></span>
             </div>
             <div class="freelancer-basic">
               <h3 class="freelancer-name">{{ getDisplayName(freelancer) }}</h3>
               <p class="freelancer-headline">{{ freelancer.headline || 'Freelancer' }}</p>
+              <div class="freelancer-rating" *ngIf="freelancer.rating">
+                <span class="star">⭐</span>
+                <span class="rating-value">{{ formatRating(freelancer.rating) }}</span>
+                <span class="reviews-count" *ngIf="freelancer.reviews_count">({{ freelancer.reviews_count }})</span>
+              </div>
             </div>
           </div>
 
           <p class="freelancer-description" *ngIf="freelancer.description">
             {{ freelancer.description | slice:0:120 }}{{ freelancer.description.length > 120 ? '...' : '' }}
           </p>
+
+          <!-- Stats Row -->
+          <div class="freelancer-stats">
+            <div class="stat-item" *ngIf="freelancer.experience_level">
+              <span class="stat-label">Experience</span>
+              <span class="stat-value">{{ getExperienceLabel(freelancer.experience_level) }}</span>
+            </div>
+            <div class="stat-item" *ngIf="freelancer.jobs_completed && freelancer.jobs_completed > 0">
+              <span class="stat-label">Jobs Done</span>
+              <span class="stat-value">{{ freelancer.jobs_completed }}</span>
+            </div>
+            <div class="stat-item availability">
+              <span class="stat-label">Status</span>
+              <span class="stat-value" [class]="freelancer.availability_status">
+                {{ getAvailabilityLabel(freelancer.availability_status) }}
+              </span>
+            </div>
+          </div>
 
           <div class="freelancer-skills" *ngIf="freelancer.skills?.length">
             <span class="skill-tag" *ngFor="let skill of freelancer.skills.slice(0, 4)">{{ skill }}</span>

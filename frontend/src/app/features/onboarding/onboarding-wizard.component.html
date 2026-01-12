@@ -104,10 +104,10 @@
       <!-- Step 4: Skills & Rate (Freelancer only) -->
       <div class="step" *ngIf="currentStep === 4 && isFreelancer">
         <h2>🛠️ Skills & Rate</h2>
-        <p class="step-desc">Set your hourly rate and select your skills</p>
+        <p class="step-desc">Set your hourly rate, experience level, and select your skills</p>
 
         <div class="form-row">
-          <div class="form-group half">
+          <div class="form-group third">
             <label for="hourly_rate">Hourly Rate ($)</label>
             <input 
               type="number" 
@@ -118,13 +118,43 @@
               max="999">
           </div>
 
-          <div class="form-group half">
+          <div class="form-group third">
             <label for="availability">Availability</label>
             <select id="availability" [(ngModel)]="data.availability_status">
               <option value="available">Available</option>
               <option value="partially_available">Partially Available</option>
               <option value="not_available">Not Available</option>
             </select>
+          </div>
+
+          <div class="form-group third">
+            <label for="experience_level">Experience Level</label>
+            <select id="experience_level" [(ngModel)]="data.experience_level">
+              <option [ngValue]="null">Select level</option>
+              <option value="entry">Entry Level</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="expert">Expert</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="github_url">GitHub URL (optional)</label>
+            <input 
+              type="url" 
+              id="github_url" 
+              [(ngModel)]="data.github_url" 
+              placeholder="https://github.com/username">
+          </div>
+
+          <div class="form-group half">
+            <label for="linkedin_url">LinkedIn URL (optional)</label>
+            <input 
+              type="url" 
+              id="linkedin_url" 
+              [(ngModel)]="data.linkedin_url" 
+              placeholder="https://linkedin.com/in/username">
           </div>
         </div>
 
@@ -156,6 +186,64 @@
             </button>
           </div>
           <span class="hint">{{ data.skills.length }} / 15 skills selected</span>
+        </div>
+      </div>
+
+      <!-- Step 4: Company Info (Employer only) -->
+      <div class="step" *ngIf="currentStep === 4 && !isFreelancer">
+        <h2>🏢 Company Information</h2>
+        <p class="step-desc">Tell freelancers about your company</p>
+
+        <div class="form-group">
+          <label for="company_name">Company Name *</label>
+          <input 
+            type="text" 
+            id="company_name" 
+            [(ngModel)]="data.company_name" 
+            placeholder="Your company name"
+            maxlength="255">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="industry">Industry</label>
+            <select id="industry" [(ngModel)]="data.industry">
+              <option value="">Select industry</option>
+              <option *ngFor="let ind of industries" [value]="ind">{{ ind }}</option>
+            </select>
+          </div>
+
+          <div class="form-group half">
+            <label for="company_size">Company Size</label>
+            <select id="company_size" [(ngModel)]="data.company_size">
+              <option [ngValue]="null">Select size</option>
+              <option value="1-10">1-10 employees</option>
+              <option value="11-50">11-50 employees</option>
+              <option value="51-200">51-200 employees</option>
+              <option value="201-500">201-500 employees</option>
+              <option value="500+">500+ employees</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="company_website">Company Website (optional)</label>
+          <input 
+            type="url" 
+            id="company_website" 
+            [(ngModel)]="data.company_website" 
+            placeholder="https://yourcompany.com">
+        </div>
+
+        <div class="form-group">
+          <label for="company_description">About Your Company (optional)</label>
+          <textarea 
+            id="company_description" 
+            [(ngModel)]="data.company_description" 
+            placeholder="Briefly describe your company, culture, and what kind of projects you typically work on..."
+            rows="4"
+            maxlength="1000"></textarea>
+          <span class="char-count">{{ data.company_description.length }} / 1000</span>
         </div>
       </div>
     </div>

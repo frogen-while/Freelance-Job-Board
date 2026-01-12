@@ -30,17 +30,58 @@
   </div>
 
   <div class="sidebar-body">
-    <!-- Availability badge -->
-    <div class="availability-badge" [ngClass]="getAvailabilityClass()">
-      <span class="dot"></span>
-      {{ getAvailabilityLabel() }}
-    </div>
+    <!-- Freelancer Stats -->
+    <ng-container *ngIf="isFreelancer && freelancerStats">
+      <!-- Availability badge -->
+      <div class="availability-badge" [ngClass]="getAvailabilityClass()">
+        <span class="dot"></span>
+        {{ getAvailabilityLabel() }}
+      </div>
 
-    <!-- Hourly rate (freelancer only) -->
-    <div class="stat-item" *ngIf="isFreelancer && profile?.hourly_rate">
-      <span class="stat-value">${{ profile.hourly_rate }}/hr</span>
-      <span class="stat-label">Hourly Rate</span>
-    </div>
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-item" *ngIf="freelancerStats.hourly_rate">
+          <span class="stat-value">${{ freelancerStats.hourly_rate }}</span>
+          <span class="stat-label">Per Hour</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">{{ freelancerStats.jobs_completed || 0 }}</span>
+          <span class="stat-label">Jobs Done</span>
+        </div>
+        <div class="stat-item" *ngIf="freelancerStats.rating">
+          <span class="stat-value">⭐ {{ formatRating(freelancerStats.rating) }}</span>
+          <span class="stat-label">{{ freelancerStats.reviews_count }} reviews</span>
+        </div>
+        <div class="stat-item" *ngIf="freelancerStats.experience_level">
+          <span class="stat-value experience">{{ getExperienceLabel() }}</span>
+          <span class="stat-label">Experience</span>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Employer Stats -->
+    <ng-container *ngIf="isEmployer && employerStats">
+      <div class="company-info" *ngIf="employerStats.company_name">
+        <span class="company-name">{{ employerStats.company_name }}</span>
+        <span class="company-industry" *ngIf="employerStats.industry">{{ employerStats.industry }}</span>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-value">{{ employerStats.jobs_posted || 0 }}</span>
+          <span class="stat-label">Jobs Posted</span>
+        </div>
+        <div class="stat-item" *ngIf="employerStats.total_spent && employerStats.total_spent > 0">
+          <span class="stat-value">${{ employerStats.total_spent | number:'1.0-0' }}</span>
+          <span class="stat-label">Total Spent</span>
+        </div>
+        <div class="stat-item" *ngIf="employerStats.rating">
+          <span class="stat-value">⭐ {{ formatRating(employerStats.rating) }}</span>
+          <span class="stat-label">{{ employerStats.reviews_count }} reviews</span>
+        </div>
+      </div>
+    </ng-container>
 
     <!-- Location -->
     <div class="info-item" *ngIf="profile?.location">

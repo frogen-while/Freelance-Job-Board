@@ -152,6 +152,102 @@
   }
 }
 
+.filter-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  padding: $space-sm $space-lg;
+  background: #f8fafc;
+  border: 1px solid $border-light;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .filter-count {
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #6366f1;
+    color: white;
+    border-radius: $radius-full;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+  }
+
+  &:hover, &.active {
+    border-color: #6366f1;
+    color: #6366f1;
+  }
+}
+
+// Filters Panel
+.filters-panel {
+  background: white;
+  border-radius: $radius-xl;
+  padding: $space-lg;
+  margin-bottom: $space-lg;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-lg;
+  align-items: flex-end;
+
+  .filter-group {
+    flex: 1;
+    min-width: 150px;
+
+    label {
+      display: block;
+      font-size: $font-size-xs;
+      font-weight: $font-weight-medium;
+      color: $text-muted;
+      margin-bottom: $space-xs;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-select {
+      width: 100%;
+    }
+  }
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  cursor: pointer;
+  font-size: $font-size-sm;
+  color: $text-primary;
+  padding: $space-sm $space-md;
+  background: #f8fafc;
+  border-radius: $radius-md;
+
+  input {
+    width: 18px;
+    height: 18px;
+    accent-color: #6366f1;
+    cursor: pointer;
+  }
+}
+
 // Loading
 .loading-state {
   display: flex;
@@ -323,7 +419,57 @@
   color: $text-secondary;
   line-height: 1.6;
   flex: 1;
-  margin-bottom: $space-lg;
+  margin-bottom: $space-md;
+}
+
+.card-badges {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+}
+
+.remote-badge {
+  padding: $space-xs $space-sm;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.job-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-xs;
+  margin-bottom: $space-md;
+}
+
+.tag {
+  padding: $space-xs $space-sm;
+  border-radius: $radius-md;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+
+  &.experience {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+  }
+
+  &.job-type {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+  }
+
+  &.skill {
+    background: #f1f5f9;
+    color: $text-secondary;
+  }
+
+  &.more {
+    background: transparent;
+    color: $text-muted;
+    padding-left: 0;
+  }
 }
 
 .card-bottom {
@@ -338,6 +484,7 @@
   display: flex;
   align-items: center;
   gap: $space-md;
+  flex-wrap: wrap;
 }
 
 .info-item {
@@ -356,6 +503,10 @@
     font-weight: $font-weight-bold;
     font-size: $font-size-lg;
     color: #16a34a;
+  }
+
+  &.location {
+    font-size: $font-size-xs;
   }
 }
 
