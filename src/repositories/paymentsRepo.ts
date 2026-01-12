@@ -1,5 +1,5 @@
 import { db } from '../config/init_db.js';
-import { status, Payment } from '../interfaces/Payments.js';
+import { PaymentStatus, Payment } from '../interfaces/Payments.js';
 
 export const paymentsRepo = {
 
@@ -10,7 +10,7 @@ export const paymentsRepo = {
         return result || [];
     },
     
-    async create(job_id: number, payer_id: number, payee_id: number, amount: number, status: status): Promise<number | null> {
+    async create(job_id: number, payer_id: number, payee_id: number, amount: number, status: PaymentStatus): Promise<number | null> {
         const result = await db.connection?.run(
             `INSERT INTO payments (job_id, payer_id, payee_id, amount, status) VALUES (?, ?, ?, ?, ?)`,
             job_id, payer_id, payee_id, amount, status
@@ -26,7 +26,7 @@ export const paymentsRepo = {
         );
     },
     
-    async update(payment_id: number, updateData: { job_id?: number, payer_id?: number, payee_id?: number, amount?: number, status?: status}): Promise<boolean> {
+    async update(payment_id: number, updateData: { job_id?: number, payer_id?: number, payee_id?: number, amount?: number, status?: PaymentStatus}): Promise<boolean> {
         const setClauses: string[] = [];
         const params: (string | number)[] = [];
 

@@ -2,18 +2,18 @@ import { Request, Response } from 'express';
 import { paymentsRepo } from '../repositories/paymentsRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
-import { status } from '../interfaces/Payments.js';
+import { PaymentStatus } from '../interfaces/Payments.js';
 import { sendError, sendSuccess } from '../utils/http.js';
 
 export const createPayment = async (req: Request, res: Response) => {
-    const {job_id, payer_id, receiver_id, amount, status} = req.body;
+    const {job_id, payer_id, payee_id, amount, status} = req.body;
 
-    if (job_id === undefined || payer_id === undefined || receiver_id === undefined || amount === undefined || !status) {
-        return sendError(res, 400, 'job_id, payer_id, receiver_id, amount and status are required.');
+    if (job_id === undefined || payer_id === undefined || payee_id === undefined || amount === undefined || !status) {
+        return sendError(res, 400, 'job_id, payer_id, payee_id, amount and status are required.');
     }
 
-    if (!['Pending', 'Paid', 'Failed'].includes(status)) {
-        return sendError(res, 400, 'status must be Pending, Paid, or Failed.');
+    if (!['pending', 'completed', 'failed', 'refunded'].includes(status)) {
+        return sendError(res, 400, 'status must be pending, completed, failed, or refunded.');
     }
 
     if (amount <= 0) {
@@ -31,12 +31,12 @@ export const createPayment = async (req: Request, res: Response) => {
             return sendError(res, 400, 'payer_id does not reference an existing user.');
         }
 
-        const receiver = await userRepo.findById(receiver_id);
-        if (!receiver) {
-            return sendError(res, 400, 'receiver_id does not reference an existing user.');
+        const payee = await userRepo.findById(payee_id);
+        if (!payee) {
+            return sendError(res, 400, 'payee_id does not reference an existing user.');
         }
 
-        const newPaymentId = await paymentsRepo.create(job_id, payer_id, receiver_id, amount, status);
+        const newPaymentId = await paymentsRepo.create(job_id, payer_id, payee_id, amount, status);
 
         if (newPaymentId) {
             return sendSuccess(res, { payment_id: newPaymentId }, 201);
@@ -102,13 +102,13 @@ export const deletePayment = async(req: Request, res: Response) =>{
 
 export const updatePayment = async (req: Request, res: Response) => {
     const paymentId = parseInt(req.params.id, 10);
-    const { job_id, payer_id, receiver_id, amount, status} = req.body; 
+    const { job_id, payer_id, payee_id, amount, status} = req.body; 
 
     if (isNaN(paymentId)) {
         return sendError(res, 400, 'Invalid payment ID format.');
     }
 
-    const updateData: {job_id?: number, payer_id?: number, receiver_id?: number, amount?: number, status?: status} = {};
+    const updateData: {job_id?: number, payer_id?: number, payee_id?: number, amount?: number, status?: PaymentStatus} = {};
     
     if (job_id !== undefined) {
         const job = await jobRepo.findById(job_id);
@@ -124,12 +124,12 @@ export const updatePayment = async (req: Request, res: Response) => {
         }
         updateData.payer_id = payer_id;
     }
-    if (receiver_id !== undefined) {
-        const receiver = await userRepo.findById(receiver_id);
-        if (!receiver) {
-            return sendError(res, 400, 'receiver_id does not reference an existing user.');
+    if (payee_id !== undefined) {
+        const payee = await userRepo.findById(payee_id);
+        if (!payee) {
+            return sendError(res, 400, 'payee_id does not reference an existing user.');
         }
-        updateData.receiver_id = receiver_id;
+        updateData.payee_id = payee_id;
     }
     if (amount !== undefined) {
         if (amount <= 0) {
@@ -138,14 +138,14 @@ export const updatePayment = async (req: Request, res: Response) => {
         updateData.amount = amount;
     }
     if (status !== undefined) {
-        if (!['Pending', 'Paid', 'Failed'].includes(status)) {
-            return sendError(res, 400, 'status must be Pending, Paid, or Failed.');
+        if (!['pending', 'completed', 'failed', 'refunded'].includes(status)) {
+            return sendError(res, 400, 'status must be pending, completed, failed, or refunded.');
         }
         updateData.status = status;
     }
 
     if (Object.keys(updateData).length === 0) {
-        return sendError(res, 400, 'No valid fields provided for update (allowed: job_id, payer_id, receiver_id, amount, status)')
+        return sendError(res, 400, 'No valid fields provided for update (allowed: job_id, payer_id, payee_id, amount, status)')
     }
     
     try {

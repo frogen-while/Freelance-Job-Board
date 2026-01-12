@@ -14,7 +14,6 @@
     "typeRoots": [
       "node_modules/@types"
     ],
-    "types": ["jasmine"],
     "lib": [
       "es2020",
       "dom"
@@ -24,6 +23,7 @@
   "exclude": [
     "cypress",
     "cypress/**",
-    "cypress.config.ts"
+    "cypress.config.ts",
+    "**/*.spec.ts"
   ]
 }

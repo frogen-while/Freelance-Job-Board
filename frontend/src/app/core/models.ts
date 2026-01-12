@@ -32,6 +32,7 @@ export interface FreelancerProfile {
   location: string | null;
   hourly_rate: number | null;
   availability_status: string | null;
+  onboarding_completed?: boolean;
   first_name: string;
   last_name: string;
   skills: string[];

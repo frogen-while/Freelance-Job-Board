@@ -110,13 +110,6 @@ export const setProfileSkills = async (req: Request, res: Response) => {
   try {
     await profileSkillsRepo.setSkillsForUser(userId, skill_ids as number[]);
     await profilesRepo.upsert(userId, {
-      description: null,
-      photo_url: null,
-      education_info: null,
-      languages: null,
-      timezone: null,
-      hourly_rate_min: null,
-      hourly_rate_max: null,
       skills: skill_ids as number[]
     });
 
