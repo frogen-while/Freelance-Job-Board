@@ -23,18 +23,7 @@
       <!-- Step 1: Basic Info -->
       <div class="step" *ngIf="currentStep === 1">
         <h2>👋 Welcome, {{ user?.first_name }}!</h2>
-        <p class="step-desc">Let's start with your display name and photo</p>
-
-        <div class="form-group">
-          <label for="display_name">Display Name</label>
-          <input 
-            type="text" 
-            id="display_name" 
-            [(ngModel)]="data.display_name" 
-            placeholder="How should we call you?"
-            maxlength="100">
-          <span class="hint">This is how clients will see your name</span>
-        </div>
+        <p class="step-desc">Let's start with your profile photo and location</p>
 
         <div class="form-group">
           <label for="photo_url">Profile Photo URL (optional)</label>

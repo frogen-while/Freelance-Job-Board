@@ -3,7 +3,6 @@ import { AuthService, PublicUser } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
 
 interface ProfileData {
-  display_name?: string;
   headline?: string;
   photo_url?: string;
   location?: string;
@@ -126,7 +125,6 @@ export class ProfileSidebarComponent implements OnInit {
   }
 
   getDisplayName(): string {
-    if (this.profile?.display_name) return this.profile.display_name;
     if (this.user) return `${this.user.first_name} ${this.user.last_name}`;
     return 'User';
   }

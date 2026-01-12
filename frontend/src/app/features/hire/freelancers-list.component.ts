@@ -122,8 +122,7 @@ export class FreelancersListComponent implements OnInit {
   }
 
   getDisplayName(freelancer: FreelancerProfile): string {
-    if (freelancer.display_name) return freelancer.display_name;
-    return `${freelancer.first_name} ${freelancer.last_name?.charAt(0)}.`;
+    return `${freelancer.first_name} ${freelancer.last_name?.charAt(0) || ''}.`;
   }
 
   getAvailabilityLabel(status: string): string {
@@ -150,11 +149,7 @@ export class FreelancersListComponent implements OnInit {
   }
 
   onViewProfile(freelancer: FreelancerProfile): void {
-    if (this.isLoggedIn) {
-      this.router.navigate(['/profile', freelancer.user_id]);
-    } else {
-      this.showAuthModal = true;
-    }
+    this.router.navigate(['/profile', freelancer.user_id]);
   }
 
   closeAuthModal(): void {

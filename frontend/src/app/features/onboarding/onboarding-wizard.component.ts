@@ -6,7 +6,6 @@ import { ExperienceLevel, AvailabilityStatus, CompanySize } from '../../core/mod
 
 interface OnboardingData {
   // Base profile
-  display_name: string;
   headline: string;
   description: string;
   photo_url: string;
@@ -54,7 +53,6 @@ export class OnboardingWizardComponent implements OnInit {
   ];
 
   data: OnboardingData = {
-    display_name: '',
     headline: '',
     description: '',
     photo_url: '',
@@ -87,9 +85,6 @@ export class OnboardingWizardComponent implements OnInit {
 
     this.isFreelancer = this.auth.isFreelancer();
     this.totalSteps = 4; // Both freelancer and employer have 4 steps
-
-    // Pre-fill display name
-    this.data.display_name = `${this.user.first_name} ${this.user.last_name}`;
 
     // Load skills for freelancers
     if (this.isFreelancer) {
@@ -158,7 +153,8 @@ export class OnboardingWizardComponent implements OnInit {
   canProceed(): boolean {
     switch (this.currentStep) {
       case 1:
-        return this.data.display_name.trim().length >= 2;
+        // Step 1 is always passable (photo and location are optional)
+        return true;
       case 2:
         return this.data.headline.trim().length >= 5;
       case 3:
@@ -185,7 +181,6 @@ export class OnboardingWizardComponent implements OnInit {
 
     // Step 1: Save base profile
     const basePayload: any = {
-      display_name: this.data.display_name,
       headline: this.data.headline,
       description: this.data.description,
       photo_url: this.data.photo_url || null,

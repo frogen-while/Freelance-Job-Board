@@ -16,6 +16,7 @@ const routes: Routes = [
   { path: 'categories', component: CategoriesComponent },
   { path: 'about', component: AboutComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard, OnboardingGuard] },
+  { path: 'profile/:userId', component: ProfileComponent },
   { path: 'jobs', loadChildren: () => import('./features/jobs/jobs.module').then(m => m.JobsModule) },
   // Landing pages accessible to all, browse pages have guards inside modules
   { path: 'hire', loadChildren: () => import('./features/hire/hire.module').then(m => m.HireModule) },

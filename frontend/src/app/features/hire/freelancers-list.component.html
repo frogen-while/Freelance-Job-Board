@@ -81,7 +81,8 @@
 
       <!-- Freelancers Grid -->
       <div class="freelancers-grid" *ngIf="!loading && freelancers.length > 0">
-        <div class="freelancer-card" *ngFor="let freelancer of freelancers">
+        <div class="freelancer-card" *ngFor="let freelancer of freelancers" 
+             [routerLink]="['/profile', freelancer.user_id]" style="cursor: pointer;">
           <div class="card-header">
             <div class="freelancer-avatar">
               <img *ngIf="freelancer.photo_url" [src]="freelancer.photo_url" [alt]="getDisplayName(freelancer)" />

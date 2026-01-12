@@ -1,15 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService, PublicUser } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
 import { ExperienceLevel, AvailabilityStatus, CompanySize } from '../../core/models';
 
 interface ProfileData {
-  display_name: string;
   headline: string;
   description: string;
   photo_url: string;
   location: string;
+}
+
+interface ProfileUserInfo {
+  first_name: string;
+  last_name: string;
+  email: string;
+  user_type: string;
 }
 
 interface FreelancerData {
@@ -54,10 +60,14 @@ export class ProfileComponent implements OnInit {
   editMode = false;
   successMessage = '';
   errorMessage = '';
+  
+  // Public profile viewing
+  isOwnProfile = true;
+  profileUserId: number | null = null;
+  profileUserInfo: ProfileUserInfo | null = null;
 
   // Base profile data
   profileData: ProfileData = {
-    display_name: '',
     headline: '',
     description: '',
     photo_url: '',
@@ -103,45 +113,89 @@ export class ProfileComponent implements OnInit {
   constructor(
     public auth: AuthService, 
     private api: ApiService, 
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.user = this.auth.getUser();
-    if (!this.user) {
-      this.router.navigateByUrl('/login');
-      return;
-    }
-
-    this.isFreelancer = this.auth.isFreelancer();
-    this.isEmployer = !this.isFreelancer;
-    this.loadProfile();
+    const currentUser = this.auth.getUser();
     
-    if (this.isFreelancer) {
-      this.loadSkills();
-      this.loadFreelancerProfile();
+    // Check if viewing specific user profile via route param
+    const userIdParam = this.route.snapshot.paramMap.get('userId');
+    
+    if (userIdParam) {
+      // Viewing a specific user's profile (could be own or someone else's)
+      this.profileUserId = Number(userIdParam);
+      this.isOwnProfile = currentUser?.user_id === this.profileUserId;
     } else {
-      this.loadEmployerProfile();
+      // Viewing own profile at /profile
+      if (!currentUser) {
+        this.router.navigateByUrl('/login');
+        return;
+      }
+      this.profileUserId = currentUser.user_id;
+      this.isOwnProfile = true;
+    }
+    
+    if (this.isOwnProfile && currentUser) {
+      this.user = currentUser;
+      this.isFreelancer = this.auth.isFreelancer();
+      this.isEmployer = !this.isFreelancer;
+    }
+    
+    this.loadUserInfo();
+    this.loadProfile();
+    this.loadSkills();
+  }
+
+  loadUserInfo(): void {
+    if (!this.profileUserId) return;
+    
+    this.api.getUserById(this.profileUserId).subscribe({
+      next: (res: any) => {
+        if (res.success && res.data) {
+          this.profileUserInfo = res.data;
+          // Determine user type from profile data for non-own profiles
+          if (!this.isOwnProfile) {
+            this.isFreelancer = res.data.user_type === 'freelancer';
+            this.isEmployer = res.data.user_type === 'employer';
+            // Load type-specific profile after determining user type
+            if (this.isFreelancer) {
+              this.loadFreelancerProfile();
+            } else {
+              this.loadEmployerProfile();
+            }
+          }
+        }
+      }
+    });
+    
+    // For own profile, load type-specific data immediately
+    if (this.isOwnProfile) {
+      if (this.isFreelancer) {
+        this.loadFreelancerProfile();
+      } else {
+        this.loadEmployerProfile();
+      }
     }
   }
 
   loadProfile(): void {
-    if (!this.user) return;
+    if (!this.profileUserId) return;
 
-    this.api.getProfileByUserId(this.user.user_id).subscribe({
+    this.api.getProfileByUserId(this.profileUserId).subscribe({
       next: (res: any) => {
         if (res.success && res.data) {
           const profile = res.data;
           this.profileData = {
-            display_name: profile.display_name || `${this.user!.first_name} ${this.user!.last_name}`,
             headline: profile.headline || '',
             description: profile.description || '',
             photo_url: profile.photo_url || '',
             location: profile.location || ''
           };
           
-          // Load selected skills for freelancers
-          if (this.isFreelancer && profile.skills) {
+          // Load selected skills
+          if (profile.skills) {
             this.loadProfileSkills();
           }
         }
@@ -154,9 +208,9 @@ export class ProfileComponent implements OnInit {
   }
 
   loadFreelancerProfile(): void {
-    if (!this.user) return;
+    if (!this.profileUserId) return;
 
-    this.api.getFreelancerProfile(this.user.user_id).subscribe({
+    this.api.getFreelancerProfile(this.profileUserId).subscribe({
       next: (res: any) => {
         if (res.success && res.data) {
           const fp = res.data;
@@ -176,9 +230,9 @@ export class ProfileComponent implements OnInit {
   }
 
   loadEmployerProfile(): void {
-    if (!this.user) return;
+    if (!this.profileUserId) return;
 
-    this.api.getEmployerProfile(this.user.user_id).subscribe({
+    this.api.getEmployerProfile(this.profileUserId).subscribe({
       next: (res: any) => {
         if (res.success && res.data) {
           const ep = res.data;
@@ -210,9 +264,9 @@ export class ProfileComponent implements OnInit {
   }
 
   loadProfileSkills(): void {
-    if (!this.user) return;
+    if (!this.profileUserId) return;
 
-    this.api.getProfileSkills(this.user.user_id).subscribe({
+    this.api.getProfileSkills(this.profileUserId).subscribe({
       next: (res: any) => {
         if (res.success && res.data) {
           this.selectedSkills = res.data.map((s: any) => s.skill_id);
@@ -257,8 +311,23 @@ export class ProfileComponent implements OnInit {
   }
 
   getInitials(): string {
-    if (!this.user) return '';
-    return (this.user.first_name[0] + this.user.last_name[0]).toUpperCase();
+    if (this.isOwnProfile && this.user) {
+      return (this.user.first_name[0] + this.user.last_name[0]).toUpperCase();
+    }
+    if (this.profileUserInfo) {
+      return (this.profileUserInfo.first_name[0] + this.profileUserInfo.last_name[0]).toUpperCase();
+    }
+    return '?';
+  }
+
+  getFullName(): string {
+    if (this.isOwnProfile && this.user) {
+      return `${this.user.first_name} ${this.user.last_name}`;
+    }
+    if (this.profileUserInfo) {
+      return `${this.profileUserInfo.first_name} ${this.profileUserInfo.last_name}`;
+    }
+    return 'User';
   }
 
   getAvailabilityLabel(): string {
@@ -299,7 +368,6 @@ export class ProfileComponent implements OnInit {
 
     // Step 1: Save base profile
     const basePayload: any = {
-      display_name: this.profileData.display_name,
       headline: this.profileData.headline,
       description: this.profileData.description,
       photo_url: this.profileData.photo_url || null,
