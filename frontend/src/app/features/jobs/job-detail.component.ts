@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { AuthService, PublicUser } from '../../core/auth.service';
-import { Job, Category, Skill } from '../../core/models';
+import { Job, Category, Skill, JobApplication } from '../../core/models';
 
 interface EmployerInfo {
   user_id: number;
@@ -24,6 +24,10 @@ export class JobDetailComponent implements OnInit {
   skills: Skill[] = [];
   jobSkillNames: string[] = [];
   
+  // Job applications (for employer view)
+  applications: JobApplication[] = [];
+  loadingApplications = false;
+  
   loading = true;
   applying = false;
   applied = false;
@@ -33,6 +37,7 @@ export class JobDetailComponent implements OnInit {
   
   isLoggedIn = false;
   isFreelancer = false;
+  isOwner = false;
   showAuthModal = false;
 
   constructor(
@@ -87,9 +92,15 @@ export class JobDetailComponent implements OnInit {
       next: (res) => {
         if (res.success && res.data) {
           this.job = res.data;
+          this.isOwner = this.currentUser?.user_id === this.job.employer_id;
           this.loadEmployer(this.job.employer_id);
           this.loadCategory(this.job.category_id);
           this.mapJobSkills();
+          
+          // Load applications if owner
+          if (this.isOwner) {
+            this.loadApplications(id);
+          }
         }
         this.loading = false;
       },
@@ -117,6 +128,64 @@ export class JobDetailComponent implements OnInit {
         }
       }
     });
+  }
+
+  loadApplications(jobId: number) {
+    this.loadingApplications = true;
+    this.api.getApplicationsByJobId(jobId).subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.applications = res.data;
+        }
+        this.loadingApplications = false;
+      },
+      error: () => {
+        this.loadingApplications = false;
+      }
+    });
+  }
+
+  acceptApplication(applicationId: number) {
+    this.api.updateApplicationStatus(applicationId, 'Accepted').subscribe({
+      next: (res) => {
+        if (res.success) {
+          // Update local state
+          const app = this.applications.find(a => a.application_id === applicationId);
+          if (app) app.status = 'Accepted';
+        }
+      },
+      error: () => {
+        alert('Failed to accept application. Please try again.');
+      }
+    });
+  }
+
+  rejectApplication(applicationId: number) {
+    this.api.updateApplicationStatus(applicationId, 'Rejected').subscribe({
+      next: (res) => {
+        if (res.success) {
+          // Update local state
+          const app = this.applications.find(a => a.application_id === applicationId);
+          if (app) app.status = 'Rejected';
+        }
+      },
+      error: () => {
+        alert('Failed to reject application. Please try again.');
+      }
+    });
+  }
+
+  getApplicantName(app: JobApplication): string {
+    if (app.display_name) return app.display_name;
+    if (app.first_name && app.last_name) return `${app.first_name} ${app.last_name}`;
+    return 'Unknown';
+  }
+
+  getApplicantInitials(app: JobApplication): string {
+    if (app.first_name && app.last_name) {
+      return (app.first_name[0] + app.last_name[0]).toUpperCase();
+    }
+    return '?';
   }
 
   apply() {

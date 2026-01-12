@@ -170,7 +170,7 @@ export class JobCreateComponent implements OnInit {
         if (res.success) {
           this.successMessage = 'Job posted successfully!';
           setTimeout(() => {
-            this.router.navigateByUrl('/hire');
+            this.router.navigateByUrl('/my-jobs');
           }, 1500);
         } else {
           this.errorMessage = res.error?.message || 'Failed to create job';

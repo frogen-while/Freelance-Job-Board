@@ -136,3 +136,66 @@ export const updateJobApplication = async (req: Request, res: Response) => {
         return sendError(res, 500, 'An internal server error occurred while updating the job application.');
     }
 };
+
+export const getApplicationsByJobId = async (req: Request, res: Response) => {
+    const jobId = parseInt(req.params.jobId, 10);
+
+    if (isNaN(jobId)) {
+        return sendError(res, 400, 'Invalid job ID format.');
+    }
+
+    try {
+        const applications = await jobAplRepo.findByJobId(jobId);
+        return sendSuccess(res, applications);
+    } catch (error) {
+        console.error(`Error fetching applications for job ${jobId}:`, error);
+        return sendError(res, 500, 'An internal server error occurred while fetching applications.');
+    }
+};
+
+export const getApplicationsByFreelancerId = async (req: Request, res: Response) => {
+    const freelancerId = parseInt(req.params.freelancerId, 10);
+
+    if (isNaN(freelancerId)) {
+        return sendError(res, 400, 'Invalid freelancer ID format.');
+    }
+
+    try {
+        const applications = await jobAplRepo.findByFreelancerId(freelancerId);
+        return sendSuccess(res, applications);
+    } catch (error) {
+        console.error(`Error fetching applications for freelancer ${freelancerId}:`, error);
+        return sendError(res, 500, 'An internal server error occurred while fetching applications.');
+    }
+};
+
+export const updateApplicationStatus = async (req: Request, res: Response) => {
+    const applicationId = parseInt(req.params.id, 10);
+    const { status } = req.body;
+
+    if (isNaN(applicationId)) {
+        return sendError(res, 400, 'Invalid application ID format.');
+    }
+
+    if (!status || !['Pending', 'Accepted', 'Rejected'].includes(status)) {
+        return sendError(res, 400, 'Valid status is required (Pending, Accepted, Rejected).');
+    }
+
+    try {
+        const existingApplication = await jobAplRepo.findById(applicationId);
+        if (!existingApplication) {
+            return sendError(res, 404, 'Job application not found.');
+        }
+
+        const success = await jobAplRepo.update(applicationId, { status });
+
+        if (success) {
+            return sendSuccess(res, { message: `Application ${status.toLowerCase()} successfully.` });
+        } else {
+            return sendError(res, 500, 'Failed to update application status.');
+        }
+    } catch (error) {
+        console.error(`Error updating application status ${applicationId}:`, error);
+        return sendError(res, 500, 'An internal server error occurred while updating application status.');
+    }
+};

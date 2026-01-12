@@ -191,3 +191,30 @@ export interface CreateJobPayload {
   location?: string;
   skill_ids?: number[];
 }
+
+// ============ JOB APPLICATION ============
+
+export type JobApplicationStatus = 'Pending' | 'Accepted' | 'Rejected';
+
+export interface JobApplication {
+  application_id: number;
+  job_id: number;
+  freelancer_id: number;
+  bid_amount: number;
+  proposal_text?: string;
+  status: JobApplicationStatus;
+  created_at?: string;
+  // Joined freelancer data
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  display_name?: string;
+  headline?: string;
+  photo_url?: string;
+  hourly_rate?: number;
+  experience_level?: ExperienceLevel;
+  // Joined job data (for freelancer's view)
+  job_title?: string;
+  job_budget?: number;
+  job_status?: string;
+}

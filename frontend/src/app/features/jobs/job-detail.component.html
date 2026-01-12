@@ -178,9 +178,15 @@
           </div>
 
           <!-- Employer View -->
-          <div class="employer-view" *ngIf="!applied && isLoggedIn && !isFreelancer && job.status === 'Open'">
-            <h3>This is Your Listing</h3>
-            <p>Only freelancers can submit proposals to this job.</p>
+          <div class="employer-view" *ngIf="!applied && isLoggedIn && isOwner">
+            <h3>Manage Your Listing</h3>
+            <p class="proposals-count">{{ applications.length }} proposal(s) received</p>
+          </div>
+
+          <!-- Non-owner employer view -->
+          <div class="employer-view" *ngIf="!applied && isLoggedIn && !isFreelancer && !isOwner && job.status === 'Open'">
+            <h3>Employer Account</h3>
+            <p>Only freelancers can submit proposals to jobs.</p>
           </div>
 
           <!-- Guest View -->
@@ -190,6 +196,58 @@
             <button class="btn-apply" (click)="showAuthModal = true">Sign Up to Apply</button>
             <p class="login-link">Already have an account? <a routerLink="/login">Log in</a></p>
           </div>
+        </div>
+
+        <!-- Proposals Section (Employer Only) -->
+        <div class="proposals-card" *ngIf="isOwner && applications.length > 0">
+          <h3>Proposals ({{ applications.length }})</h3>
+          
+          <div class="proposals-list">
+            <div class="proposal-item" *ngFor="let app of applications" [class]="'status-' + app.status.toLowerCase()">
+              <div class="proposal-header">
+                <div class="applicant-info">
+                  <div class="applicant-avatar">
+                    <img *ngIf="app.photo_url" [src]="app.photo_url" [alt]="getApplicantName(app)" />
+                    <span *ngIf="!app.photo_url" class="avatar-initials">{{ getApplicantInitials(app) }}</span>
+                  </div>
+                  <div class="applicant-details">
+                    <h4 class="applicant-name">{{ getApplicantName(app) }}</h4>
+                    <p class="applicant-headline" *ngIf="app.headline">{{ app.headline }}</p>
+                    <p class="applicant-rate" *ngIf="app.hourly_rate">${{ app.hourly_rate }}/hr</p>
+                  </div>
+                </div>
+                <div class="proposal-bid">
+                  <span class="bid-amount">${{ app.bid_amount }}</span>
+                  <span class="bid-label">Proposed</span>
+                </div>
+              </div>
+              
+              <div class="proposal-text" *ngIf="app.proposal_text">
+                <p>{{ app.proposal_text }}</p>
+              </div>
+              
+              <div class="proposal-footer">
+                <span class="proposal-status" [class]="'status-' + app.status.toLowerCase()">
+                  {{ app.status }}
+                </span>
+                
+                <div class="proposal-actions" *ngIf="app.status === 'Pending'">
+                  <button class="btn-accept" (click)="acceptApplication(app.application_id)">
+                    Accept
+                  </button>
+                  <button class="btn-reject" (click)="rejectApplication(app.application_id)">
+                    Reject
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Proposals Yet -->
+        <div class="no-proposals-card" *ngIf="isOwner && applications.length === 0 && !loadingApplications">
+          <h3>No Proposals Yet</h3>
+          <p>Your job is visible to freelancers. Proposals will appear here when freelancers apply.</p>
         </div>
       </aside>
     </div>

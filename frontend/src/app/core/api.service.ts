@@ -17,7 +17,8 @@ import {
   CreateJobPayload,
   ExperienceLevel,
   AvailabilityStatus,
-  CompanySize
+  CompanySize,
+  JobApplication
 } from './models';
 
 @Injectable({ providedIn: 'root' })
@@ -179,5 +180,17 @@ export class ApiService {
     status: string;
   }): Observable<ApiResponse<{ application_id: number }>> {
     return this.http.post<ApiResponse<{ application_id: number }>>(`${this.base}/jobapplications`, payload);
+  }
+
+  getApplicationsByJobId(jobId: number): Observable<ApiResponse<JobApplication[]>> {
+    return this.http.get<ApiResponse<JobApplication[]>>(`${this.base}/jobapplications/job/${jobId}`);
+  }
+
+  getApplicationsByFreelancerId(freelancerId: number): Observable<ApiResponse<JobApplication[]>> {
+    return this.http.get<ApiResponse<JobApplication[]>>(`${this.base}/jobapplications/freelancer/${freelancerId}`);
+  }
+
+  updateApplicationStatus(applicationId: number, status: 'Pending' | 'Accepted' | 'Rejected'): Observable<ApiResponse<{ message: string }>> {
+    return this.http.patch<ApiResponse<{ message: string }>>(`${this.base}/jobapplications/${applicationId}/status`, { status });
   }
 }

@@ -62,6 +62,34 @@ export const jobAplRepo = {
             'DELETE FROM jobapplications WHERE application_id = ?',
             application_id
         );
+    },
+
+    async findByJobId(job_id: number): Promise<JobApl[]> {
+        const result = await db.connection?.all<JobApl[]>(
+            `SELECT ja.*, u.first_name, u.last_name, u.email,
+                    p.display_name, p.headline, p.photo_url,
+                    fp.hourly_rate, fp.experience_level
+             FROM jobapplications ja
+             LEFT JOIN users u ON ja.freelancer_id = u.user_id
+             LEFT JOIN profiles p ON ja.freelancer_id = p.user_id
+             LEFT JOIN freelancer_profiles fp ON ja.freelancer_id = fp.user_id
+             WHERE ja.job_id = ?
+             ORDER BY ja.created_at DESC`,
+            job_id
+        );
+        return result || [];
+    },
+
+    async findByFreelancerId(freelancer_id: number): Promise<JobApl[]> {
+        const result = await db.connection?.all<JobApl[]>(
+            `SELECT ja.*, j.title as job_title, j.budget as job_budget, j.status as job_status
+             FROM jobapplications ja
+             LEFT JOIN jobs j ON ja.job_id = j.job_id
+             WHERE ja.freelancer_id = ?
+             ORDER BY ja.created_at DESC`,
+            freelancer_id
+        );
+        return result || [];
     }
 
 }
