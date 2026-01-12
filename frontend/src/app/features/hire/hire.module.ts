@@ -6,6 +6,7 @@ import { HireLandingComponent } from './hire-landing.component';
 import { FreelancersListComponent } from './freelancers-list.component';
 import { JobCreateComponent } from './job-create.component';
 import { SharedModule } from '../../shared/shared.module';
+import { AuthGuard, OnboardingGuard, EmployerGuard } from '../../core/guards';
 
 @NgModule({
   declarations: [HireLandingComponent, FreelancersListComponent, JobCreateComponent],
@@ -16,7 +17,7 @@ import { SharedModule } from '../../shared/shared.module';
     RouterModule.forChild([
       { path: '', component: HireLandingComponent },
       { path: 'browse', component: FreelancersListComponent },
-      { path: 'post-job', component: JobCreateComponent }
+      { path: 'post-job', component: JobCreateComponent, canActivate: [AuthGuard, OnboardingGuard, EmployerGuard] }
     ])
   ]
 })

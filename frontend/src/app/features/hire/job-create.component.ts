@@ -53,8 +53,8 @@ export class JobCreateComponent implements OnInit {
   ngOnInit(): void {
     this.user = this.auth.getUser();
     
-    if (!this.user || this.auth.isFreelancer()) {
-      this.router.navigateByUrl('/');
+    // Guards handle auth/employer check, but double-check here
+    if (!this.user) {
       return;
     }
 
@@ -194,9 +194,8 @@ export class JobCreateComponent implements OnInit {
 
   getJobTypeLabel(type: string): string {
     const labels: Record<string, string> = {
-      'one_time': 'One-time project',
-      'ongoing': 'Ongoing project',
-      'contract': 'Contract position'
+      'fixed': 'Fixed Price',
+      'hourly': 'Hourly Rate'
     };
     return labels[type] || '';
   }
@@ -204,9 +203,10 @@ export class JobCreateComponent implements OnInit {
   getDurationLabel(duration: string): string {
     const labels: Record<string, string> = {
       'less_than_week': 'Less than a week',
-      '1_to_4_weeks': '1 to 4 weeks',
-      '1_to_3_months': '1 to 3 months',
-      '3_to_6_months': '3 to 6 months',
+      '1_2_weeks': '1-2 weeks',
+      '2_4_weeks': '2-4 weeks',
+      '1_3_months': '1-3 months',
+      '3_6_months': '3-6 months',
       'more_than_6_months': 'More than 6 months'
     };
     return labels[duration] || '';

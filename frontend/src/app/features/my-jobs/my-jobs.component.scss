@@ -8,37 +8,6 @@
   padding-bottom: 4rem;
 }
 
-.bg-shapes {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 0;
-  
-  .shape {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.4;
-  }
-  
-  .shape-1 {
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, transparent 70%);
-    top: -150px;
-    right: -150px;
-  }
-  
-  .shape-2 {
-    width: 350px;
-    height: 350px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
-    bottom: -100px;
-    left: -100px;
-  }
-}
-
 .page-container {
   position: relative;
   z-index: 1;

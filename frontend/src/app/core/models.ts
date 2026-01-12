@@ -8,8 +8,8 @@ export interface ApiResponse<T> {
 
 export type ExperienceLevel = 'entry' | 'intermediate' | 'expert';
 export type AvailabilityStatus = 'available' | 'partially_available' | 'not_available';
-export type JobType = 'one_time' | 'ongoing' | 'contract';
-export type DurationEstimate = 'less_than_week' | '1_to_4_weeks' | '1_to_3_months' | '3_to_6_months' | 'more_than_6_months';
+export type JobType = 'fixed' | 'hourly';
+export type DurationEstimate = 'less_than_week' | '1_2_weeks' | '2_4_weeks' | '1_3_months' | '3_6_months' | 'more_than_6_months';
 export type CompanySize = '1-10' | '11-50' | '51-200' | '201-500' | '501+';
 
 // ============ JOB ============

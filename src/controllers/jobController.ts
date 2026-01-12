@@ -97,7 +97,7 @@ export const getJobById = async (req: Request, res: Response) => {
     }
 
     try {
-        const job = await jobRepo.findById(jobId);
+        const  job = await jobRepo.findById(jobId);
 
         if (!job) {
             return sendError(res, 404, 'Job not found.');

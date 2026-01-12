@@ -14,7 +14,6 @@ export class MyJobsComponent implements OnInit {
   filteredJobs: Job[] = [];
   loading = true;
   statusFilter: string = 'all';
-  showCreateModal = false;
 
   stats = {
     total: 0,
@@ -72,14 +71,6 @@ export class MyJobsComponent implements OnInit {
     } else {
       this.filteredJobs = this.jobs.filter(j => j.status === status);
     }
-  }
-
-  openCreateModal(): void {
-    this.showCreateModal = true;
-  }
-
-  closeCreateModal(): void {
-    this.showCreateModal = false;
   }
 
   viewJob(jobId: number): void {
