@@ -4,13 +4,23 @@
   display: block;
 }
 
+// Local palette tuned to the global brand colors
+$surface-1: lighten($bg-page, 1%);
+$surface-2: lighten($bg-page, 3%);
+$surface-3: #eef2ff;
+$ink-strong: $primary;
+$ink-muted: $text-secondary;
+$accent-strong: $accent;
+$accent-soft: rgba($accent, 0.14);
+$accent-glow: rgba($accent, 0.1);
+
 .home-page {
   min-height: 100vh;
   background: 
-    radial-gradient(ellipse 120% 80% at 50% 0%, rgba(251, 146, 60, 0.04), transparent 50%),
-    radial-gradient(ellipse 100% 60% at 100% 30%, rgba(245, 158, 11, 0.03), transparent),
-    radial-gradient(ellipse 80% 50% at 0% 70%, rgba(251, 191, 36, 0.025), transparent),
-    linear-gradient(180deg, #fffbf5 0%, #fef7ed 30%, #fdf4e7 60%, #faf0e0 100%);
+    radial-gradient(ellipse 120% 80% at 50% 0%, rgba($accent-strong, 0.12), transparent 52%),
+    radial-gradient(ellipse 100% 60% at 100% 30%, rgba($primary, 0.08), transparent),
+    radial-gradient(ellipse 80% 50% at 0% 70%, rgba($accent-strong, 0.06), transparent),
+    linear-gradient(180deg, $surface-3 0%, $surface-2 45%, $surface-1 100%);
   padding: $space-2xl $space-lg;
   padding-top: 120px;
   position: relative;
@@ -51,7 +61,7 @@
 .shape-1 {
   width: 600px;
   height: 600px;
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.12), rgba(245, 158, 11, 0.08));
+  background: linear-gradient(135deg, rgba($accent-strong, 0.22), rgba($accent-strong, 0.14));
   top: -200px;
   right: -150px;
   animation-delay: 0s;
@@ -60,7 +70,7 @@
 .shape-2 {
   width: 500px;
   height: 500px;
-  background: linear-gradient(135deg, rgba(217, 119, 6, 0.08), rgba(251, 191, 36, 0.06));
+  background: linear-gradient(135deg, rgba($primary, 0.16), rgba($accent-strong, 0.12));
   bottom: 5%;
   left: -200px;
   animation-delay: -10s;
@@ -69,7 +79,7 @@
 .shape-3 {
   width: 400px;
   height: 400px;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(252, 211, 77, 0.05));
+  background: linear-gradient(135deg, rgba($accent-strong, 0.12), rgba($accent-strong, 0.08));
   top: 40%;
   right: -50px;
   animation-delay: -20s;
@@ -78,7 +88,7 @@
 .shape-4 {
   width: 250px;
   height: 250px;
-  background: linear-gradient(135deg, rgba(180, 83, 9, 0.06), rgba(217, 119, 6, 0.04));
+  background: linear-gradient(135deg, rgba($primary, 0.12), rgba($accent-strong, 0.08));
   top: 20%;
   left: 10%;
   animation-delay: -15s;
@@ -87,7 +97,7 @@
 .shape-5 {
   width: 350px;
   height: 350px;
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.07), rgba(251, 191, 36, 0.04));
+  background: linear-gradient(135deg, rgba($accent-strong, 0.1), rgba($accent-strong, 0.06));
   bottom: 25%;
   right: 20%;
   animation-delay: -25s;
@@ -108,7 +118,7 @@
   position: absolute;
   width: 4px;
   height: 4px;
-  background: rgba(217, 119, 6, 0.25);
+  background: rgba($accent-strong, 0.2);
   border-radius: 50%;
   animation: particle-float 20s ease-in-out infinite;
   
@@ -184,30 +194,30 @@
 }
 
 .hero-block {
-  background: linear-gradient(145deg, #ffffff 0%, #fffcf7 50%, #fef8f0 100%);
+  background: linear-gradient(145deg, $bg-white 0%, rgba($accent-strong, 0.04) 50%, rgba($accent-strong, 0.08) 100%);
   box-shadow: 
-    0 20px 60px rgba(180, 83, 9, 0.06),
-    0 0 0 1px rgba(217, 119, 6, 0.04);
+    0 20px 60px rgba($primary, 0.06),
+    0 0 0 1px rgba($accent-strong, 0.08);
 }
 
 .hero-badge {
   display: inline-flex;
   align-items: center;
   gap: $space-sm;
-  background: rgba(217, 119, 6, 0.08);
-  color: #92400e;
+  background: $accent-soft;
+  color: darken($accent-strong, 12%);
   padding: $space-sm $space-lg;
   border-radius: $radius-full;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   margin-bottom: $space-xl;
-  border: 1px solid rgba(217, 119, 6, 0.12);
+  border: 1px solid rgba($accent-strong, 0.25);
 }
 
 .badge-dot {
   width: 6px;
   height: 6px;
-  background: #f59e0b;
+  background: $accent-strong;
   border-radius: 50%;
   animation: pulse-dot 2s ease-in-out infinite;
 }
@@ -225,7 +235,7 @@
 .hero-title {
   font-size: 3.2rem;
   font-weight: $font-weight-extrabold;
-  color: #78350f;
+  color: $ink-strong;
   line-height: 1.1;
   margin-bottom: $space-md;
 
@@ -239,14 +249,14 @@
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%);
+  background: linear-gradient(135deg, $primary 0%, $accent-strong 50%, lighten($accent-strong, 10%) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .hero-subtitle {
-  color: #92400e;
+  color: $ink-muted;
   font-size: $font-size-lg;
   margin-bottom: $space-2xl;
 
@@ -263,12 +273,12 @@
   overflow: hidden;
   max-width: 560px;
   margin: 0 auto $space-lg;
-  border: 1px solid rgba(217, 119, 6, 0.1);
+  border: 1px solid rgba($accent-strong, 0.18);
   transition: all $transition-base;
 
   &:focus-within {
-    border-color: rgba(217, 119, 6, 0.3);
-    box-shadow: 0 4px 20px rgba(180, 83, 9, 0.1), 0 0 0 3px rgba(217, 119, 6, 0.08);
+    border-color: rgba($accent-strong, 0.4);
+    box-shadow: 0 4px 20px rgba($primary, 0.1), 0 0 0 3px rgba($accent-strong, 0.14);
   }
 
   @include respond-to(sm) {
@@ -286,10 +296,10 @@
   font-size: $font-size-base;
   outline: none;
   background: transparent;
-  color: #78350f;
+  color: $ink-strong;
 
   &::placeholder {
-    color: #d97706;
+    color: rgba($accent-strong, 0.6);
     opacity: 0.5;
   }
 
@@ -306,7 +316,7 @@
   align-items: center;
   justify-content: center;
   gap: $space-sm;
-  background: #78350f;
+  background: $accent-strong;
   color: white;
   border: none;
   padding: $space-lg $space-xl;
@@ -315,7 +325,7 @@
   transition: all $transition-base;
 
   &:hover {
-    background: #92400e;
+    background: $accent-hover;
   }
 
   @include respond-to(sm) {
@@ -334,7 +344,7 @@
   display: inline-flex;
   align-items: center;
   gap: $space-sm;
-  color: #92400e;
+  color: $accent-strong;
   font-weight: $font-weight-semibold;
   text-decoration: none;
   padding: $space-md $space-xl;
@@ -342,8 +352,8 @@
   transition: all $transition-base;
 
   &:hover {
-    background: rgba(217, 119, 6, 0.08);
-    color: #78350f;
+    background: $accent-soft;
+    color: $ink-strong;
     
     .cta-arrow {
       transform: translateX(4px);
@@ -356,7 +366,7 @@
 }
 
 .categories-block {
-  background: linear-gradient(145deg, #1c1917 0%, #292524 50%, #1c1917 100%);
+  background: linear-gradient(145deg, $primary-dark 0%, $primary 50%, $primary-light 100%);
   box-shadow: 
     0 20px 60px rgba(0, 0, 0, 0.2),
     0 0 0 1px rgba(255, 255, 255, 0.05);
@@ -364,7 +374,7 @@
   .block-title {
     display: inline-block;
     background: rgba(255, 255, 255, 0.05);
-    color: #a8a29e;
+    color: rgba(255, 255, 255, 0.78);
     padding: $space-md $space-2xl;
     border-radius: $radius-lg;
     margin-bottom: $space-2xl;
@@ -395,7 +405,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: $space-md;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(8px);
   padding: $space-xl;
   border-radius: $radius-xl;
@@ -404,12 +414,12 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(217, 119, 6, 0.4);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba($accent-strong, 0.5);
     transform: translateY(-4px);
 
     .category-icon {
-      color: #f59e0b;
+      color: $accent-strong;
       transform: scale(1.1);
     }
   }
@@ -422,7 +432,7 @@
 .category-icon {
   width: 40px;
   height: 40px;
-  color: #d97706;
+  color: $accent-strong;
   transition: all 0.3s ease;
 
   svg {
@@ -448,19 +458,19 @@
 }
 
 .how-it-works-block {
-  background: linear-gradient(145deg, #fffbf5 0%, #fef7ed 50%, #fef3e2 100%);
+  background: linear-gradient(145deg, $bg-white 0%, $surface-3 55%, $surface-2 100%);
   box-shadow: 
-    0 20px 60px rgba(180, 83, 9, 0.06),
-    0 0 0 1px rgba(217, 119, 6, 0.06);
+    0 20px 60px rgba($primary, 0.06),
+    0 0 0 1px rgba($accent-strong, 0.08);
 
   .block-title {
     display: inline-block;
     background: rgba(255, 255, 255, 0.8);
-    color: #44403c;
+    color: $ink-strong;
     padding: $space-md $space-2xl;
     border-radius: $radius-lg;
     margin-bottom: $space-2xl;
-    border: 1px solid rgba(68, 64, 60, 0.12);
+    border: 1px solid rgba($accent-strong, 0.12);
     font-size: 1.25rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -482,14 +492,14 @@
 
 .step-line {
   position: absolute;
-  top: 80px;
+  top: 113px;
   left: 15%;
   right: 15%;
   height: 3px;
   background: linear-gradient(90deg, 
-    rgba(217, 119, 6, 0.1) 0%, 
-    rgba(245, 158, 11, 0.3) 50%, 
-    rgba(217, 119, 6, 0.1) 100%);
+    rgba($accent-strong, 0.12) 0%, 
+    rgba($accent-strong, 0.32) 50%, 
+    rgba($accent-strong, 0.12) 100%);
   border-radius: $radius-full;
 
   &::before {
@@ -498,21 +508,14 @@
     top: 0;
     left: 0;
     height: 100%;
-    width: 30%;
-    background: linear-gradient(90deg, #f59e0b, #d97706);
+    width: 100%;
+    background: linear-gradient(90deg, $accent-strong, lighten($accent-strong, 10%));
     border-radius: $radius-full;
-    animation: progress-line 3s ease-in-out infinite;
   }
 
   @include respond-to(md) {
     display: none;
   }
-}
-
-@keyframes progress-line {
-  0% { left: 0; width: 0; }
-  50% { left: 35%; width: 30%; }
-  100% { left: 70%; width: 0; }
 }
 
 .step-card {
@@ -525,7 +528,7 @@
   width: 48px;
   height: 48px;
   margin: 0 auto $space-lg;
-  background: linear-gradient(135deg, #78350f, #92400e);
+  background: linear-gradient(135deg, $primary, darken($accent-strong, 6%));
   color: white;
   border-radius: 50%;
   display: flex;
@@ -541,7 +544,7 @@
     position: absolute;
     inset: -4px;
     border-radius: 50%;
-    border: 2px dashed rgba(217, 119, 6, 0.3);
+    border: 2px dashed rgba($accent-strong, 0.3);
     animation: rotate-border 10s linear infinite;
   }
 }
@@ -560,8 +563,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #d97706;
-  box-shadow: 0 4px 16px rgba(180, 83, 9, 0.1);
+  color: $accent-strong;
+  box-shadow: 0 4px 16px rgba($accent-strong, 0.12);
   transition: all 0.3s ease;
 
   svg {
@@ -571,39 +574,39 @@
 
   .step-card:hover & {
     transform: translateY(-4px) scale(1.05);
-    box-shadow: 0 8px 24px rgba(180, 83, 9, 0.15);
+    box-shadow: 0 8px 24px rgba($accent-strong, 0.2);
   }
 }
 
 .step-title {
   font-size: 1.25rem;
   font-weight: $font-weight-bold;
-  color: #78350f;
+  color: $ink-strong;
   margin-bottom: $space-xs;
 }
 
 .step-text {
   font-size: $font-size-base;
-  color: #92400e;
+  color: $ink-muted;
   max-width: 240px;
   margin: 0 auto;
   line-height: 1.5;
 }
 
 .features-block {
-  background: linear-gradient(145deg, #fffbf5 0%, #fef7ed 50%, #fef3e2 100%);
+  background: linear-gradient(145deg, $bg-white 0%, $surface-3 55%, $surface-2 100%);
   box-shadow: 
-    0 20px 60px rgba(180, 83, 9, 0.06),
-    0 0 0 1px rgba(217, 119, 6, 0.06);
+    0 20px 60px rgba($primary, 0.06),
+    0 0 0 1px rgba($accent-strong, 0.08);
 
   .block-title {
     display: inline-block;
     background: rgba(255, 255, 255, 0.8);
-    color: #44403c;
+    color: $ink-strong;
     padding: $space-md $space-2xl;
     border-radius: $radius-lg;
     margin-bottom: $space-2xl;
-    border: 1px solid rgba(68, 64, 60, 0.12);
+    border: 1px solid rgba($accent-strong, 0.12);
     font-size: 1.25rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -630,7 +633,7 @@
   backdrop-filter: blur(12px);
   border-radius: $radius-2xl;
   padding: $space-xl;
-  border: 1px solid rgba(217, 119, 6, 0.1);
+  border: 1px solid rgba($accent-strong, 0.16);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -642,14 +645,14 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #f59e0b, #d97706, #b45309);
+    background: linear-gradient(90deg, $accent-strong, lighten($accent-strong, 6%), lighten($accent-strong, 12%));
     opacity: 0;
     transition: opacity 0.3s ease;
   }
 
   &:hover {
     transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(180, 83, 9, 0.12);
+    box-shadow: 0 20px 40px rgba($primary, 0.12);
 
     &::before {
       opacity: 1;
@@ -693,7 +696,7 @@
 .shield-icon {
   width: 80px;
   height: 80px;
-  color: #b45309;
+  color: $accent-strong;
   animation: float-gentle 4s ease-in-out infinite;
 
   svg {
@@ -709,7 +712,7 @@
 
 .floating-badge {
   position: absolute;
-  background: linear-gradient(135deg, #78350f, #92400e);
+  background: linear-gradient(135deg, $primary, darken($accent-strong, 6%));
   color: white;
   padding: $space-xs $space-sm;
   border-radius: $radius-full;
@@ -745,20 +748,20 @@
 .bento-title {
   font-size: 1.5rem;
   font-weight: $font-weight-bold;
-  color: #78350f;
+  color: $ink-strong;
   margin-bottom: $space-sm;
 }
 
 .bento-text {
   font-size: $font-size-base;
-  color: #92400e;
+  color: $ink-muted;
   line-height: 1.6;
 }
 
 .bento-icon-wrap {
   width: 56px;
   height: 56px;
-  color: #f59e0b;
+  color: $accent-strong;
   margin-bottom: $space-lg;
   transition: transform 0.3s ease;
 
@@ -806,7 +809,7 @@
 .globe {
   width: 48px;
   height: 48px;
-  color: #d97706;
+  color: $accent-strong;
   animation: rotate-globe 20s linear infinite;
 
   svg {
@@ -828,7 +831,7 @@
 
 .star {
   font-size: 1.5rem;
-  color: #fbbf24;
+  color: #facc15;
   animation: star-pop 0.5s ease both;
 
   @for $i from 1 through 5 {
