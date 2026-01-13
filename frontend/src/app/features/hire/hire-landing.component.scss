@@ -7,9 +7,9 @@
 .hire-page {
   min-height: 100vh;
   background: 
-    radial-gradient(ellipse 120% 80% at 50% 0%, rgba(251, 146, 60, 0.04), transparent 50%),
-    radial-gradient(ellipse 100% 60% at 100% 30%, rgba(245, 158, 11, 0.03), transparent),
-    linear-gradient(180deg, #fffbf5 0%, #fef7ed 30%, #fdf4e7 60%, #faf0e0 100%);
+    radial-gradient(ellipse 120% 80% at 50% 0%, rgba($accent, 0.12), transparent 52%),
+    radial-gradient(ellipse 100% 60% at 100% 30%, rgba($primary, 0.08), transparent),
+    linear-gradient(180deg, #eef2ff 0%, lighten($bg-page, 3%) 45%, $bg-page 100%);
   padding-top: 80px;
   position: relative;
   overflow: hidden;
@@ -36,7 +36,7 @@
 .shape-1 {
   width: 600px;
   height: 600px;
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.12), rgba(245, 158, 11, 0.08));
+  background: linear-gradient(135deg, rgba($accent, 0.22), rgba($accent, 0.14));
   top: -200px;
   right: -150px;
 }
@@ -44,7 +44,7 @@
 .shape-2 {
   width: 500px;
   height: 500px;
-  background: linear-gradient(135deg, rgba(217, 119, 6, 0.08), rgba(251, 191, 36, 0.06));
+  background: linear-gradient(135deg, rgba($primary, 0.16), rgba($accent, 0.12));
   bottom: 20%;
   left: -200px;
   animation-delay: -10s;
@@ -53,7 +53,7 @@
 .shape-3 {
   width: 400px;
   height: 400px;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(252, 211, 77, 0.05));
+  background: linear-gradient(135deg, rgba($accent, 0.12), rgba($accent, 0.08));
   top: 50%;
   right: 10%;
   animation-delay: -20s;
@@ -98,11 +98,11 @@
   align-items: center;
   gap: $space-sm;
   padding: $space-sm $space-md;
-  background: rgba(217, 119, 6, 0.1);
+  background: rgba($accent, 0.14);
   border-radius: $radius-full;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  color: #b45309;
+  color: darken($accent, 12%);
   margin-bottom: $space-xl;
 
   .badge-dot {
@@ -129,7 +129,7 @@
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #d97706, #ea580c, #f59e0b);
+  background: linear-gradient(135deg, $primary, $accent, lighten($accent, 10%));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -174,7 +174,7 @@
   align-items: center;
   gap: $space-sm;
   padding: $space-lg $space-2xl;
-  background: linear-gradient(135deg, #d97706, #ea580c);
+  background: $accent;
   color: white;
   border: none;
   font-size: $font-size-md;
@@ -188,7 +188,7 @@
   }
 
   &:hover {
-    background: linear-gradient(135deg, #b45309, #c2410c);
+    background: $accent-hover;
   }
 
   @media (max-width: $bp-sm) {
@@ -212,7 +212,7 @@
 
 .btn-primary {
   padding: $space-md $space-xl;
-  background: linear-gradient(135deg, #d97706, #ea580c);
+  background: $accent;
   color: white;
   border: none;
   border-radius: $radius-lg;
@@ -220,11 +220,12 @@
   font-weight: $font-weight-semibold;
   cursor: pointer;
   transition: all $transition-fast;
-  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);
+  box-shadow: 0 4px 14px rgba($accent, 0.3);
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(217, 119, 6, 0.4);
+    background: $accent-hover;
+    box-shadow: 0 6px 20px rgba($accent, 0.4);
   }
 
   &.large {
@@ -245,8 +246,8 @@
   transition: all $transition-fast;
 
   &:hover {
-    border-color: #d97706;
-    color: #d97706;
+    border-color: $accent;
+    color: $accent;
   }
 
   &.large {
@@ -311,7 +312,7 @@
   height: 48px;
   border-radius: 50%;
   overflow: hidden;
-  background: linear-gradient(135deg, #fde68a, #fbbf24);
+  background: linear-gradient(135deg, lighten($accent, 20%), $accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -325,7 +326,7 @@
   .avatar-initials {
     font-size: $font-size-md;
     font-weight: $font-weight-bold;
-    color: #92400e;
+    color: white;
   }
 }
 
@@ -387,12 +388,12 @@
 .view-all-link {
   font-size: $font-size-md;
   font-weight: $font-weight-medium;
-  color: #d97706;
+  color: $accent;
   text-decoration: none;
   transition: color $transition-fast;
 
   &:hover {
-    color: #b45309;
+    color: $accent-hover;
   }
 }
 
@@ -423,7 +424,7 @@
   width: 64px;
   height: 64px;
   margin: 0 auto $space-lg;
-  background: linear-gradient(135deg, rgba(217, 119, 6, 0.1), rgba(245, 158, 11, 0.1));
+  background: rgba($accent, 0.12);
   border-radius: $radius-xl;
   display: flex;
   align-items: center;
@@ -432,7 +433,7 @@
   svg {
     width: 32px;
     height: 32px;
-    stroke: #d97706;
+    stroke: $accent;
   }
 }
 
@@ -483,7 +484,7 @@
   width: 48px;
   height: 48px;
   margin: 0 auto $space-lg;
-  background: linear-gradient(135deg, #d97706, #ea580c);
+  background: $accent;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -561,13 +562,13 @@
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: linear-gradient(135deg, #fde68a, #fbbf24);
+    background: linear-gradient(135deg, lighten($accent, 20%), $accent);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: $font-size-2xl;
     font-weight: $font-weight-bold;
-    color: #92400e;
+    color: white;
 
     &.large {
       font-size: $font-size-3xl;
@@ -618,8 +619,8 @@
 
 .skill-tag {
   padding: $space-xs $space-sm;
-  background: rgba(217, 119, 6, 0.1);
-  color: #b45309;
+  background: rgba($accent, 0.12);
+  color: darken($accent, 12%);
   border-radius: $radius-md;
   font-size: $font-size-xs;
   font-weight: $font-weight-medium;
@@ -655,8 +656,8 @@
   width: 100%;
   padding: $space-sm $space-lg;
   background: transparent;
-  color: #d97706;
-  border: 2px solid #d97706;
+  color: $accent;
+  border: 2px solid $accent;
   border-radius: $radius-lg;
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
@@ -664,7 +665,7 @@
   transition: all $transition-fast;
 
   &:hover {
-    background: #d97706;
+    background: $accent;
     color: white;
   }
 }
@@ -718,7 +719,7 @@
 
 .category-arrow {
   font-size: $font-size-lg;
-  color: #d97706;
+  color: $accent;
   transition: transform $transition-fast;
 }
 
