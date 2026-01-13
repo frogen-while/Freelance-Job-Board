@@ -9,23 +9,24 @@
         <a class="nav-link" *ngIf="auth.isFreelancer()" routerLink="/my-proposals" routerLinkActive="active">My Proposals</a>
         <a class="nav-link" *ngIf="auth.isEmployer()" routerLink="/hire/browse" routerLinkActive="active">Find Talent</a>
         <a class="nav-link" *ngIf="auth.isEmployer()" routerLink="/my-jobs" routerLinkActive="active">My Jobs</a>
+        <a class="nav-link" routerLink="/about" routerLinkActive="active">About Us</a>
       </ng-container>
       
       <ng-template #guestNav>
-        <a class="nav-link" routerLink="/find-work">Find Work</a>
-        <a class="nav-link" routerLink="/hire">Hire Freelancers</a>
-        <a class="nav-link" routerLink="/about">About Us</a>
+        <a class="nav-link" routerLink="/find-work" routerLinkActive="active">Find Work</a>
+        <a class="nav-link" routerLink="/hire" routerLinkActive="active">Hire Freelancers</a>
+        <a class="nav-link" routerLink="/about" routerLinkActive="active">About Us</a>
       </ng-template>
     </nav>
 
     <nav class="header-nav">
       <ng-container *ngIf="!auth.isLoggedIn(); else loggedIn">
-        <a class="nav-link" routerLink="/login">Log in</a>
-        <a class="nav-btn" routerLink="/register">Sign up</a>
+        <a class="nav-link" routerLink="/login" routerLinkActive="active">Log in</a>
+        <a class="nav-btn" routerLink="/register" routerLinkActive="active">Sign up</a>
       </ng-container>
 
       <ng-template #loggedIn>
-          <a class="profile-link" routerLink="/profile" *ngIf="auth.getUser() as user">
+          <a class="profile-link" routerLink="/profile" routerLinkActive="active" *ngIf="auth.getUser() as user">
             <span class="profile-pic">
               <img *ngIf="user.profile_image_url; else initials" [src]="user.profile_image_url" alt="Profile" />
               <ng-template #initials>

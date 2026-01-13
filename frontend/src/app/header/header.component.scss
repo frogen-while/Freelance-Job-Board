@@ -10,7 +10,7 @@
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(255, 251, 245, 0.98);
+  background: rgba(171, 172, 235, 0.98);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(217, 119, 6, 0.1);
@@ -48,9 +48,11 @@
 .main-nav {
   display: flex;
   align-items: center;
-  gap: $space-sm;
+  gap: 15px;
   flex: 1;
-
+  margin: 5px;
+  padding: 5px;
+  text-decoration: underline;
   @include respond-to(md) {
     display: none;
   }
@@ -173,15 +175,20 @@
   font-size: $font-size-base;
   font-weight: $font-weight-medium;
   color: $text-primary;
-  text-decoration: none;
-  background: none;
-  border: none;
+  text-decoration: underline;
   cursor: pointer;
-  padding: 0;
-  transition: opacity $transition-fast;
+  transition: all $transition-fast;
+  padding: $space-xs $space-md;
+  border-radius: $radius-md;
 
   &:hover {
     opacity: 0.7;
+  }
+
+  &.active {
+    background: rgba($accent, 0.15);
+    color: $accent;
+    text-decoration: none;
   }
 
   @include respond-to(sm) {
@@ -193,12 +200,27 @@
   display: inline-flex;
   align-items: center;
   gap: $space-sm;
+  background: none;
+  border: none;
+  padding: 0;
+  
+  img {
+    display: block;
+  }
 }
 
 .profile-link {
   display: inline-flex;
   align-items: center;
   text-decoration: none;
+  padding: $space-xs;
+  border-radius: 50%;
+  transition: all $transition-fast;
+
+  &.active {
+    background: rgba($accent, 0.15);
+    box-shadow: 0 0 0 2px rgba($accent, 0.3);
+  }
 }
 
 .profile-pic {
@@ -244,6 +266,11 @@
   &:hover {
     background: $primary-dark;
     transform: translateY(-1px);
+  }
+
+  &.active {
+    background: $accent;
+    box-shadow: 0 0 0 3px rgba($accent, 0.2);
   }
 
   @include respond-to(sm) {
