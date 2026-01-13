@@ -9,6 +9,7 @@
         <a class="nav-link" *ngIf="auth.isFreelancer()" routerLink="/my-proposals" routerLinkActive="active">My Proposals</a>
         <a class="nav-link" *ngIf="auth.isEmployer()" routerLink="/hire/browse" routerLinkActive="active">Find Talent</a>
         <a class="nav-link" *ngIf="auth.isEmployer()" routerLink="/my-jobs" routerLinkActive="active">My Jobs</a>
+        <a class="nav-link" routerLink="/about">About Us</a>
       </ng-container>
       
       <ng-template #guestNav>
