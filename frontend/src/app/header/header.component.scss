@@ -177,10 +177,18 @@
   color: $text-primary;
   text-decoration: underline;
   cursor: pointer;
-  transition: opacity $transition-fast;
+  transition: all $transition-fast;
+  padding: $space-xs $space-md;
+  border-radius: $radius-md;
 
   &:hover {
     opacity: 0.7;
+  }
+
+  &.active {
+    background: rgba($accent, 0.15);
+    color: $accent;
+    text-decoration: none;
   }
 
   @include respond-to(sm) {
@@ -205,6 +213,14 @@
   display: inline-flex;
   align-items: center;
   text-decoration: none;
+  padding: $space-xs;
+  border-radius: 50%;
+  transition: all $transition-fast;
+
+  &.active {
+    background: rgba($accent, 0.15);
+    box-shadow: 0 0 0 2px rgba($accent, 0.3);
+  }
 }
 
 .profile-pic {
@@ -250,6 +266,11 @@
   &:hover {
     background: $primary-dark;
     transform: translateY(-1px);
+  }
+
+  &.active {
+    background: $accent;
+    box-shadow: 0 0 0 3px rgba($accent, 0.2);
   }
 
   @include respond-to(sm) {
