@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { ApiService } from '../core/api.service';
@@ -9,11 +9,13 @@ import { Category } from '../core/models';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   activeDropdown: string | null = null;
   private closeTimeout: any = null;
+  private unreadInterval: any = null;
 
   categories: Category[] = [];
+  unreadCount = 0;
 
   constructor(
     public auth: AuthService,
@@ -23,6 +25,28 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.loadCategories();
+    this.checkUnreadMessages();
+    // Check unread messages every 30 seconds
+    this.unreadInterval = setInterval(() => this.checkUnreadMessages(), 30000);
+  }
+
+  ngOnDestroy() {
+    if (this.unreadInterval) {
+      clearInterval(this.unreadInterval);
+    }
+  }
+
+  checkUnreadMessages() {
+    const user = this.auth.getUser();
+    if (user) {
+      this.api.getUnreadCount(user.user_id).subscribe({
+        next: (res) => {
+          if (res.success && res.data) {
+            this.unreadCount = res.data.unread_count || 0;
+          }
+        }
+      });
+    }
   }
 
   loadCategories() {

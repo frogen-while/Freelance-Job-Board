@@ -216,8 +216,30 @@ export class JobDetailComponent implements OnInit {
     
     this.api.applyToJob(payload).subscribe({
       next: () => {
-        this.applied = true;
-        this.applying = false;
+        // Send cover letter as initial message to employer
+        if (this.job && this.currentUser) {
+          const messageBody = `📋 *New Proposal for "${this.job.title}"*\n\n💰 Bid Amount: $${this.bidAmount}\n\n${this.proposalText.trim()}`;
+          
+          this.api.sendMessage({
+            sender_id: this.currentUser.user_id,
+            receiver_id: this.job.employer_id,
+            job_id: this.job.job_id,
+            body: messageBody
+          }).subscribe({
+            next: () => {
+              this.applied = true;
+              this.applying = false;
+            },
+            error: () => {
+              // Application succeeded but message failed - still show success
+              this.applied = true;
+              this.applying = false;
+            }
+          });
+        } else {
+          this.applied = true;
+          this.applying = false;
+        }
       },
       error: () => {
         this.applying = false;

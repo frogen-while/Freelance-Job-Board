@@ -23,7 +23,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
             Log In
           </a>
           <a class="btn-secondary" routerLink="/register">
-            Sign Up Free
+            Sign Up
           </a>
         </div>
         
@@ -170,7 +170,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class AuthPromptModalComponent {
   @Input() show = false;
   @Input() title = 'Sign in to continue';
-  @Input() message = 'Create a free account or log in to access this feature.';
+  @Input() message = 'Create account or log in to access this feature.';
   @Input() returnUrl = '/';
   @Output() closed = new EventEmitter<void>();
 

@@ -9,7 +9,8 @@ import {
     markMessageAsRead,
     markAllAsRead,
     deleteMessage,
-    getUnreadCount
+    getUnreadCount,
+    getConversations
 } from '../controllers/messageController.js';
 
 const router = Router();
@@ -17,6 +18,7 @@ const router = Router();
 router.get('/', getAllMessages);
 router.get('/user/:userId', getMessagesByUser);
 router.get('/user/:userId/unread', getUnreadCount);
+router.get('/user/:userId/conversations', getConversations);
 router.get('/conversation/:userId1/:userId2', getConversation);
 router.get('/job/:jobId', getMessagesByJob);
 router.post('/', sendMessage);

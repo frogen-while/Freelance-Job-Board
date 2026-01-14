@@ -100,5 +100,35 @@ export const messageRepo = {
             user_id
         );
         return result?.count ?? 0;
+    },
+
+    async getConversations(user_id: number): Promise<any[]> {
+        const result = await db.connection?.all(
+            `SELECT 
+                CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END as other_user_id,
+                u.first_name || ' ' || u.last_name as other_user_name,
+                p.photo_url as other_user_photo,
+                m.body as last_message,
+                m.sent_at as last_message_time,
+                m.job_id,
+                j.title as job_title,
+                (SELECT COUNT(*) FROM messages m2 
+                 WHERE m2.sender_id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END 
+                 AND m2.receiver_id = ? AND m2.is_read = 0) as unread_count
+            FROM messages m
+            JOIN users u ON u.user_id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END
+            LEFT JOIN profiles p ON p.user_id = u.user_id
+            LEFT JOIN jobs j ON j.job_id = m.job_id
+            WHERE m.sender_id = ? OR m.receiver_id = ?
+            AND m.sent_at = (
+                SELECT MAX(m3.sent_at) FROM messages m3 
+                WHERE (m3.sender_id = ? AND m3.receiver_id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END)
+                   OR (m3.receiver_id = ? AND m3.sender_id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END)
+            )
+            GROUP BY other_user_id
+            ORDER BY m.sent_at DESC`,
+            user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id
+        );
+        return result || [];
     }
 };

@@ -36,7 +36,7 @@
           <div class="header-top">
             <span class="job-category" *ngIf="category">{{ category.name }}</span>
             <span class="job-status" [class]="getStatusClass()">{{ job.status }}</span>
-            <span class="remote-badge" *ngIf="job.is_remote">🌍 Remote</span>
+            <span class="remote-badge" *ngIf="job.is_remote">Remote</span>
           </div>
           <h1 class="job-title">{{ job.title }}</h1>
           <div class="job-meta">

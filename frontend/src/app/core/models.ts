@@ -218,3 +218,30 @@ export interface JobApplication {
   job_budget?: number;
   job_status?: string;
 }
+
+// ============ MESSAGE ============
+
+export interface Message {
+  message_id: number;
+  sender_id: number;
+  receiver_id: number;
+  job_id?: number | null;
+  body: string;
+  is_read: boolean;
+  sent_at: string;
+  // Joined data
+  sender_name?: string;
+  receiver_name?: string;
+  job_title?: string;
+}
+
+export interface Conversation {
+  other_user_id: number;
+  other_user_name: string;
+  other_user_photo?: string;
+  last_message: string;
+  last_message_time: string;
+  unread_count: number;
+  job_id?: number;
+  job_title?: string;
+}

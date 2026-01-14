@@ -52,111 +52,9 @@
   flex: 1;
   margin: 5px;
   padding: 5px;
-  text-decoration: underline;
+  text-decoration: none;
   @include respond-to(md) {
     display: none;
-  }
-}
-
-.nav-dropdown {
-  position: relative;
-}
-
-.nav-dropdown-trigger {
-  display: flex;
-  align-items: center;
-  gap: $space-xs;
-  padding: $space-sm $space-md;
-  font-size: $font-size-base;
-  font-weight: $font-weight-medium;
-  color: $text-primary;
-  background: transparent;
-  border: none;
-  border-radius: $radius-md;
-  cursor: pointer;
-  transition: all $transition-fast;
-
-  &:hover,
-  &.active {
-    background: rgba(217, 119, 6, 0.08);
-    color: $primary;
-  }
-
-  .dropdown-arrow {
-    width: 16px;
-    height: 16px;
-    transition: transform $transition-fast;
-  }
-
-  &.active .dropdown-arrow {
-    transform: rotate(180deg);
-  }
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: $space-xs;
-  background: $bg-white;
-  border-radius: $radius-lg;
-  box-shadow: 
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 10px 20px -2px rgba(0, 0, 0, 0.08),
-    0 0 0 1px rgba(217, 119, 6, 0.08);
-  animation: dropdownFadeIn 0.2s ease-out;
-  overflow: hidden;
-}
-
-@keyframes dropdownFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.dropdown-content {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: $space-sm;
-  padding: $space-xl;
-  min-width: 700px;
-
-  &.single-column {
-    grid-template-columns: repeat(2, 1fr);
-    min-width: 400px;
-  }
-}
-
-.dropdown-empty {
-  padding: $space-xl;
-  text-align: center;
-  color: $text-secondary;
-  font-size: $font-size-sm;
-  
-  p {
-    margin: 0;
-  }
-}
-
-.category-item {
-  display: block;
-  padding: $space-sm $space-md;
-  font-size: $font-size-base;
-  font-weight: $font-weight-medium;
-  color: $text-primary;
-  text-decoration: none;
-  border-radius: $radius-md;
-  transition: all $transition-fast;
-  white-space: nowrap;
-
-  &:hover {
-    background: rgba(217, 119, 6, 0.08);
-    color: $primary;
   }
 }
 
@@ -175,11 +73,12 @@
   font-size: $font-size-base;
   font-weight: $font-weight-medium;
   color: $text-primary;
-  text-decoration: underline;
+  text-decoration: none;
   cursor: pointer;
   transition: all $transition-fast;
   padding: $space-xs $space-md;
   border-radius: $radius-md;
+  position: relative;
 
   &:hover {
     opacity: 0.7;
@@ -194,6 +93,27 @@
   @include respond-to(sm) {
     font-size: $font-size-sm;
   }
+
+  &.messages-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+}
+
+.unread-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 9px;
+  line-height: 1;
 }
 
 .profile-logout {

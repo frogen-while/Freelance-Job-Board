@@ -18,7 +18,9 @@ import {
   ExperienceLevel,
   AvailabilityStatus,
   CompanySize,
-  JobApplication
+  JobApplication,
+  Message,
+  Conversation
 } from './models';
 
 @Injectable({ providedIn: 'root' })
@@ -192,5 +194,43 @@ export class ApiService {
 
   updateApplicationStatus(applicationId: number, status: 'Pending' | 'Accepted' | 'Rejected'): Observable<ApiResponse<{ message: string }>> {
     return this.http.patch<ApiResponse<{ message: string }>>(`${this.base}/jobapplications/${applicationId}/status`, { status });
+  }
+
+  // ============ MESSAGES ============
+
+  getMessages(): Observable<ApiResponse<Message[]>> {
+    return this.http.get<ApiResponse<Message[]>>(`${this.base}/messages`);
+  }
+
+  getMessagesByUser(userId: number): Observable<ApiResponse<Message[]>> {
+    return this.http.get<ApiResponse<Message[]>>(`${this.base}/messages/user/${userId}`);
+  }
+
+  getConversation(userId1: number, userId2: number): Observable<ApiResponse<Message[]>> {
+    return this.http.get<ApiResponse<Message[]>>(`${this.base}/messages/conversation/${userId1}/${userId2}`);
+  }
+
+  getMessagesByJob(jobId: number): Observable<ApiResponse<Message[]>> {
+    return this.http.get<ApiResponse<Message[]>>(`${this.base}/messages/job/${jobId}`);
+  }
+
+  sendMessage(payload: { sender_id: number; receiver_id: number; job_id?: number; body: string }): Observable<ApiResponse<Message>> {
+    return this.http.post<ApiResponse<Message>>(`${this.base}/messages`, payload);
+  }
+
+  markMessageAsRead(messageId: number): Observable<ApiResponse<{ message: string }>> {
+    return this.http.patch<ApiResponse<{ message: string }>>(`${this.base}/messages/${messageId}/read`, {});
+  }
+
+  markAllMessagesAsRead(receiverId: number, senderId: number): Observable<ApiResponse<{ message: string }>> {
+    return this.http.post<ApiResponse<{ message: string }>>(`${this.base}/messages/read-all`, { receiver_id: receiverId, sender_id: senderId });
+  }
+
+  getUnreadCount(userId: number): Observable<ApiResponse<{ unread_count: number }>> {
+    return this.http.get<ApiResponse<{ unread_count: number }>>(`${this.base}/messages/user/${userId}/unread`);
+  }
+
+  getConversations(userId: number): Observable<ApiResponse<Conversation[]>> {
+    return this.http.get<ApiResponse<Conversation[]>>(`${this.base}/messages/user/${userId}/conversations`);
   }
 }

@@ -23,6 +23,8 @@ const routes: Routes = [
   { path: 'find-work', loadChildren: () => import('./features/find-work/find-work.module').then(m => m.FindWorkModule) },
   // Dashboard - requires auth and onboarding
   { path: 'dashboard', loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule), canActivate: [AuthGuard, OnboardingGuard] },
+  // Messages - requires auth and onboarding
+  { path: 'messages', loadChildren: () => import('./features/messages/messages.module').then(m => m.MessagesModule), canActivate: [AuthGuard, OnboardingGuard] },
   // Functional pages
   { path: 'my-proposals', loadChildren: () => import('./features/my-proposals/my-proposals.module').then(m => m.MyProposalsModule), canActivate: [AuthGuard, OnboardingGuard, FreelancerGuard] },
   { path: 'my-jobs', loadChildren: () => import('./features/my-jobs/my-jobs.module').then(m => m.MyJobsModule), canActivate: [AuthGuard, OnboardingGuard, EmployerGuard] },

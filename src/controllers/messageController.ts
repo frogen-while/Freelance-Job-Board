@@ -181,3 +181,19 @@ export const getUnreadCount = async (req: Request, res: Response) => {
         return sendError(res, 500, 'An internal server error occurred.');
     }
 };
+
+export const getConversations = async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.userId, 10);
+
+    if (isNaN(userId)) {
+        return sendError(res, 400, 'Invalid user ID format.');
+    }
+
+    try {
+        const conversations = await messageRepo.getConversations(userId);
+        return sendSuccess(res, conversations);
+    } catch (error) {
+        console.error(`Error getting conversations for user ${userId}:`, error);
+        return sendError(res, 500, 'An internal server error occurred.');
+    }
+};
