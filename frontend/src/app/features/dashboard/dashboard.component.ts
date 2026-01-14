@@ -33,6 +33,8 @@ export class DashboardComponent implements OnInit {
   quickActions: QuickAction[] = [];
   recentJobs: Job[] = [];
   loading = true;
+  loadingStats = true;
+  errorMessage = '';
 
   constructor(
     private auth: AuthService,
@@ -118,8 +120,11 @@ export class DashboardComponent implements OnInit {
   private loadData(): void {
     if (!this.user) {
       this.loading = false;
+      this.loadingStats = false;
       return;
     }
+
+    this.errorMessage = '';
 
     if (this.isFreelancer) {
       // Load freelancer stats
@@ -135,6 +140,13 @@ export class DashboardComponent implements OnInit {
             this.stats[1].value = total;
             this.stats[2].value = `$${accepted * 500}`; // Placeholder earnings
           }
+          this.loadingStats = false;
+          this.loading = false;
+        },
+        error: () => {
+          this.loadingStats = false;
+          this.loading = false;
+          this.errorMessage = 'Failed to load dashboard data.';
         }
       });
     } else if (this.isEmployer) {
@@ -152,12 +164,26 @@ export class DashboardComponent implements OnInit {
             
             // Count total proposals
             let totalProposals = 0;
+            let processedJobs = 0;
+            if (jobs.length === 0) {
+              this.loadingStats = false;
+            }
             jobs.forEach((job: any) => {
               this.api.getApplicationsByJobId(job.job_id).subscribe({
                 next: (appRes) => {
+                  processedJobs++;
                   if (appRes.success && appRes.data) {
                     totalProposals += appRes.data.length;
                     this.stats[1].value = totalProposals;
+                  }
+                  if (processedJobs === jobs.length) {
+                    this.loadingStats = false;
+                  }
+                },
+                error: () => {
+                  processedJobs++;
+                  if (processedJobs === jobs.length) {
+                    this.loadingStats = false;
                   }
                 }
               });
@@ -167,6 +193,8 @@ export class DashboardComponent implements OnInit {
         },
         error: () => {
           this.loading = false;
+          this.loadingStats = false;
+          this.errorMessage = 'Failed to load dashboard data.';
         }
       });
       return;
@@ -178,9 +206,12 @@ export class DashboardComponent implements OnInit {
           this.recentJobs = res.data.slice(0, 5);
         }
         this.loading = false;
+        this.loadingStats = false;
       },
       error: () => {
         this.loading = false;
+        this.loadingStats = false;
+        this.errorMessage = 'Failed to load dashboard data.';
       }
     });
   }

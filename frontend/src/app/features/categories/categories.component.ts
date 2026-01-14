@@ -9,10 +9,27 @@ import { Category } from '../../core/models';
 })
 export class CategoriesComponent implements OnInit {
   categories: Category[] = [];
+  loading = true;
+  errorMessage = '';
 
   constructor(private api: ApiService) {}
 
   ngOnInit() {
-    this.api.getCategories().subscribe(res => this.categories = res.data || []);
+    this.loadCategories();
+  }
+
+  private loadCategories(): void {
+    this.loading = true;
+    this.errorMessage = '';
+    this.api.getCategories().subscribe({
+      next: (res) => {
+        this.categories = res.data || [];
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.errorMessage = 'Failed to load categories. Please try again.';
+      }
+    });
   }
 }

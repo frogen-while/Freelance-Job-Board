@@ -13,6 +13,7 @@ export class MyJobsComponent implements OnInit {
   jobs: Job[] = [];
   filteredJobs: Job[] = [];
   loading = true;
+  errorMessage = '';
   statusFilter: string = 'all';
 
   stats = {
@@ -39,6 +40,7 @@ export class MyJobsComponent implements OnInit {
       return;
     }
 
+    this.errorMessage = '';
     this.api.getJobs().subscribe({
       next: (res) => {
         if (res.success && res.data) {
@@ -51,6 +53,7 @@ export class MyJobsComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
+        this.errorMessage = 'Failed to load jobs. Please try again.';
       }
     });
   }

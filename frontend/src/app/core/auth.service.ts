@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 type ApiEnvelope<T> = { success: true; data: T } | { success: false; error: { message: string } };
@@ -28,8 +28,37 @@ export class AuthService {
   private readonly tokenKey = 'token';
   private readonly userKey = 'auth_user';
   private readonly base = environment.apiBase;
+  
+  private authReady$ = new BehaviorSubject<boolean>(false);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    // Auth state is ready immediately since we use localStorage
+    this.authReady$.next(true);
+  }
+
+  isAuthReady(): Observable<boolean> {
+    return this.authReady$.asObservable();
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
+
+  isLoggedIn$(): Observable<boolean> {
+    return of(this.isLoggedIn());
+  }
+
+  isFreelancer$(): Observable<boolean> {
+    return of(this.isFreelancer());
+  }
+
+  isEmployer$(): Observable<boolean> {
+    return of(this.isEmployer());
+  }
+
+  needsOnboarding$(): Observable<boolean> {
+    return of(this.needsOnboarding());
+  }
 
   isLoggedIn(): boolean {
     return !!this.getToken();

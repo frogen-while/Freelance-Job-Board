@@ -1,18 +1,23 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { Observable, of, switchMap, map, take } from 'rxjs';
 import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (this.auth.isLoggedIn()) {
-      return true;
-    }
-    
-    this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
-    return false;
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
+    return this.auth.isAuthReady().pipe(
+      take(1),
+      switchMap(() => this.auth.isLoggedIn$()),
+      map(loggedIn => {
+        if (loggedIn) {
+          return true;
+        }
+        return this.router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
+      })
+    );
   }
 }
 
@@ -20,18 +25,24 @@ export class AuthGuard implements CanActivate {
 export class OnboardingGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
-  canActivate(): boolean {
-    if (!this.auth.isLoggedIn()) {
-      this.router.navigate(['/login']);
-      return false;
-    }
-
-    if (this.auth.needsOnboarding()) {
-      this.router.navigate(['/onboarding']);
-      return false;
-    }
-
-    return true;
+  canActivate(): Observable<boolean | UrlTree> {
+    return this.auth.isAuthReady().pipe(
+      take(1),
+      switchMap(() => this.auth.isLoggedIn$()),
+      switchMap(loggedIn => {
+        if (!loggedIn) {
+          return of(this.router.createUrlTree(['/login']));
+        }
+        return this.auth.needsOnboarding$().pipe(
+          map(needsOnboarding => {
+            if (needsOnboarding) {
+              return this.router.createUrlTree(['/onboarding']);
+            }
+            return true;
+          })
+        );
+      })
+    );
   }
 }
 
@@ -39,19 +50,24 @@ export class OnboardingGuard implements CanActivate {
 export class GuestGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
-  canActivate(): boolean {
-    if (!this.auth.isLoggedIn()) {
-      return true;
-    }
-
-    // Logged in users go to dashboard
-    if (this.auth.needsOnboarding()) {
-      this.router.navigate(['/onboarding']);
-    } else {
-      this.router.navigate(['/dashboard']);
-    }
-    
-    return false;
+  canActivate(): Observable<boolean | UrlTree> {
+    return this.auth.isAuthReady().pipe(
+      take(1),
+      switchMap(() => this.auth.isLoggedIn$()),
+      switchMap(loggedIn => {
+        if (!loggedIn) {
+          return of(true);
+        }
+        return this.auth.needsOnboarding$().pipe(
+          map(needsOnboarding => {
+            if (needsOnboarding) {
+              return this.router.createUrlTree(['/onboarding']);
+            }
+            return this.router.createUrlTree(['/dashboard']);
+          })
+        );
+      })
+    );
   }
 }
 
@@ -59,19 +75,24 @@ export class GuestGuard implements CanActivate {
 export class OnboardingPageGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
-  canActivate(): boolean {
-    if (!this.auth.isLoggedIn()) {
-      this.router.navigate(['/login']);
-      return false;
-    }
-
-    // If already completed onboarding, redirect to appropriate page
-    if (!this.auth.needsOnboarding()) {
-      this.router.navigate(['/dashboard']);
-      return false;
-    }
-
-    return true;
+  canActivate(): Observable<boolean | UrlTree> {
+    return this.auth.isAuthReady().pipe(
+      take(1),
+      switchMap(() => this.auth.isLoggedIn$()),
+      switchMap(loggedIn => {
+        if (!loggedIn) {
+          return of(this.router.createUrlTree(['/login']));
+        }
+        return this.auth.needsOnboarding$().pipe(
+          map(needsOnboarding => {
+            if (!needsOnboarding) {
+              return this.router.createUrlTree(['/dashboard']);
+            }
+            return true;
+          })
+        );
+      })
+    );
   }
 }
 
@@ -79,18 +100,24 @@ export class OnboardingPageGuard implements CanActivate {
 export class FreelancerGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
-  canActivate(): boolean {
-    if (!this.auth.isLoggedIn()) {
-      this.router.navigate(['/login']);
-      return false;
-    }
-
-    if (!this.auth.isFreelancer()) {
-      this.router.navigate(['/dashboard']);
-      return false;
-    }
-
-    return true;
+  canActivate(): Observable<boolean | UrlTree> {
+    return this.auth.isAuthReady().pipe(
+      take(1),
+      switchMap(() => this.auth.isLoggedIn$()),
+      switchMap(loggedIn => {
+        if (!loggedIn) {
+          return of(this.router.createUrlTree(['/login']));
+        }
+        return this.auth.isFreelancer$().pipe(
+          map(isFreelancer => {
+            if (!isFreelancer) {
+              return this.router.createUrlTree(['/dashboard']);
+            }
+            return true;
+          })
+        );
+      })
+    );
   }
 }
 
@@ -98,17 +125,23 @@ export class FreelancerGuard implements CanActivate {
 export class EmployerGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
-  canActivate(): boolean {
-    if (!this.auth.isLoggedIn()) {
-      this.router.navigate(['/login']);
-      return false;
-    }
-
-    if (!this.auth.isEmployer()) {
-      this.router.navigate(['/dashboard']);
-      return false;
-    }
-
-    return true;
+  canActivate(): Observable<boolean | UrlTree> {
+    return this.auth.isAuthReady().pipe(
+      take(1),
+      switchMap(() => this.auth.isLoggedIn$()),
+      switchMap(loggedIn => {
+        if (!loggedIn) {
+          return of(this.router.createUrlTree(['/login']));
+        }
+        return this.auth.isEmployer$().pipe(
+          map(isEmployer => {
+            if (!isEmployer) {
+              return this.router.createUrlTree(['/dashboard']);
+            }
+            return true;
+          })
+        );
+      })
+    );
   }
 }

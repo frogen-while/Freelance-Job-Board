@@ -64,13 +64,21 @@ export const getMessagesByJob = async (req: Request, res: Response) => {
 
 export const sendMessage = async (req: Request, res: Response) => {
     const { sender_id, receiver_id, job_id, body } = req.body;
+    const authUser = (req as any).user;
 
-    if (sender_id === undefined || receiver_id === undefined || !body) {
-        return sendError(res, 400, 'sender_id, receiver_id, and body are required.');
+    if (receiver_id === undefined || !body) {
+        return sendError(res, 400, 'receiver_id and body are required.');
+    }
+
+    // Use authenticated user's ID, but allow sender_id from body for backward compatibility
+    const actualSenderId = authUser?.sub || sender_id;
+    
+    if (!actualSenderId) {
+        return sendError(res, 400, 'sender_id is required.');
     }
 
     try {
-        const sender = await userRepo.findById(sender_id);
+        const sender = await userRepo.findById(actualSenderId);
         const receiver = await userRepo.findById(receiver_id);
         
         if (!sender) {
@@ -81,7 +89,7 @@ export const sendMessage = async (req: Request, res: Response) => {
         }
 
         const messageId = await messageRepo.create({
-            sender_id,
+            sender_id: actualSenderId,
             receiver_id,
             job_id,
             body

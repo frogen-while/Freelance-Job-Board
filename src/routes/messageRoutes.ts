@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requireAuth } from '../middleware/authMiddleware.js';
 import {
     getAllMessages,
     getMessagesByUser,
@@ -15,16 +16,16 @@ import {
 
 const router = Router();
 
-router.get('/', getAllMessages);
-router.get('/user/:userId', getMessagesByUser);
-router.get('/user/:userId/unread', getUnreadCount);
-router.get('/user/:userId/conversations', getConversations);
-router.get('/conversation/:userId1/:userId2', getConversation);
-router.get('/job/:jobId', getMessagesByJob);
-router.post('/', sendMessage);
-router.get('/:id', getMessageById);
-router.patch('/:id/read', markMessageAsRead);
-router.post('/read-all', markAllAsRead);
-router.delete('/:id', deleteMessage);
+router.get('/', requireAuth, getAllMessages);
+router.get('/user/:userId', requireAuth, getMessagesByUser);
+router.get('/user/:userId/unread', requireAuth, getUnreadCount);
+router.get('/user/:userId/conversations', requireAuth, getConversations);
+router.get('/conversation/:userId1/:userId2', requireAuth, getConversation);
+router.get('/job/:jobId', requireAuth, getMessagesByJob);
+router.post('/', requireAuth, sendMessage);
+router.get('/:id', requireAuth, getMessageById);
+router.patch('/:id/read', requireAuth, markMessageAsRead);
+router.post('/read-all', requireAuth, markAllAsRead);
+router.delete('/:id', requireAuth, deleteMessage);
 
 export default router;
