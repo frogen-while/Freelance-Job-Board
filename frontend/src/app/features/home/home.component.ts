@@ -49,6 +49,10 @@ export class HomeComponent implements OnInit {
   }
 
   onExplore() {
-    this.router.navigate(['/login']);
+    if (this.search.trim()) {
+      this.router.navigate(['/find-work/browse'], { queryParams: { q: this.search.trim() } });
+    } else {
+      this.router.navigate(['/find-work/browse']);
+    }
   }
 }

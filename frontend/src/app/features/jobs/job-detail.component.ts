@@ -101,11 +101,27 @@ export class JobDetailComponent implements OnInit {
           if (this.isOwner) {
             this.loadApplications(id);
           }
+          
+          // Check if current user already applied
+          if (this.currentUser && this.isFreelancer && !this.isOwner) {
+            this.checkIfApplied(id);
+          }
         }
         this.loading = false;
       },
       error: () => {
         this.loading = false;
+      }
+    });
+  }
+
+  checkIfApplied(jobId: number) {
+    if (!this.currentUser) return;
+    this.api.getApplicationsByFreelancerId(this.currentUser.user_id).subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.applied = res.data.some((app: any) => app.job_id === jobId);
+        }
       }
     });
   }
@@ -152,6 +168,16 @@ export class JobDetailComponent implements OnInit {
           // Update local state
           const app = this.applications.find(a => a.application_id === applicationId);
           if (app) app.status = 'Accepted';
+          // Reject all other pending applications locally
+          this.applications.forEach(a => {
+            if (a.application_id !== applicationId && a.status === 'Pending') {
+              a.status = 'Rejected';
+            }
+          });
+          // Update job status to Assigned
+          if (this.job) {
+            this.job.status = 'Assigned';
+          }
         }
       },
       error: () => {
@@ -198,6 +224,16 @@ export class JobDetailComponent implements OnInit {
       alert('Only freelancers can apply for jobs');
       return;
     }
+
+    if (this.applied) {
+      alert('You have already applied to this job');
+      return;
+    }
+
+    if (this.job?.status !== 'Open') {
+      alert('This job is no longer accepting applications');
+      return;
+    }
     
     if (!this.job || !this.currentUser) return;
     if (!this.bidAmount || !this.proposalText.trim()) {
@@ -241,9 +277,10 @@ export class JobDetailComponent implements OnInit {
           this.applying = false;
         }
       },
-      error: () => {
+      error: (err) => {
         this.applying = false;
-        alert('Failed to submit application. Please try again.');
+        const msg = err?.error?.error?.message || 'Failed to submit application. Please try again.';
+        alert(msg);
       }
     });
   }

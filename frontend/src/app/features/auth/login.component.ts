@@ -47,6 +47,8 @@ export class LoginComponent implements OnInit {
   private redirectAfterAuth() {
     if (this.auth.needsOnboarding()) {
       this.router.navigate(['/onboarding']);
+    } else if (this.returnUrl && this.returnUrl !== '/' && !this.returnUrl.includes('/login') && !this.returnUrl.includes('/register')) {
+      this.router.navigateByUrl(this.returnUrl);
     } else if (this.auth.isFreelancer()) {
       this.router.navigate(['/find-work/browse']);
     } else {

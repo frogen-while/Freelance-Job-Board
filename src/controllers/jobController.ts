@@ -111,6 +111,22 @@ export const getJobById = async (req: Request, res: Response) => {
     }
 };
 
+export const getJobsByEmployerId = async (req: Request, res: Response) => {
+    const employerId = parseInt(req.params.employerId, 10);
+
+    if (isNaN(employerId)) {
+        return sendError(res, 400, 'Invalid employer ID format.');
+    }
+
+    try {
+        const jobs = await jobRepo.findByEmployerId(employerId);
+        return sendSuccess(res, jobs);
+    } catch (error) {
+        console.error(`Error fetching jobs for employer ${employerId}:`, error);
+        return sendError(res, 500, 'An internal server error occurred while fetching jobs.');
+    }
+};
+
 export const deleteJob = async(req: Request, res: Response) =>{
     const jobId = parseInt(req.params.id, 10);
 

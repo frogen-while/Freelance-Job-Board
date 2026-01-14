@@ -109,6 +109,6 @@ export class HireLandingComponent implements OnInit {
   }
 
   postJob() {
-    this.router.navigate(['/jobs/create']);
+    this.router.navigate(['/hire/post-job']);
   }
 }

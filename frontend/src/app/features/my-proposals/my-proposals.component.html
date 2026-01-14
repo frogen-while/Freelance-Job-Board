@@ -70,17 +70,16 @@
     <!-- Proposals List -->
     <section class="proposals-section" *ngIf="!loading">
       <div class="proposals-list" *ngIf="filteredProposals.length > 0">
-        <div class="proposal-card" *ngFor="let proposal of filteredProposals">
+        <div class="proposal-card" *ngFor="let proposal of filteredProposals" (click)="viewJob(proposal.job_id)">
           <div class="proposal-main">
-            <h3 class="proposal-title">{{ proposal.jobTitle }}</h3>
-            <p class="proposal-desc">{{ proposal.jobDescription | slice:0:120 }}...</p>
+            <h3 class="proposal-title">{{ proposal.job_title }}</h3>
+            <p class="proposal-desc">{{ proposal.proposal_text | slice:0:120 }}...</p>
             <div class="proposal-meta">
               <span class="meta-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                 </svg>
-                {{ proposal.employerName }}
+                {{ formatBudget(proposal.job_budget) }}
               </span>
               <span class="meta-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -89,12 +88,12 @@
                   <line x1="8" y1="2" x2="8" y2="6"/>
                   <line x1="3" y1="10" x2="21" y2="10"/>
                 </svg>
-                {{ proposal.createdAt }}
+                {{ getTimeAgo(proposal.created_at) }}
               </span>
             </div>
           </div>
           <div class="proposal-side">
-            <span class="bid-amount">${{ proposal.bidAmount }}</span>
+            <span class="bid-amount">{{ formatBudget(proposal.bid_amount) }}</span>
             <span class="proposal-status" [class]="getStatusClass(proposal.status)">{{ proposal.status }}</span>
           </div>
         </div>

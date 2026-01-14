@@ -76,6 +76,19 @@ export const jobRepo = {
         return job;
     },
 
+    async findByEmployerId(employer_id: number): Promise<Job[]> {
+        const jobs = await db.connection?.all<Job[]>(
+            `SELECT * FROM jobs WHERE employer_id = ? ORDER BY created_at DESC`,
+            employer_id
+        );
+        if (jobs) {
+            for (const job of jobs) {
+                job.skills = await jobSkillsRepo.getSkillNamesByJobId(job.job_id);
+            }
+        }
+        return jobs || [];
+    },
+
     async update(job_id: number, updateData: { 
         employer_id?: number;
         category_id?: number;

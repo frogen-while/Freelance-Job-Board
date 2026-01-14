@@ -209,11 +209,13 @@ export class JobsBrowseComponent implements OnInit {
 
   getJobTypeLabel(type: string): string {
     const labels: Record<string, string> = {
+      'fixed': 'Fixed Price',
+      'hourly': 'Hourly',
       'one_time': 'One-time',
       'ongoing': 'Ongoing',
       'contract': 'Contract'
     };
-    return labels[type] || '';
+    return labels[type] || type || '';
   }
 
   getSkillName(skillId: number): string {
@@ -233,9 +235,22 @@ export class JobsBrowseComponent implements OnInit {
     return `$${budget}`;
   }
 
-  getTimeAgo(date: string): string {
-    // Simplified time ago
-    return 'Recently posted';
+  getTimeAgo(dateStr: string): string {
+    if (!dateStr) return 'Recently posted';
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} min ago`;
+    if (diffHours < 24) return `${diffHours} hours ago`;
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    return date.toLocaleDateString();
   }
 
   onViewJob(job: Job): void {

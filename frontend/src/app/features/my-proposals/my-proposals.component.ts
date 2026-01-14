@@ -1,15 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
-
-interface Proposal {
-  id: number;
-  jobTitle: string;
-  jobDescription: string;
-  bidAmount: number;
-  status: 'Pending' | 'Accepted' | 'Rejected';
-  createdAt: string;
-  employerName: string;
-}
+import { ApiService } from '../../core/api.service';
+import { JobApplication } from '../../core/models';
 
 @Component({
   selector: 'app-my-proposals',
@@ -17,8 +10,8 @@ interface Proposal {
   styleUrls: ['./my-proposals.component.scss']
 })
 export class MyProposalsComponent implements OnInit {
-  proposals: Proposal[] = [];
-  filteredProposals: Proposal[] = [];
+  proposals: JobApplication[] = [];
+  filteredProposals: JobApplication[] = [];
   loading = true;
   statusFilter: string = 'all';
 
@@ -29,21 +22,36 @@ export class MyProposalsComponent implements OnInit {
     rejected: 0
   };
 
-  constructor(private auth: AuthService) {}
+  constructor(
+    private auth: AuthService,
+    private api: ApiService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadProposals();
   }
 
   private loadProposals(): void {
-    // TODO: Replace with actual API call
-    // For now, show empty state
-    setTimeout(() => {
-      this.proposals = [];
-      this.filteredProposals = [];
-      this.calculateStats();
+    const user = this.auth.getUser();
+    if (!user) {
       this.loading = false;
-    }, 500);
+      return;
+    }
+
+    this.api.getApplicationsByFreelancerId(user.user_id).subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.proposals = res.data;
+          this.filteredProposals = this.proposals;
+          this.calculateStats();
+        }
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
   }
 
   private calculateStats(): void {
@@ -64,5 +72,29 @@ export class MyProposalsComponent implements OnInit {
 
   getStatusClass(status: string): string {
     return status.toLowerCase();
+  }
+
+  viewJob(jobId: number): void {
+    this.router.navigate(['/jobs', jobId]);
+  }
+
+  formatBudget(budget: number): string {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(budget);
+  }
+
+  getTimeAgo(dateStr: string): string {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
   }
 }

@@ -116,6 +116,62 @@ export class DashboardComponent implements OnInit {
   }
 
   private loadData(): void {
+    if (!this.user) {
+      this.loading = false;
+      return;
+    }
+
+    if (this.isFreelancer) {
+      // Load freelancer stats
+      this.api.getApplicationsByFreelancerId(this.user.user_id).subscribe({
+        next: (res) => {
+          if (res.success && res.data) {
+            const apps = res.data;
+            const pending = apps.filter((a: any) => a.status === 'Pending').length;
+            const total = apps.length;
+            const accepted = apps.filter((a: any) => a.status === 'Accepted').length;
+            
+            this.stats[0].value = pending;
+            this.stats[1].value = total;
+            this.stats[2].value = `$${accepted * 500}`; // Placeholder earnings
+          }
+        }
+      });
+    } else if (this.isEmployer) {
+      // Load employer jobs and proposals
+      this.api.getJobsByEmployerId(this.user.user_id).subscribe({
+        next: (res) => {
+          if (res.success && res.data) {
+            const jobs = res.data;
+            const activeJobs = jobs.filter((j: any) => j.status === 'Open').length;
+            const assigned = jobs.filter((j: any) => j.status === 'Assigned').length;
+            
+            this.stats[0].value = activeJobs;
+            this.stats[2].value = assigned;
+            this.recentJobs = jobs.slice(0, 5);
+            
+            // Count total proposals
+            let totalProposals = 0;
+            jobs.forEach((job: any) => {
+              this.api.getApplicationsByJobId(job.job_id).subscribe({
+                next: (appRes) => {
+                  if (appRes.success && appRes.data) {
+                    totalProposals += appRes.data.length;
+                    this.stats[1].value = totalProposals;
+                  }
+                }
+              });
+            });
+          }
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+        }
+      });
+      return;
+    }
+
     this.api.getJobs().subscribe({
       next: (res) => {
         if (res.success && res.data) {

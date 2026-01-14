@@ -18,9 +18,21 @@ export const createJobApplication = async (req: Request, res: Response) => {
             return sendError(res, 400, 'job_id does not reference an existing job.');
         }
 
+        // Check if job is still open for applications
+        if (job.status !== 'Open') {
+            return sendError(res, 400, 'This job is no longer accepting applications.');
+        }
+
         const freelancerUser = await userRepo.findById(freelancer_id);
         if (!freelancerUser) {
             return sendError(res, 400, 'freelancer_id does not reference an existing user.');
+        }
+
+        // Check if freelancer already applied to this job
+        const existingApplications = await jobAplRepo.findByJobId(job_id);
+        const alreadyApplied = existingApplications.some(app => app.freelancer_id === freelancer_id);
+        if (alreadyApplied) {
+            return sendError(res, 400, 'You have already applied to this job.');
         }
 
         const newApplicationId = await jobAplRepo.create(job_id, freelancer_id, bid_amount, proposal_text, status);
@@ -190,6 +202,19 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
         const success = await jobAplRepo.update(applicationId, { status });
 
         if (success) {
+            // When accepting an application, update job status to Assigned and reject other applications
+            if (status === 'Accepted') {
+                const { jobRepo } = await import('../repositories/jobRepo.js');
+                await jobRepo.update(existingApplication.job_id, { status: 'Assigned' });
+                
+                // Reject all other pending applications for this job
+                const allApplications = await jobAplRepo.findByJobId(existingApplication.job_id);
+                for (const app of allApplications) {
+                    if (app.application_id !== applicationId && app.status === 'Pending') {
+                        await jobAplRepo.update(app.application_id, { status: 'Rejected' });
+                    }
+                }
+            }
             return sendSuccess(res, { message: `Application ${status.toLowerCase()} successfully.` });
         } else {
             return sendError(res, 500, 'Failed to update application status.');
