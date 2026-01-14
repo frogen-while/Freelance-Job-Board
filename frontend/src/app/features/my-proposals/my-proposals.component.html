@@ -67,8 +67,15 @@
       <span>Loading your proposals...</span>
     </div>
 
+    <!-- Error State -->
+    <div class="error-state" *ngIf="errorMessage && !loading">
+      <div class="error-icon">⚠️</div>
+      <p>{{ errorMessage }}</p>
+      <button class="btn-secondary" (click)="loadProposals()">Try Again</button>
+    </div>
+
     <!-- Proposals List -->
-    <section class="proposals-section" *ngIf="!loading">
+    <section class="proposals-section" *ngIf="!loading && !errorMessage">
       <div class="proposals-list" *ngIf="filteredProposals.length > 0">
         <div class="proposal-card" *ngFor="let proposal of filteredProposals" (click)="viewJob(proposal.job_id)">
           <div class="proposal-main">

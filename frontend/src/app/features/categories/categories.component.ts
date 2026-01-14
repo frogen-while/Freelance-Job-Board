@@ -18,7 +18,7 @@ export class CategoriesComponent implements OnInit {
     this.loadCategories();
   }
 
-  private loadCategories(): void {
+  loadCategories(): void {
     this.loading = true;
     this.errorMessage = '';
     this.api.getCategories().subscribe({

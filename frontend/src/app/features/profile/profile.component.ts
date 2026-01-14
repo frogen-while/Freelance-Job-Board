@@ -359,6 +359,12 @@ export class ProfileComponent implements OnInit {
     this.errorMessage = '';
   }
 
+  contactUser(): void {
+    if (this.profileUserId) {
+      this.router.navigate(['/messages'], { queryParams: { userId: this.profileUserId } });
+    }
+  }
+
   saveProfile(): void {
     if (!this.user) return;
 

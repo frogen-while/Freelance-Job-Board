@@ -15,6 +15,12 @@
       </div>
     </header>
 
+    <!-- Error State -->
+    <div class="error-state" *ngIf="errorMessage">
+      <div class="error-icon">⚠️</div>
+      <p>{{ errorMessage }}</p>
+    </div>
+
     <!-- Stats Grid -->
     <section class="stats-section">
       <div class="stats-grid">

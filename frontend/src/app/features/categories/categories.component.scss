@@ -1,36 +1,57 @@
 @use 'app/shared' as *;
 
-:host {
+.categories-page {
   display: block;
   @include categories-section;
 }
 
-h1 {
+.categories-title {
   @include categories-title;
 }
 
-.grid {
+.categories-grid {
   @include categories-grid;
 }
 
-.card {
+.category-card {
   @include category-card;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-  .name {
+  .category-name {
     @include category-name;
   }
 
-  .hint {
+  .category-hint {
     @include category-hint;
   }
 
   &:hover {
-    .name {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    
+    .category-name {
       color: rgba(15, 23, 42, 0.95);
     }
 
-    .hint {
+    .category-hint {
       color: rgba(15, 23, 42, 0.75);
     }
+  }
+}
+
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid $border-light;
+  background: transparent;
+  color: $text-primary;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba($primary, 0.05);
   }
 }

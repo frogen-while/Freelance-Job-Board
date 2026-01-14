@@ -13,6 +13,7 @@ export class MyProposalsComponent implements OnInit {
   proposals: JobApplication[] = [];
   filteredProposals: JobApplication[] = [];
   loading = true;
+  errorMessage = '';
   statusFilter: string = 'all';
 
   stats = {
@@ -32,13 +33,15 @@ export class MyProposalsComponent implements OnInit {
     this.loadProposals();
   }
 
-  private loadProposals(): void {
+  loadProposals(): void {
     const user = this.auth.getUser();
     if (!user) {
       this.loading = false;
       return;
     }
 
+    this.loading = true;
+    this.errorMessage = '';
     this.api.getApplicationsByFreelancerId(user.user_id).subscribe({
       next: (res) => {
         if (res.success && res.data) {
@@ -50,6 +53,7 @@ export class MyProposalsComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
+        this.errorMessage = 'Failed to load proposals. Please try again.';
       }
     });
   }

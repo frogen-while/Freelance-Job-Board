@@ -63,8 +63,15 @@
       <span>Loading your jobs...</span>
     </div>
 
+    <!-- Error State -->
+    <div class="error-state" *ngIf="errorMessage && !loading">
+      <div class="error-icon">⚠️</div>
+      <p>{{ errorMessage }}</p>
+      <button class="btn-secondary" (click)="loadJobs()">Try Again</button>
+    </div>
+
     <!-- Jobs List -->
-    <section class="jobs-section" *ngIf="!loading">
+    <section class="jobs-section" *ngIf="!loading && !errorMessage">
       <div class="jobs-list" *ngIf="filteredJobs.length > 0">
         <div class="job-card" *ngFor="let job of filteredJobs" (click)="viewJob(job.job_id)">
           <div class="job-header">

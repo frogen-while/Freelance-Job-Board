@@ -325,9 +325,8 @@ export class JobDetailComponent implements OnInit {
   getJobTypeLabel(): string {
     if (!this.job?.job_type) return '';
     const labels: Record<string, string> = {
-      'one_time': 'One-time project',
-      'ongoing': 'Ongoing project',
-      'contract': 'Contract'
+      'fixed': 'Fixed Price',
+      'hourly': 'Hourly Rate'
     };
     return labels[this.job.job_type] || '';
   }
@@ -336,15 +335,16 @@ export class JobDetailComponent implements OnInit {
     if (!this.job?.duration_estimate) return '';
     const labels: Record<string, string> = {
       'less_than_week': 'Less than a week',
-      '1_to_4_weeks': '1 to 4 weeks',
-      '1_to_3_months': '1 to 3 months',
-      '3_to_6_months': '3 to 6 months',
+      '1_2_weeks': '1-2 weeks',
+      '2_4_weeks': '2-4 weeks',
+      '1_3_months': '1-3 months',
+      '3_6_months': '3-6 months',
       'more_than_6_months': 'More than 6 months'
     };
     return labels[this.job.duration_estimate] || '';
   }
 
   goBack() {
-    this.router.navigate(['/find-work/browse']);
+    this.router.navigate([this.isOwner ? '/my-jobs' : '/find-work/browse']);
   }
 }

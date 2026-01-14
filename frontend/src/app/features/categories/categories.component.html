@@ -1,7 +1,23 @@
-<h1 class="categories-title">Browse top categories</h1>
-<div class="categories-grid">
-  <a class="category-card" *ngFor="let c of categories">
-    <h3 class="category-name">{{c.name}}</h3>
-    <p class="category-hint">Browse jobs</p>
-  </a>
+<div class="categories-page">
+  <h1 class="categories-title">Browse top categories</h1>
+  
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading categories...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-state" *ngIf="errorMessage && !loading">
+    <p>{{ errorMessage }}</p>
+    <button class="btn-secondary" (click)="loadCategories()">Try Again</button>
+  </div>
+
+  <!-- Categories Grid -->
+  <div class="categories-grid" *ngIf="!loading && !errorMessage">
+    <a class="category-card" *ngFor="let c of categories" [routerLink]="['/find-work/browse']" [queryParams]="{category: c.category_id}">
+      <h3 class="category-name">{{c.name}}</h3>
+      <p class="category-hint">Browse jobs</p>
+    </a>
+  </div>
 </div>

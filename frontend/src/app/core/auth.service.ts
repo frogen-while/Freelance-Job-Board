@@ -60,10 +60,6 @@ export class AuthService {
     return of(this.needsOnboarding());
   }
 
-  isLoggedIn(): boolean {
-    return !!this.getToken();
-  }
-
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }

@@ -159,6 +159,30 @@
   }
 }
 
+.btn-contact {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  padding: $space-sm $space-lg;
+  background: $primary;
+  border: none;
+  border-radius: $radius-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    background: darken($primary, 8%);
+  }
+}
+
 // Messages
 .message {
   padding: $space-md;
