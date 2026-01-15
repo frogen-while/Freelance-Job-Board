@@ -2,8 +2,8 @@
   position: fixed;
   bottom: 50px;
   right: 50px;
-  width: 60px;
-  height: 60px;
+  width: 75px;
+  height: 75px;
   border-radius: 50%;
   background-color: #4a90e2;
   border: none;
@@ -13,6 +13,7 @@
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
+  z-index: 1000;
   
   &:hover {
     background-color: #357abd;
@@ -25,8 +26,8 @@
   }
 
   .support-icon {
-    width: 35px;
-    height: 35px;
+    width: 42px;
+    height: 42px;
     object-fit: contain;
   }
 }

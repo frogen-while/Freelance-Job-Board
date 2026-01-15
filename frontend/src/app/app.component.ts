@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  standalone: false
 })
 export class AppComponent {
+  constructor(private router: Router) {}
+
   openSupport() {
-    // Open support/help modal or navigate to support page
-    alert('Support feature coming soon!');
-    // You can replace this with actual support functionality like:
-    // this.router.navigate(['/support']);
-    // or open a modal dialog
+    this.router.navigate(['/support']);
   }
 }

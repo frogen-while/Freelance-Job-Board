@@ -237,4 +237,40 @@ export class ApiService {
   getConversations(userId: number): Observable<ApiResponse<Conversation[]>> {
     return this.http.get<ApiResponse<Conversation[]>>(`${this.base}/messages/user/${userId}/conversations`);
   }
+
+  // ============ SUPPORT TICKETS ============
+
+  createSupportTicket(payload: {
+    user_id: number;
+    support_id: number;
+    subject: string;
+    message: string;
+    status: string;
+  }): Observable<ApiResponse<{ ticket_id: number }>> {
+    return this.http.post<ApiResponse<{ ticket_id: number }>>(`${this.base}/supporttickets`, payload);
+  }
+
+  getAllSupportTickets(): Observable<ApiResponse<any[]>> {
+    return this.http.get<ApiResponse<any[]>>(`${this.base}/supporttickets`);
+  }
+
+  getSupportTicketById(ticketId: number): Observable<ApiResponse<any>> {
+    return this.http.get<ApiResponse<any>>(`${this.base}/supporttickets/${ticketId}`);
+  }
+
+  getUserSupportTickets(userId: number): Observable<ApiResponse<any[]>> {
+    return this.http.get<ApiResponse<any[]>>(`${this.base}/supporttickets?user_id=${userId}`);
+  }
+
+  updateSupportTicket(ticketId: number, data: {
+    subject?: string;
+    message?: string;
+    status?: string;
+  }): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(`${this.base}/supporttickets/${ticketId}`, data);
+  }
+
+  deleteSupportTicket(ticketId: number): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(`${this.base}/supporttickets/${ticketId}`);
+  }
 }

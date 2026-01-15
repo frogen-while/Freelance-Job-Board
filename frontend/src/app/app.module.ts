@@ -11,10 +11,11 @@ import { AboutComponent } from './features/about/about.component';
 import { ProfileComponent } from './features/profile/profile.component';
 import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
+import { SupportComponent } from './features/support/support.component';
 import { AuthInterceptor } from './core/auth.interceptor';
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, HomeComponent, CategoriesComponent, AboutComponent, ProfileComponent, LoginComponent, RegisterComponent],
+  declarations: [AppComponent, HeaderComponent, HomeComponent, CategoriesComponent, AboutComponent, ProfileComponent, LoginComponent, RegisterComponent, SupportComponent],
   imports: [BrowserModule, HttpClientModule, FormsModule, AppRoutingModule],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
