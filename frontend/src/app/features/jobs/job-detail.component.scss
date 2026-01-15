@@ -235,14 +235,7 @@
   gap: $space-sm;
 }
 
-.skill-tag {
-  padding: $space-xs $space-md;
-  background: rgba(99, 102, 241, 0.15);
-  border-radius: $radius-full;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: #818cf8;
-}
+// skill-tag uses global .skill-tag-pill
 
 .job-title {
   font-size: $font-size-3xl;

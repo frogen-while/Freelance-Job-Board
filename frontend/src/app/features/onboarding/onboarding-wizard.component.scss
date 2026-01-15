@@ -171,31 +171,7 @@
   margin-bottom: $space-md;
 }
 
-.skill-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: $space-xs;
-  padding: $space-xs $space-sm;
-  background: $gradient-accent;
-  color: white;
-  border-radius: $radius-full;
-  font-size: $font-size-sm;
-
-  .remove-skill {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: $font-size-md;
-    line-height: 1;
-    padding: 0;
-    opacity: 0.8;
-
-    &:hover {
-      opacity: 1;
-    }
-  }
-}
+// skill-tag uses global .skill-tag-selected (with gradient override if needed)
 
 .skill-search {
   margin-bottom: $space-md;

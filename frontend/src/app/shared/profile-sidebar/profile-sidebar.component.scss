@@ -189,19 +189,8 @@
   gap: $space-xs;
 }
 
-.skill-tag {
-  padding: $space-xs $space-sm;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: $radius-md;
-  font-size: $font-size-xs;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.skill-more {
-  font-size: $font-size-xs;
-  color: rgba(255, 255, 255, 0.5);
-  padding: $space-xs;
-}
+// skill-tag uses global .skill-tag-dark
+// skill-more uses global .skill-more
 
 .sidebar-footer {
   padding: $space-md $space-lg;

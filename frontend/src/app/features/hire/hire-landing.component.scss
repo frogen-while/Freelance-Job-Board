@@ -578,20 +578,8 @@
   margin-bottom: $space-md;
 }
 
-.skill-tag {
-  padding: $space-xs $space-sm;
-  background: rgba($accent, 0.12);
-  color: darken($accent, 12%);
-  border-radius: $radius-md;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-}
-
-.skill-more {
-  padding: $space-xs $space-sm;
-  color: $text-muted;
-  font-size: $font-size-xs;
-}
+// skill-tag uses global .skill-tag-light
+// skill-more uses global .skill-more
 
 .freelancer-meta {
   display: flex;

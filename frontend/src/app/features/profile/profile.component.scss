@@ -298,13 +298,7 @@
   gap: $space-xs;
 }
 
-.skill-tag {
-  padding: $space-xs $space-sm;
-  background: #f1f5f9;
-  border-radius: $radius-md;
-  font-size: $font-size-sm;
-  color: $text-secondary;
-}
+// skill-tag uses global .skill-tag-light
 
 // Profile Edit Mode
 .profile-edit {
@@ -350,32 +344,9 @@
   flex-wrap: wrap;
   gap: $space-xs;
   margin-bottom: $space-md;
-
-  .skill-tag.selected {
-    display: inline-flex;
-    align-items: center;
-    gap: $space-xs;
-    background: $gradient-accent;
-    color: white;
-    border-radius: $radius-full;
-    padding: $space-xs $space-sm;
-
-    .remove-skill {
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-      font-size: $font-size-md;
-      line-height: 1;
-      padding: 0;
-      opacity: 0.8;
-
-      &:hover {
-        opacity: 1;
-      }
-    }
-  }
 }
+
+// skill-tag.selected uses global .skill-tag-selected (with gradient override if needed)
 
 .skill-search {
   margin-bottom: $space-md;
