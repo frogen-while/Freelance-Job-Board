@@ -15,6 +15,7 @@ $brand-primary: #4f46e5;
 // Accent (indigo)
 $accent: #6366f1;
 $accent-hover: #4f46e5;
+$accent-light: #8b5cf6;
 
 // Status colors
 $success: #16a34a;
@@ -23,6 +24,10 @@ $error: #b91c1c;
 $danger: #f87171;
 $warning: #f59e0b;
 $info: #0ea5e9;
+
+// Gradients (defined after colors they reference)
+$gradient-accent: linear-gradient(135deg, $accent, $accent-light);
+$gradient-success: linear-gradient(135deg, $success, $success-dark);
 
 // Text colors
 $text-primary: #0f172a;

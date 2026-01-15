@@ -50,7 +50,7 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  background: $gradient-accent;
   border-radius: $radius-full;
   transition: width 0.3s ease;
 }
@@ -77,13 +77,13 @@
   transition: all 0.3s ease;
 
   &.active {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    background: $gradient-accent;
     color: white;
     transform: scale(1.1);
   }
 
   &.completed {
-    background: #22c55e;
+    background: $success;
     color: white;
   }
 }
@@ -135,7 +135,7 @@
 
     &:focus {
       outline: none;
-      border-color: #6366f1;
+      border-color: $accent;
     }
 
     &::placeholder {
@@ -204,7 +204,7 @@
       content: '→';
       position: absolute;
       left: 0;
-      color: #6366f1;
+      color: $accent;
     }
   }
 }
@@ -222,7 +222,7 @@
   align-items: center;
   gap: $space-xs;
   padding: $space-xs $space-sm;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: $gradient-accent;
   color: white;
   border-radius: $radius-full;
   font-size: $font-size-sm;
@@ -274,8 +274,8 @@
 
   &.selected {
     background: #eef2ff;
-    border-color: #6366f1;
-    color: #6366f1;
+    border-color: $accent;
+    color: $accent;
   }
 }
 
