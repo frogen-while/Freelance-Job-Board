@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { MessagesComponent } from './messages.component';
 import { ConversationComponent } from './conversation.component';
+import { SharedModule } from '../../shared/shared.module';
 
 const routes: Routes = [
   { path: '', component: MessagesComponent },
@@ -15,6 +16,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
+    SharedModule,
     RouterModule.forChild(routes)
   ]
 })

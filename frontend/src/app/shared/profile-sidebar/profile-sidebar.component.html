@@ -2,10 +2,7 @@
 <div class="profile-sidebar guest-sidebar" *ngIf="!loading && !isLoggedIn">
   <div class="guest-content">
     <div class="guest-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
-      </svg>
+      <mat-icon>person</mat-icon>
     </div>
     <h3 class="guest-title">Join Our Platform</h3>
     <p class="guest-text">Create a free account to apply for jobs or post projects.</p>
@@ -85,10 +82,7 @@
 
     <!-- Location -->
     <div class="info-item" *ngIf="profile?.location">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-        <circle cx="12" cy="10" r="3"/>
-      </svg>
+      <mat-icon>location_on</mat-icon>
       <span>{{ profile.location }}</span>
     </div>
 
@@ -106,10 +100,7 @@
 
   <div class="sidebar-footer">
     <a routerLink="/profile" class="edit-profile-link">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-      </svg>
+      <mat-icon>edit</mat-icon>
       Edit Profile
     </a>
   </div>

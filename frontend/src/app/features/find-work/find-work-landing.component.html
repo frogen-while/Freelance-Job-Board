@@ -1,5 +1,4 @@
 <div class="find-work-page">
-  <!-- Hero Section - Full Width Dark -->
   <section class="hero-section">
     <div class="hero-bg">
       <div class="grid-pattern"></div>
@@ -22,10 +21,7 @@
 
       <div class="search-container">
         <div class="search-box">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="M21 21l-4.35-4.35"/>
-          </svg>
+          <mat-icon class="search-icon">search</mat-icon>
           <input
             type="text"
             class="search-input"
@@ -47,7 +43,7 @@
     </div>
   </section>
 
-  <!-- Stats Section -->
+
   <section class="stats-section">
     <div class="stats-grid">
       <div class="stat-item" *ngFor="let stat of stats">
@@ -57,7 +53,6 @@
     </div>
   </section>
 
-  <!-- Categories Section -->
   <section class="categories-section" *ngIf="categories.length > 0">
     <div class="section-inner">
       <div class="section-header">
@@ -74,10 +69,7 @@
            [routerLink]="['/find-work/browse']"
            [queryParams]="{ category: category.category_id }">
           <div class="category-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-            </svg>
+            <mat-icon>work</mat-icon>
           </div>
           <div class="category-info">
             <h3 class="category-name">{{ category.name }}</h3>
@@ -89,7 +81,6 @@
     </div>
   </section>
 
-  <!-- Recent Jobs Section -->
   <section class="jobs-section" *ngIf="recentJobs.length > 0">
     <div class="section-inner">
       <div class="section-header">
@@ -119,7 +110,6 @@
     </div>
   </section>
 
-  <!-- Why Join Section -->
   <section class="why-section">
     <div class="section-inner">
       <h2 class="section-title centered">Why freelancers choose us</h2>
@@ -128,23 +118,10 @@
       <div class="why-grid">
         <div class="why-card" *ngFor="let item of whyJoin">
           <div class="why-icon">
-            <svg *ngIf="item.icon === 'briefcase'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-            </svg>
-            <svg *ngIf="item.icon === 'dollar'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="6" x2="12" y2="18"/>
-              <path d="M9 12h6"/>
-            </svg>
-            <svg *ngIf="item.icon === 'clock'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <svg *ngIf="item.icon === 'trending'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-              <polyline points="17 6 23 6 23 12"/>
-            </svg>
+            <mat-icon *ngIf="item.icon === 'briefcase'">work</mat-icon>
+            <mat-icon *ngIf="item.icon === 'dollar'">attach_money</mat-icon>
+            <mat-icon *ngIf="item.icon === 'clock'">schedule</mat-icon>
+            <mat-icon *ngIf="item.icon === 'trending'">trending_up</mat-icon>
           </div>
           <h3 class="why-title">{{ item.title }}</h3>
           <p class="why-description">{{ item.description }}</p>
@@ -153,7 +130,6 @@
     </div>
   </section>
 
-  <!-- CTA Section -->
   <section class="cta-section">
     <div class="section-inner">
       <div class="cta-card">

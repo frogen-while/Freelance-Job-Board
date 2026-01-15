@@ -76,6 +76,7 @@ body {
   html {
     font-size: 14px;
   }
+}
 
 // --------------------------------------------
 // TYPOGRAPHY
@@ -1033,4 +1034,382 @@ a {
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+// --------------------------------------------
+// HERO SECTION
+// --------------------------------------------
+.hero-section {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  padding: tokens.$space-20 tokens.$space-6;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: tokens.$bp-md) {
+    padding: tokens.$space-12 tokens.$space-4;
+    min-height: 400px;
+  }
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 50%, rgba(tokens.$accent, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(tokens.$accent-light, 0.1) 0%, transparent 50%);
+  }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: tokens.$space-2;
+  padding: tokens.$space-2 tokens.$space-4;
+  background: rgba(tokens.$accent, 0.15);
+  border: 1px solid rgba(tokens.$accent, 0.3);
+  border-radius: tokens.$radius-full;
+  font-size: tokens.$font-size-sm;
+  font-weight: tokens.$font-weight-medium;
+  color: tokens.$accent-light;
+  margin-bottom: tokens.$space-6;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: tokens.$font-weight-extrabold;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: tokens.$space-6;
+
+  .highlight {
+    background: tokens.$gradient-accent;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.hero-subtitle {
+  font-size: tokens.$font-size-xl;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin-bottom: tokens.$space-8;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-actions {
+  display: flex;
+  gap: tokens.$space-4;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+// --------------------------------------------
+// SECTION LAYOUT
+// --------------------------------------------
+.section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: tokens.$space-20 tokens.$space-6;
+
+  @media (max-width: tokens.$bp-md) {
+    padding: tokens.$space-12 tokens.$space-4;
+  }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: tokens.$space-8;
+  gap: tokens.$space-4;
+
+  @media (max-width: tokens.$bp-sm) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.section-title {
+  font-size: tokens.$font-size-2xl;
+  font-weight: tokens.$font-weight-bold;
+  color: tokens.$text-primary;
+  margin: 0;
+
+  @media (min-width: tokens.$bp-md) {
+    font-size: tokens.$font-size-3xl;
+  }
+}
+
+.section-subtitle {
+  font-size: tokens.$font-size-lg;
+  color: tokens.$text-secondary;
+  margin-top: tokens.$space-2;
+}
+
+.section-link {
+  display: inline-flex;
+  align-items: center;
+  gap: tokens.$space-1;
+  color: tokens.$accent;
+  font-weight: tokens.$font-weight-medium;
+  text-decoration: none;
+  transition: gap 0.2s;
+
+  &:hover {
+    gap: tokens.$space-2;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// --------------------------------------------
+// GRID UTILITIES
+// --------------------------------------------
+.grid-4-2-1 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: tokens.$space-6;
+
+  @media (max-width: tokens.$bp-lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: tokens.$bp-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-3-2-1 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: tokens.$space-6;
+
+  @media (max-width: tokens.$bp-lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: tokens.$bp-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-3-1 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: tokens.$space-6;
+
+  @media (max-width: tokens.$bp-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-2-1 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: tokens.$space-6;
+
+  @media (max-width: tokens.$bp-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: tokens.$space-6;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: tokens.$space-6;
+
+  @media (max-width: tokens.$bp-lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: tokens.$bp-sm) {
+    grid-template-columns: 1fr;
+    gap: tokens.$space-4;
+  }
+}
+
+// --------------------------------------------
+// CARD HOVER UTILITIES
+// --------------------------------------------
+.card-hover-lift-sm {
+  transition: transform tokens.$transition-fast, box-shadow tokens.$transition-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: tokens.$shadow-lg;
+  }
+}
+
+.card-hover-lift {
+  transition: transform tokens.$transition-fast, box-shadow tokens.$transition-fast;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: tokens.$shadow-xl;
+  }
+}
+
+.card-hover-lift-lg {
+  transition: transform tokens.$transition-fast, box-shadow tokens.$transition-fast;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: tokens.$shadow-xl;
+  }
+}
+
+// Stat card base style
+.stat-card {
+  background: tokens.$bg-white;
+  border-radius: tokens.$radius-xl;
+  padding: tokens.$space-6;
+  text-align: center;
+  box-shadow: tokens.$shadow-sm;
+  transition: transform tokens.$transition-fast, box-shadow tokens.$transition-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: tokens.$shadow-lg;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: tokens.$radius-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto tokens.$space-4;
+    background: rgba(tokens.$accent, 0.1);
+    color: tokens.$accent;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .stat-value {
+    font-size: tokens.$font-size-2xl;
+    font-weight: tokens.$font-weight-bold;
+    color: tokens.$text-primary;
+    margin-bottom: tokens.$space-1;
+  }
+
+  .stat-label {
+    font-size: tokens.$font-size-sm;
+    color: tokens.$text-muted;
+  }
+}
+
+// Dark stat card variant
+.stat-card-dark {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: tokens.$radius-xl;
+  padding: tokens.$space-6;
+  text-align: center;
+  transition: transform tokens.$transition-fast, box-shadow tokens.$transition-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: tokens.$radius-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto tokens.$space-4;
+    background: rgba(tokens.$accent, 0.2);
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      color: tokens.$accent-light;
+    }
+  }
+
+  .stat-value {
+    font-size: tokens.$font-size-2xl;
+    font-weight: tokens.$font-weight-bold;
+    color: #fff;
+    margin-bottom: tokens.$space-1;
+  }
+
+  .stat-label {
+    font-size: tokens.$font-size-sm;
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+// --------------------------------------------
+// MATERIAL ICON SIZING
+// --------------------------------------------
+.mat-icon-sm {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.mat-icon-md {
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.mat-icon-lg {
+  font-size: 24px !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.mat-icon-xl {
+  font-size: 32px !important;
+  width: 32px !important;
+  height: 32px !important;
 }

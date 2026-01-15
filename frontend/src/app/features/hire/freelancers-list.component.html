@@ -20,10 +20,7 @@
             (keyup.enter)="onSearch()"
           />
           <button class="search-btn" (click)="onSearch()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="M21 21l-4.35-4.35"/>
-            </svg>
+            <mat-icon>search</mat-icon>
           </button>
         </div>
       </div>
@@ -68,12 +65,7 @@
 
       <!-- Empty State -->
       <div class="empty-state" *ngIf="!loading && freelancers.length === 0">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-        </svg>
+        <mat-icon class="empty-icon">people</mat-icon>
         <h3>No freelancers found</h3>
         <p>Try adjusting your search or filters</p>
         <button class="btn-primary" (click)="clearFilters()">Clear Filters</button>
@@ -131,10 +123,7 @@
           <div class="card-footer">
             <div class="freelancer-meta">
               <span class="meta-item" *ngIf="freelancer.location">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
+                <mat-icon>location_on</mat-icon>
                 {{ freelancer.location }}
               </span>
               <span class="meta-item rate" *ngIf="freelancer.hourly_rate">

@@ -12,9 +12,7 @@
   <!-- Empty State -->
   <div class="empty-state" *ngIf="!loading && conversations.length === 0">
     <div class="empty-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-      </svg>
+      <mat-icon>chat_bubble_outline</mat-icon>
     </div>
     <h2>No Messages Yet</h2>
     <p>When you apply to jobs or receive proposals, your conversations will appear here.</p>

@@ -32,10 +32,7 @@
           (keyup.enter)="onSearch()"
         />
         <button class="search-btn" (click)="onSearch()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="M21 21l-4.35-4.35"/>
-          </svg>
+          <mat-icon>search</mat-icon>
           <span>Find Talent</span>
         </button>
       </div>
@@ -92,19 +89,9 @@
       <div class="benefits-grid">
         <div class="benefit-card" *ngFor="let benefit of benefits">
           <div class="benefit-icon">
-            <svg *ngIf="benefit.icon === 'star'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-            <svg *ngIf="benefit.icon === 'shield'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              <path d="M9 12l2 2 4-4"/>
-            </svg>
-            <svg *ngIf="benefit.icon === 'users'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
+            <mat-icon *ngIf="benefit.icon === 'star'">star</mat-icon>
+            <mat-icon *ngIf="benefit.icon === 'shield'">verified_user</mat-icon>
+            <mat-icon *ngIf="benefit.icon === 'users'">people</mat-icon>
           </div>
           <h3 class="benefit-title">{{ benefit.title }}</h3>
           <p class="benefit-description">{{ benefit.description }}</p>
@@ -156,10 +143,7 @@
 
             <div class="freelancer-meta">
               <span class="meta-item" *ngIf="freelancer.location">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
+                <mat-icon>location_on</mat-icon>
                 {{ freelancer.location }}
               </span>
               <span class="meta-item" *ngIf="freelancer.hourly_rate">

@@ -8,10 +8,7 @@
   <!-- Job Not Found -->
   <div class="not-found" *ngIf="!loading && !job">
     <div class="not-found-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M12 8v4M12 16h.01"/>
-      </svg>
+      <mat-icon>error_outline</mat-icon>
     </div>
     <h2>Job Not Found</h2>
     <p>This job posting may have been removed or doesn't exist.</p>
@@ -22,9 +19,7 @@
   <div class="job-content" *ngIf="!loading && job">
     <!-- Back Button -->
     <button class="back-btn" (click)="goBack()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
+      <mat-icon>arrow_back</mat-icon>
       Back to Jobs
     </button>
 
@@ -44,19 +39,11 @@
               {{ formatBudget(job.budget) }}
             </span>
             <span class="meta-item" *ngIf="job.deadline">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
-              </svg>
+              <mat-icon>event</mat-icon>
               Due {{ job.deadline | date:'MMM d, y' }}
             </span>
             <span class="meta-item" *ngIf="job.location">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
+              <mat-icon>location_on</mat-icon>
               {{ job.location }}
             </span>
           </div>
@@ -123,10 +110,7 @@
           <!-- Already Applied -->
           <div class="applied-state" *ngIf="applied">
             <div class="success-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
-              </svg>
+              <mat-icon>check_circle</mat-icon>
             </div>
             <h3>Application Submitted!</h3>
             <p>Your proposal has been sent to the client. You'll be notified when they respond.</p>
