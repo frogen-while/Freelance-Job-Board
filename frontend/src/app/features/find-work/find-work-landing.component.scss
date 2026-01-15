@@ -118,7 +118,7 @@
 .search-icon {
   width: 24px;
   height: 24px;
-  stroke: #94a3b8;
+  stroke: $text-muted;
   margin: 0 $space-md;
   flex-shrink: 0;
 }
@@ -133,7 +133,7 @@
   background: transparent;
 
   &::placeholder {
-    color: #94a3b8;
+    color: $text-muted;
   }
 }
 

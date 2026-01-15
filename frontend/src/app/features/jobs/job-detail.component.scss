@@ -453,44 +453,7 @@
   }
 }
 
-.form-group {
-  margin-bottom: $space-lg;
-
-  label {
-    display: block;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: $space-sm;
-  }
-
-  input, textarea {
-    width: 100%;
-    padding: $space-md;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: $radius-md;
-    color: #fff;
-    font-size: $font-size-md;
-    transition: all 0.2s;
-
-    &::placeholder {
-      color: rgba(255, 255, 255, 0.3);
-    }
-
-    &:focus {
-      outline: none;
-      border-color: $accent;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-    }
-  }
-
-  textarea {
-    resize: vertical;
-    min-height: 120px;
-    line-height: 1.5;
-  }
-}
+// Form styles use global .form-group-dark, .form-input-dark, .form-textarea-dark
 
 // btn-apply uses global .btn-gradient .btn-block styles
 

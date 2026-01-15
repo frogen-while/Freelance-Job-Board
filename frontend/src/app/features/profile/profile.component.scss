@@ -331,54 +331,16 @@
   }
 }
 
+// Form styles use global .form-group-bordered, .form-input-bordered, etc.
+// Component-specific overrides
 .form-group {
   margin-bottom: $space-lg;
-
-  label {
-    display: block;
-    font-weight: $font-weight-medium;
-    color: $text-primary;
-    margin-bottom: $space-xs;
-  }
-
-  input, textarea, select {
-    width: 100%;
-    padding: $space-md;
-    border: 2px solid $border-light;
-    border-radius: $radius-lg;
-    font-size: $font-size-md;
-    transition: border-color 0.2s ease;
-
-    &:focus {
-      outline: none;
-      border-color: $accent;
-    }
-  }
-
-  textarea {
-    resize: vertical;
-    min-height: 120px;
-  }
 
   .char-count, .hint {
     display: block;
     font-size: $font-size-sm;
     color: $text-muted;
     margin-top: $space-xs;
-  }
-}
-
-.form-row {
-  display: flex;
-  gap: $space-lg;
-
-  .half {
-    flex: 1;
-  }
-
-  @media (max-width: 600px) {
-    flex-direction: column;
-    gap: 0;
   }
 }
 

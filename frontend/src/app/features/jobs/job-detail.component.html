@@ -41,10 +41,6 @@
           <h1 class="job-title">{{ job.title }}</h1>
           <div class="job-meta">
             <span class="meta-item" *ngIf="job.budget">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v12M9 9h6M9 15h6"/>
-              </svg>
               {{ formatBudget(job.budget) }}
             </span>
             <span class="meta-item" *ngIf="job.deadline">
@@ -140,21 +136,23 @@
           <div class="apply-form" *ngIf="!applied && isLoggedIn && isFreelancer && job.status === 'Open'">
             <h3>Submit a Proposal</h3>
             
-            <div class="form-group">
+            <div class="form-group-dark">
               <label for="bidAmount">Your Bid ($)</label>
               <input 
                 type="number" 
                 id="bidAmount"
+                class="form-input-dark"
                 [(ngModel)]="bidAmount"
                 placeholder="Enter your bid amount"
                 min="1"
               />
             </div>
             
-            <div class="form-group">
+            <div class="form-group-dark">
               <label for="proposal">Cover Letter</label>
               <textarea 
                 id="proposal"
+                class="form-textarea-dark"
                 [(ngModel)]="proposalText"
                 placeholder="Explain why you're the best fit for this job..."
                 rows="6"

@@ -146,57 +146,14 @@
   margin-bottom: $space-xl;
 }
 
-// Form Groups
+// Form styles use global .form-group-bordered, .form-input-bordered, .form-textarea-bordered
+// Additional form-group tweaks
 .form-group {
   margin-bottom: $space-lg;
 
-  label {
-    display: block;
-    font-weight: $font-weight-medium;
-    color: $text-primary;
-    margin-bottom: $space-sm;
-  }
-
-  input, textarea, select {
-    width: 100%;
-    padding: $space-md;
-    border: 2px solid $border-light;
-    border-radius: $radius-lg;
-    font-size: $font-size-md;
-    transition: border-color 0.2s ease;
-
-    &:focus {
-      outline: none;
-      border-color: $accent;
-    }
-  }
-
   textarea {
-    resize: vertical;
     min-height: 150px;
   }
-
-  .char-count {
-    display: block;
-    text-align: right;
-    font-size: $font-size-xs;
-    color: $text-muted;
-    margin-top: $space-xs;
-  }
-}
-
-.form-row {
-  display: flex;
-  gap: $space-lg;
-
-  @media (max-width: 600px) {
-    flex-direction: column;
-    gap: 0;
-  }
-}
-
-.form-group.half {
-  flex: 1;
 }
 
 // Checkbox
@@ -227,7 +184,7 @@
   margin-bottom: $space-md;
   min-height: 40px;
   padding: $space-md;
-  background: #f8fafc;
+  background: $bg-page;
   border-radius: $radius-lg;
 }
 
@@ -235,7 +192,7 @@
   color: $text-muted;
   font-size: $font-size-sm;
   padding: $space-md;
-  background: #f8fafc;
+  background: $bg-page;
   border-radius: $radius-lg;
   text-align: center;
 }
@@ -278,7 +235,7 @@
   max-height: 200px;
   overflow-y: auto;
   padding: $space-md;
-  background: #f8fafc;
+  background: $bg-page;
   border-radius: $radius-lg;
 }
 
@@ -313,7 +270,7 @@
 
 // Job Summary
 .job-summary {
-  background: #f8fafc;
+  background: $bg-page;
   border-radius: $radius-xl;
   padding: $space-xl;
   margin-top: $space-xl;

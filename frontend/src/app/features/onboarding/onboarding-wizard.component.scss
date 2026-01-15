@@ -114,39 +114,10 @@
   to { opacity: 1; transform: translateX(0); }
 }
 
-// Form elements
+// Form styles use global .form-group-bordered, .form-input-bordered, etc.
+// Component-specific overrides
 .form-group {
   margin-bottom: $space-lg;
-
-  label {
-    display: block;
-    font-weight: $font-weight-medium;
-    color: $text-primary;
-    margin-bottom: $space-xs;
-  }
-
-  input, textarea, select {
-    width: 100%;
-    padding: $space-md;
-    border: 2px solid $border-light;
-    border-radius: $radius-lg;
-    font-size: $font-size-md;
-    transition: border-color 0.2s ease;
-
-    &:focus {
-      outline: none;
-      border-color: $accent;
-    }
-
-    &::placeholder {
-      color: #94a3b8;
-    }
-  }
-
-  textarea {
-    resize: vertical;
-    min-height: 120px;
-  }
 
   .hint {
     display: block;
@@ -154,28 +125,11 @@
     color: $text-muted;
     margin-top: $space-xs;
   }
-
-  .char-count {
-    display: block;
-    text-align: right;
-    font-size: $font-size-sm;
-    color: $text-muted;
-    margin-top: $space-xs;
-  }
-}
-
-.form-row {
-  display: flex;
-  gap: $space-lg;
-
-  .half {
-    flex: 1;
-  }
 }
 
 // Headline examples
 .headline-examples {
-  background: #f8fafc;
+  background: $bg-page;
   border-radius: $radius-lg;
   padding: $space-md;
   margin-top: $space-md;
