@@ -128,7 +128,7 @@
         <div class="info-section" *ngIf="isFreelancer && selectedSkills.length > 0">
           <h2>Skills</h2>
           <div class="skills-list">
-            <span class="skill-tag" *ngFor="let skillId of selectedSkills">
+            <span class="skill-tag-light" *ngFor="let skillId of selectedSkills">
               {{ getSkillName(skillId) }}
             </span>
           </div>
@@ -214,7 +214,7 @@
             <label>Skills (up to 15)</label>
             
             <div class="selected-skills" *ngIf="selectedSkills.length > 0">
-              <span class="skill-tag selected" *ngFor="let skillId of selectedSkills">
+              <span class="skill-tag-selected" *ngFor="let skillId of selectedSkills">
                 {{ getSkillName(skillId) }}
                 <button type="button" class="remove-skill" (click)="removeSkill(skillId)">×</button>
               </span>

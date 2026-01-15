@@ -124,7 +124,7 @@
           </div>
 
           <div class="freelancer-skills" *ngIf="freelancer.skills?.length">
-            <span class="skill-tag" *ngFor="let skill of freelancer.skills.slice(0, 4)">{{ skill }}</span>
+            <span class="skill-tag-light" *ngFor="let skill of freelancer.skills.slice(0, 4)">{{ skill }}</span>
             <span class="skill-more" *ngIf="freelancer.skills.length > 4">+{{ freelancer.skills.length - 4 }}</span>
           </div>
 

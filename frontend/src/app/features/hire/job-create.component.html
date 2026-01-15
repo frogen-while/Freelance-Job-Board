@@ -149,7 +149,7 @@
         <div class="form-group">
           <label>Selected Skills</label>
           <div class="selected-skills" *ngIf="selectedSkills.length > 0">
-            <span class="skill-tag selected" *ngFor="let skillId of selectedSkills">
+            <span class="skill-tag-selected" *ngFor="let skillId of selectedSkills">
               {{ getSkillName(skillId) }}
               <button type="button" class="remove-skill" (click)="removeSkill(skillId)">×</button>
             </span>

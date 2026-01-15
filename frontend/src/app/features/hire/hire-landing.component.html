@@ -150,7 +150,7 @@
             <p class="freelancer-headline">{{ freelancer.headline || 'Freelancer' }}</p>
             
             <div class="freelancer-skills" *ngIf="freelancer.skills?.length">
-              <span class="skill-tag" *ngFor="let skill of freelancer.skills.slice(0, 3)">{{ skill }}</span>
+              <span class="skill-tag-light" *ngFor="let skill of freelancer.skills.slice(0, 3)">{{ skill }}</span>
               <span class="skill-more" *ngIf="freelancer.skills.length > 3">+{{ freelancer.skills.length - 3 }}</span>
             </div>
 

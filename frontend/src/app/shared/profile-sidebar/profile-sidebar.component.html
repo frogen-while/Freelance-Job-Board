@@ -96,7 +96,7 @@
     <div class="skills-section" *ngIf="isFreelancer && profile?.skills?.length">
       <h4>Skills</h4>
       <div class="skills-list">
-        <span class="skill-tag" *ngFor="let skill of profile.skills?.slice(0, 5)">{{ skill }}</span>
+        <span class="skill-tag-dark" *ngFor="let skill of profile.skills?.slice(0, 5)">{{ skill }}</span>
         <span class="skill-more" *ngIf="profile.skills && profile.skills.length > 5">
           +{{ profile.skills.length - 5 }} more
         </span>
