@@ -1,12 +1,5 @@
 @use 'app/shared' as tokens;
 
-// ============================================
-// GLOBAL STYLES - Freelance Job Board
-// ============================================
-
-// --------------------------------------------
-// RESET & BASE
-// --------------------------------------------
 * {
   margin: 0;
   padding: 0;
@@ -14,7 +7,6 @@
 }
 
 :root {
-  // Colors
   --liquid-a: #{tokens.$liquid-a};
   --liquid-b: #{tokens.$liquid-b};
   --liquid-c: #{tokens.$liquid-c};
@@ -37,7 +29,6 @@
   --color-bg-card: #{tokens.$bg-card};
   --color-border: #{tokens.$border-medium};
 
-  // Spacing (CSS custom properties)
   --space-1: #{tokens.$space-1};
   --space-2: #{tokens.$space-2};
   --space-3: #{tokens.$space-3};
@@ -85,7 +76,6 @@ body {
   html {
     font-size: 14px;
   }
-}
 
 // --------------------------------------------
 // TYPOGRAPHY
@@ -645,4 +635,5 @@ a {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
 }
