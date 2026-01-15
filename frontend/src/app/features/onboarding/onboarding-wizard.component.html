@@ -242,7 +242,7 @@
     <div class="wizard-footer">
       <button 
         type="button" 
-        class="btn-secondary" 
+        class="btn-dark-ghost" 
         (click)="prevStep()" 
         *ngIf="currentStep > 1">
         ← Back
@@ -250,7 +250,7 @@
       <div class="spacer"></div>
       <button 
         type="button" 
-        class="btn-primary" 
+        class="btn-gradient" 
         (click)="nextStep()" 
         [disabled]="!canProceed()"
         *ngIf="currentStep < totalSteps">
@@ -258,7 +258,7 @@
       </button>
       <button 
         type="button" 
-        class="btn-submit" 
+        class="btn-gradient-success" 
         (click)="submit()" 
         [disabled]="!canProceed() || loading"
         *ngIf="currentStep === totalSteps">

@@ -41,17 +41,4 @@
   }
 }
 
-.btn-secondary {
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  border: 1px solid $border-light;
-  background: transparent;
-  color: $text-primary;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    background: rgba($primary, 0.05);
-  }
-}
+// Button styles use global classes from styles.scss

@@ -308,34 +308,6 @@
   gap: $space-sm;
   margin-top: $space-sm;
   
-  .btn-primary, .btn-secondary {
-    display: block;
-    padding: $space-sm $space-md;
-    border-radius: $radius-md;
-    font-weight: $font-weight-semibold;
-    font-size: $font-size-sm;
-    text-decoration: none;
-    text-align: center;
-    transition: all 0.2s ease;
-  }
-  
-  .btn-primary {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    color: white;
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-    }
-  }
-  
-  .btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
-    
-    &:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: white;
-    }
-  }
+  // Button styles use global classes from styles.scss
+  // .btn-gradient, .btn-dark-secondary
 }

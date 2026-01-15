@@ -302,51 +302,8 @@
   flex: 1;
 }
 
-.btn-secondary {
-  padding: $space-md $space-xl;
-  background: #f1f5f9;
-  border: none;
-  border-radius: $radius-lg;
-  font-size: $font-size-md;
-  font-weight: $font-weight-medium;
-  color: $text-secondary;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: #e2e8f0;
-  }
-}
-
-.btn-primary, .btn-submit {
-  padding: $space-md $space-xl;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  border: none;
-  border-radius: $radius-lg;
-  font-size: $font-size-md;
-  font-weight: $font-weight-semibold;
-  color: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-.btn-submit {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-
-  &:hover:not(:disabled) {
-    box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
-  }
-}
+// Button styles use global classes from styles.scss
+// .btn-dark-ghost, .btn-gradient, .btn-gradient-success
 
 // Responsive
 @media (max-width: $bp-sm) {

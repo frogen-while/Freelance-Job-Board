@@ -210,50 +210,11 @@
   }
 }
 
-.btn-primary {
-  padding: $space-md $space-xl;
-  background: $accent;
-  color: white;
-  border: none;
-  border-radius: $radius-lg;
-  font-size: $font-size-md;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: all $transition-fast;
-  box-shadow: 0 4px 14px rgba($accent, 0.3);
-
-  &:hover {
-    transform: translateY(-2px);
-    background: $accent-hover;
-    box-shadow: 0 6px 20px rgba($accent, 0.4);
-  }
-
-  &.large {
-    padding: $space-lg $space-2xl;
-    font-size: $font-size-lg;
-  }
-}
-
-.btn-secondary {
-  padding: $space-md $space-xl;
-  background: $bg-white;
-  color: $text-primary;
-  border: 2px solid $border-medium;
-  border-radius: $radius-lg;
-  font-size: $font-size-md;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: all $transition-fast;
-
-  &:hover {
-    border-color: $accent;
-    color: $accent;
-  }
-
-  &.large {
-    padding: $space-lg $space-2xl;
-    font-size: $font-size-lg;
-  }
+// Button styles use global classes from styles.scss
+// Local override for large variant
+.btn-lg {
+  padding: $space-lg $space-2xl !important;
+  font-size: $font-size-lg !important;
 }
 
 // Hero Visual / Floating Cards
