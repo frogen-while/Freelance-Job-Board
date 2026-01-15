@@ -58,13 +58,13 @@
     </section>
 
     <!-- Loading State -->
-    <div class="loading-state" *ngIf="loading">
+    <div class="loading-state-dark" *ngIf="loading">
       <div class="spinner"></div>
       <span>Loading your jobs...</span>
     </div>
 
     <!-- Error State -->
-    <div class="error-state" *ngIf="errorMessage && !loading">
+    <div class="error-state-dark" *ngIf="errorMessage && !loading">
       <div class="error-icon">⚠️</div>
       <p>{{ errorMessage }}</p>
       <button class="btn-dark-secondary" (click)="loadJobs()">Try Again</button>

@@ -248,41 +248,9 @@
   }
 }
 
-// Loading
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: $space-3xl;
-  color: $text-muted;
-}
+// Loading state uses global .loading-state class
 
-.spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid rgba(99, 102, 241, 0.2);
-  border-top-color: #6366f1;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: $space-md;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-// Empty State
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: $space-3xl;
-  text-align: center;
-  background: white;
-  border-radius: $radius-xl;
-}
+// Empty State uses global .empty-state class
 
 .empty-icon {
   width: 80px;

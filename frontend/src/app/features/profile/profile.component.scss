@@ -15,29 +15,7 @@
   margin: 0 auto;
 }
 
-// Loading
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: $space-3xl;
-  color: white;
-}
-
-.spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid rgba(255, 255, 255, 0.2);
-  border-top-color: #6366f1;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: $space-md;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+// Loading state uses global .loading-state-dark class
 
 // Profile Header
 .profile-header {
