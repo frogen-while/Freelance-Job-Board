@@ -102,7 +102,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       justify-content: center;
       margin: 0 auto 1.5rem;
       
-      svg {
+      :is(svg) {
         width: 36px;
         height: 36px;
         color: #818cf8;

@@ -189,8 +189,8 @@
     @media (max-width: $bp-xl) { @content; }
   } @else if $breakpoint == 2xl {
     @media (max-width: $bp-2xl) { @content; }
-  } @else if $breakpoint == 3xl-up {
-    @media (min-width: $bp-3xl) { @content; }
+  } @else if $breakpoint == 2xl-up {
+    @media (min-width: $bp-2xl) { @content; }
   }
 }
 

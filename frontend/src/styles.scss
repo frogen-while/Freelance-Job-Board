@@ -1,5 +1,12 @@
 @use 'app/shared' as tokens;
 
+// ============================================
+// GLOBAL STYLES - Freelance Job Board
+// ============================================
+
+// --------------------------------------------
+// RESET & BASE
+// --------------------------------------------
 * {
   margin: 0;
   padding: 0;
@@ -7,15 +14,20 @@
 }
 
 :root {
+  // Colors
   --liquid-a: #{tokens.$liquid-a};
   --liquid-b: #{tokens.$liquid-b};
   --liquid-c: #{tokens.$liquid-c};
   --liquid-d: #{tokens.$liquid-d};
 
   --color-primary: #{tokens.$primary};
+  --color-primary-light: #{tokens.$primary-light};
   --color-accent: #{tokens.$accent};
+  --color-accent-hover: #{tokens.$accent-hover};
   --color-success: #{tokens.$success};
+  --color-warning: #{tokens.$warning};
   --color-error: #{tokens.$error};
+  --color-info: #{tokens.$info};
 
   --color-text: #{tokens.$text-primary};
   --color-text-secondary: #{tokens.$text-secondary};
@@ -23,6 +35,32 @@
 
   --color-bg: #{tokens.$bg-page};
   --color-bg-card: #{tokens.$bg-card};
+  --color-border: #{tokens.$border-medium};
+
+  // Spacing (CSS custom properties)
+  --space-1: #{tokens.$space-1};
+  --space-2: #{tokens.$space-2};
+  --space-3: #{tokens.$space-3};
+  --space-4: #{tokens.$space-4};
+  --space-5: #{tokens.$space-5};
+  --space-6: #{tokens.$space-6};
+  --space-8: #{tokens.$space-8};
+  --space-10: #{tokens.$space-10};
+  --space-12: #{tokens.$space-12};
+  --space-16: #{tokens.$space-16};
+
+  // Radius
+  --radius-sm: #{tokens.$radius-sm};
+  --radius-md: #{tokens.$radius-md};
+  --radius-lg: #{tokens.$radius-lg};
+  --radius-xl: #{tokens.$radius-xl};
+  --radius-full: #{tokens.$radius-full};
+
+  // Shadows
+  --shadow-sm: #{tokens.$shadow-sm};
+  --shadow-md: #{tokens.$shadow-md};
+  --shadow-lg: #{tokens.$shadow-lg};
+  --shadow-card: #{tokens.$shadow-card};
 }
 
 html {
@@ -32,6 +70,9 @@ html {
 
 body {
   font-family: tokens.$font-family;
+  font-size: tokens.$font-size-base;
+  line-height: tokens.$line-height-normal;
+  color: tokens.$text-primary;
   background: tokens.$bg-page;
   min-height: 100vh;
   position: relative;
@@ -46,21 +87,389 @@ body {
   }
 }
 
-// Shared UI states
+// --------------------------------------------
+// TYPOGRAPHY
+// --------------------------------------------
+h1, h2, h3, h4, h5, h6 {
+  font-weight: tokens.$font-weight-semibold;
+  line-height: tokens.$line-height-tight;
+  color: tokens.$text-primary;
+}
+
+h1 { font-size: tokens.$font-size-4xl; }
+h2 { font-size: tokens.$font-size-3xl; }
+h3 { font-size: tokens.$font-size-2xl; }
+h4 { font-size: tokens.$font-size-xl; }
+h5 { font-size: tokens.$font-size-lg; }
+h6 { font-size: tokens.$font-size-base; }
+
+p {
+  margin-bottom: tokens.$space-4;
+  color: tokens.$text-secondary;
+}
+
+a {
+  color: tokens.$accent;
+  text-decoration: none;
+  transition: color tokens.$transition-fast;
+
+  &:hover {
+    color: tokens.$accent-hover;
+  }
+}
+
+// --------------------------------------------
+// BUTTONS
+// --------------------------------------------
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: tokens.$space-2;
+  padding: tokens.$space-3 tokens.$space-5;
+  font-family: inherit;
+  font-size: tokens.$font-size-sm;
+  font-weight: tokens.$font-weight-medium;
+  line-height: 1;
+  text-decoration: none;
+  border: none;
+  border-radius: tokens.$radius-md;
+  cursor: pointer;
+  transition: all tokens.$transition-base;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+}
+
+.btn-primary {
+  @extend .btn;
+  background: tokens.$primary;
+  color: tokens.$text-white;
+  box-shadow: tokens.$shadow-button;
+
+  &:hover:not(:disabled) {
+    background: tokens.$primary-dark;
+    box-shadow: tokens.$shadow-button-hover;
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.btn-secondary {
+  @extend .btn;
+  background: tokens.$bg-white;
+  color: tokens.$text-primary;
+  border: 1px solid tokens.$border-medium;
+
+  &:hover:not(:disabled) {
+    background: tokens.$bg-page;
+    border-color: tokens.$border-strong;
+  }
+}
+
+.btn-accent {
+  @extend .btn;
+  background: tokens.$accent;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: tokens.$accent-hover;
+    transform: translateY(-1px);
+  }
+}
+
+.btn-outline {
+  @extend .btn;
+  background: transparent;
+  color: tokens.$text-primary;
+  border: 1px solid tokens.$border-medium;
+
+  &:hover:not(:disabled) {
+    background: tokens.$bg-glass;
+    border-color: tokens.$primary;
+  }
+}
+
+.btn-ghost {
+  @extend .btn;
+  background: transparent;
+  color: tokens.$text-secondary;
+
+  &:hover:not(:disabled) {
+    background: tokens.$bg-glass;
+    color: tokens.$text-primary;
+  }
+}
+
+.btn-success {
+  @extend .btn;
+  background: tokens.$success;
+  color: white;
+  box-shadow: tokens.$shadow-success;
+
+  &:hover:not(:disabled) {
+    background: tokens.$success-dark;
+  }
+}
+
+.btn-sm {
+  padding: tokens.$space-2 tokens.$space-3;
+  font-size: tokens.$font-size-xs;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.btn-lg {
+  padding: tokens.$space-4 tokens.$space-6;
+  font-size: tokens.$font-size-md;
+  border-radius: tokens.$radius-lg;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// --------------------------------------------
+// CARDS
+// --------------------------------------------
+.card {
+  background: tokens.$bg-card;
+  border-radius: tokens.$radius-lg;
+  border: 1px solid tokens.$border-light;
+  box-shadow: tokens.$shadow-card;
+  transition: all tokens.$transition-base;
+}
+
+.card-hover {
+  @extend .card;
+
+  &:hover {
+    box-shadow: tokens.$shadow-card-hover;
+    transform: translateY(-2px);
+    border-color: tokens.$border-medium;
+  }
+}
+
+.card-body {
+  padding: tokens.$space-6;
+}
+
+.card-header {
+  padding: tokens.$space-5 tokens.$space-6;
+  border-bottom: 1px solid tokens.$border-light;
+}
+
+.card-footer {
+  padding: tokens.$space-4 tokens.$space-6;
+  border-top: 1px solid tokens.$border-light;
+  background: rgba(tokens.$bg-page, 0.5);
+}
+
+// --------------------------------------------
+// FORMS
+// --------------------------------------------
+.form-group {
+  margin-bottom: tokens.$space-5;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: tokens.$space-2;
+  font-size: tokens.$font-size-sm;
+  font-weight: tokens.$font-weight-medium;
+  color: tokens.$text-primary;
+}
+
+.form-input {
+  width: 100%;
+  padding: tokens.$space-3 tokens.$space-4;
+  font-family: inherit;
+  font-size: tokens.$font-size-base;
+  color: tokens.$text-primary;
+  background: tokens.$bg-white;
+  border: 1px solid tokens.$border-medium;
+  border-radius: tokens.$radius-md;
+  transition: all tokens.$transition-fast;
+
+  &::placeholder {
+    color: tokens.$text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: tokens.$accent;
+    box-shadow: 0 0 0 3px rgba(tokens.$accent, 0.1);
+  }
+
+  &:disabled {
+    background: tokens.$bg-page;
+    cursor: not-allowed;
+  }
+}
+
+.form-select {
+  @extend .form-input;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right tokens.$space-3 center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: tokens.$space-10;
+}
+
+.form-textarea {
+  @extend .form-input;
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-hint {
+  margin-top: tokens.$space-1;
+  font-size: tokens.$font-size-xs;
+  color: tokens.$text-muted;
+}
+
+.form-error {
+  margin-top: tokens.$space-1;
+  font-size: tokens.$font-size-xs;
+  color: tokens.$error;
+}
+
+// --------------------------------------------
+// BADGES
+// --------------------------------------------
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: tokens.$space-1 tokens.$space-2;
+  font-size: tokens.$font-size-xs;
+  font-weight: tokens.$font-weight-medium;
+  border-radius: tokens.$radius-sm;
+  white-space: nowrap;
+}
+
+.badge-primary {
+  @extend .badge;
+  background: rgba(tokens.$primary, 0.1);
+  color: tokens.$primary;
+}
+
+.badge-accent {
+  @extend .badge;
+  background: rgba(tokens.$accent, 0.1);
+  color: tokens.$accent;
+}
+
+.badge-success {
+  @extend .badge;
+  background: rgba(tokens.$success, 0.1);
+  color: tokens.$success;
+}
+
+.badge-warning {
+  @extend .badge;
+  background: rgba(tokens.$warning, 0.1);
+  color: darken(tokens.$warning, 10%);
+}
+
+.badge-error {
+  @extend .badge;
+  background: rgba(tokens.$error, 0.1);
+  color: tokens.$error;
+}
+
+.badge-muted {
+  @extend .badge;
+  background: tokens.$bg-page;
+  color: tokens.$text-secondary;
+}
+
+// --------------------------------------------
+// LAYOUT
+// --------------------------------------------
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 tokens.$space-6;
+
+  @media (max-width: tokens.$bp-sm) {
+    padding: 0 tokens.$space-4;
+  }
+}
+
+.container-sm {
+  @extend .container;
+  max-width: 640px;
+}
+
+.container-lg {
+  @extend .container;
+  max-width: 1400px;
+}
+
+.page-section {
+  padding: tokens.$space-16 0;
+
+  @media (max-width: tokens.$bp-md) {
+    padding: tokens.$space-10 0;
+  }
+}
+
+.page-header {
+  margin-bottom: tokens.$space-8;
+}
+
+.page-title {
+  font-size: tokens.$font-size-3xl;
+  font-weight: tokens.$font-weight-bold;
+  color: tokens.$text-primary;
+  margin-bottom: tokens.$space-2;
+
+  @media (max-width: tokens.$bp-sm) {
+    font-size: tokens.$font-size-2xl;
+  }
+}
+
+.page-subtitle {
+  font-size: tokens.$font-size-lg;
+  color: tokens.$text-secondary;
+}
+
+// --------------------------------------------
+// UTILITY STATES
+// --------------------------------------------
 .loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem;
-  gap: 1rem;
+  padding: tokens.$space-12;
+  gap: tokens.$space-4;
   color: tokens.$text-secondary;
-  
+
   .spinner {
     width: 40px;
     height: 40px;
     border: 3px solid tokens.$border-light;
-    border-top-color: tokens.$primary;
+    border-top-color: tokens.$accent;
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -71,27 +480,169 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
-  gap: 1rem;
+  padding: tokens.$space-8;
+  gap: tokens.$space-4;
   text-align: center;
-  background: rgba(tokens.$error, 0.1);
-  border-radius: 12px;
-  margin: 1rem 0;
-  
+  background: rgba(tokens.$error, 0.05);
+  border: 1px solid rgba(tokens.$error, 0.1);
+  border-radius: tokens.$radius-lg;
+  margin: tokens.$space-4 0;
+
   .error-icon {
     font-size: 2rem;
   }
-  
+
   p {
     color: tokens.$text-primary;
     margin: 0;
   }
-  
-  button {
-    margin-top: 0.5rem;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: tokens.$space-12;
+  text-align: center;
+  color: tokens.$text-secondary;
+
+  .empty-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: tokens.$space-4;
+    color: tokens.$text-muted;
+  }
+
+  h3 {
+    margin-bottom: tokens.$space-2;
+    color: tokens.$text-primary;
+  }
+
+  p {
+    margin-bottom: tokens.$space-6;
   }
 }
 
+.success-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: tokens.$space-8;
+  gap: tokens.$space-4;
+  text-align: center;
+  background: rgba(tokens.$success, 0.05);
+  border: 1px solid rgba(tokens.$success, 0.1);
+  border-radius: tokens.$radius-lg;
+
+  p {
+    color: tokens.$success-dark;
+    margin: 0;
+  }
+}
+
+// --------------------------------------------
+// MESSAGES / ALERTS
+// --------------------------------------------
+.message {
+  padding: tokens.$space-4;
+  border-radius: tokens.$radius-md;
+  font-size: tokens.$font-size-sm;
+  font-weight: tokens.$font-weight-medium;
+
+  &.success {
+    background: rgba(tokens.$success, 0.1);
+    color: tokens.$success-dark;
+    border: 1px solid rgba(tokens.$success, 0.2);
+  }
+
+  &.error {
+    background: rgba(tokens.$error, 0.1);
+    color: tokens.$error;
+    border: 1px solid rgba(tokens.$error, 0.2);
+  }
+
+  &.warning {
+    background: rgba(tokens.$warning, 0.1);
+    color: darken(tokens.$warning, 15%);
+    border: 1px solid rgba(tokens.$warning, 0.2);
+  }
+
+  &.info {
+    background: rgba(tokens.$info, 0.1);
+    color: darken(tokens.$info, 10%);
+    border: 1px solid rgba(tokens.$info, 0.2);
+  }
+}
+
+// --------------------------------------------
+// ANIMATIONS
+// --------------------------------------------
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+// Utility classes for animations
+.animate-fade-in {
+  animation: fadeIn tokens.$transition-normal forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp tokens.$transition-normal forwards;
+}
+
+// --------------------------------------------
+// UTILITY CLASSES
+// --------------------------------------------
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.text-primary { color: tokens.$text-primary; }
+.text-secondary { color: tokens.$text-secondary; }
+.text-muted { color: tokens.$text-muted; }
+.text-accent { color: tokens.$accent; }
+.text-success { color: tokens.$success; }
+.text-error { color: tokens.$error; }
+
+.font-medium { font-weight: tokens.$font-weight-medium; }
+.font-semibold { font-weight: tokens.$font-weight-semibold; }
+.font-bold { font-weight: tokens.$font-weight-bold; }
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }

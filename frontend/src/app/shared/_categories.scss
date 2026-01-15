@@ -92,7 +92,7 @@
     gap: 10px;
   }
 
-  @include respond-to(3xl-up) {
+  @include respond-to(2xl-up) {
     grid-template-columns: repeat(5, 1fr);
   }
 }
