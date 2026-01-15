@@ -830,6 +830,71 @@ a {
 }
 
 // --------------------------------------------
+// MODALS
+// --------------------------------------------
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: tokens.$z-modal;
+  padding: tokens.$space-4;
+}
+
+.modal-content {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: tokens.$radius-2xl;
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: tokens.$space-6;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  h2 {
+    font-size: tokens.$font-size-lg;
+    font-weight: tokens.$font-weight-semibold;
+    color: #fff;
+    margin: 0;
+  }
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+.modal-body {
+  padding: tokens.$space-8 tokens.$space-6;
+}
+
+.modal-footer {
+  display: flex;
+  gap: tokens.$space-3;
+  justify-content: flex-end;
+  padding: tokens.$space-6;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// --------------------------------------------
 // ANIMATIONS
 // --------------------------------------------
 @keyframes spin {

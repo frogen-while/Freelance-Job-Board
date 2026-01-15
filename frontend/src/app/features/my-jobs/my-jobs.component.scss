@@ -290,59 +290,7 @@
 
 // Loading state uses global .loading-state-dark class
 
-// Modal
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
-}
-
-.modal-content {
-  background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  width: 100%;
-  max-width: 500px;
-  overflow: hidden;
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  
-  h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #fff;
-  }
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 1.75rem;
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  line-height: 1;
-  
-  &:hover {
-    color: #fff;
-  }
-}
-
-.modal-body {
-  padding: 2rem 1.5rem;
-  text-align: center;
-}
+// Modal styles use global .modal-overlay, .modal-content, .modal-header, .modal-close, .modal-body
 
 .coming-soon {
   font-size: 1.1rem;
