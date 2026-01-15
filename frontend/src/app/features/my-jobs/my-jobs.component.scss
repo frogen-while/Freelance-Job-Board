@@ -230,7 +230,8 @@
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.6);
   
-  svg {
+  mat-icon {
+    font-size: 16px;
     width: 16px;
     height: 16px;
   }
@@ -268,7 +269,8 @@
   justify-content: center;
   margin-bottom: 1.5rem;
   
-  svg {
+  mat-icon {
+    font-size: 40px;
     width: 40px;
     height: 40px;
     color: #c084fc;

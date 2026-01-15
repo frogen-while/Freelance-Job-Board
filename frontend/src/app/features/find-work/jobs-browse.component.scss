@@ -165,7 +165,8 @@
   cursor: pointer;
   transition: all $transition-fast;
 
-  svg {
+  mat-icon {
+    font-size: 16px;
     width: 16px;
     height: 16px;
   }
@@ -262,10 +263,11 @@
   justify-content: center;
   margin-bottom: $space-lg;
 
-  svg {
+  mat-icon {
+    font-size: 36px;
     width: 36px;
     height: 36px;
-    stroke: $text-muted;
+    color: $text-muted;
   }
 }
 
@@ -462,7 +464,8 @@
   font-size: $font-size-sm;
   color: $text-muted;
 
-  svg {
+  mat-icon {
+    font-size: 14px;
     width: 14px;
     height: 14px;
   }

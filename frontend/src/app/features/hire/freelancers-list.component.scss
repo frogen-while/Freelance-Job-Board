@@ -114,10 +114,11 @@
   cursor: pointer;
   transition: all $transition-fast;
 
-  svg {
+  mat-icon {
+    font-size: 18px;
     width: 18px;
     height: 18px;
-    stroke: white;
+    color: white;
   }
 
   &:hover {
@@ -223,10 +224,11 @@
   padding: $space-3xl;
   text-align: center;
 
-  svg {
+  .empty-icon, mat-icon.empty-icon {
+    font-size: 80px;
     width: 80px;
     height: 80px;
-    stroke: $text-muted;
+    color: $text-muted;
     margin-bottom: $space-lg;
   }
 
@@ -463,7 +465,8 @@
   font-size: $font-size-sm;
   color: $text-muted;
 
-  svg {
+  mat-icon {
+    font-size: 14px;
     width: 14px;
     height: 14px;
   }

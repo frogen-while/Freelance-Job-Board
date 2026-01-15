@@ -330,10 +330,11 @@
   justify-content: center;
   flex-shrink: 0;
 
-  svg {
+  mat-icon {
+    font-size: 24px;
     width: 24px;
     height: 24px;
-    stroke: $accent;
+    color: $accent;
   }
 }
 
@@ -436,7 +437,8 @@
   font-weight: $font-weight-semibold;
   color: #16a34a;
 
-  svg {
+  mat-icon {
+    font-size: 18px;
     width: 18px;
     height: 18px;
   }
@@ -500,10 +502,11 @@
   justify-content: center;
   margin: 0 auto $space-lg;
 
-  svg {
+  mat-icon {
+    font-size: 28px;
     width: 28px;
     height: 28px;
-    stroke: $accent;
+    color: $accent;
   }
 }
 

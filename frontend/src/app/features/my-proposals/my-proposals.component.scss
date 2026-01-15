@@ -88,7 +88,8 @@
   cursor: pointer;
   transition: all 0.25s ease;
   
-  svg {
+  mat-icon {
+    font-size: 18px;
     width: 18px;
     height: 18px;
   }
@@ -250,7 +251,8 @@
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.5);
   
-  svg {
+  mat-icon {
+    font-size: 14px;
     width: 14px;
     height: 14px;
   }
@@ -323,7 +325,8 @@
   justify-content: center;
   margin-bottom: 1.5rem;
   
-  svg {
+  mat-icon {
+    font-size: 40px;
     width: 40px;
     height: 40px;
     color: #818cf8;

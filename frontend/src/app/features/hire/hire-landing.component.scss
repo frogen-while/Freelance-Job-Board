@@ -182,7 +182,8 @@
   cursor: pointer;
   transition: all $transition-fast;
 
-  svg {
+  mat-icon {
+    font-size: 20px;
     width: 20px;
     height: 20px;
   }
@@ -391,10 +392,11 @@
   align-items: center;
   justify-content: center;
 
-  svg {
+  mat-icon {
+    font-size: 32px;
     width: 32px;
     height: 32px;
-    stroke: $accent;
+    color: $accent;
   }
 }
 
@@ -595,7 +597,8 @@
   font-size: $font-size-sm;
   color: $text-muted;
 
-  svg {
+  mat-icon {
+    font-size: 14px;
     width: 14px;
     height: 14px;
   }

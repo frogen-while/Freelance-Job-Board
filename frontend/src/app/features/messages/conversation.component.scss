@@ -35,7 +35,8 @@
     background: #e5e7eb;
   }
   
-  svg {
+  mat-icon {
+    font-size: 20px;
     width: 20px;
     height: 20px;
     color: #374151;
@@ -214,7 +215,8 @@
     cursor: not-allowed;
   }
   
-  svg {
+  mat-icon {
+    font-size: 18px;
     width: 18px;
     height: 18px;
     color: #fff;
