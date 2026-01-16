@@ -32,7 +32,7 @@
       <ng-template #loggedIn>
           <a class="profile-link" routerLink="/profile" routerLinkActive="active" *ngIf="auth.getUser() as user">
             <span class="profile-pic">
-              <img *ngIf="user.profile_image_url; else initials" [src]="user.profile_image_url" alt="Profile" />
+              <img *ngIf="profilePhotoUrl; else initials" [src]="profilePhotoUrl" alt="Profile" />
               <ng-template #initials>
                 <span class="initials">{{ getInitials(user) }}</span>
               </ng-template>
