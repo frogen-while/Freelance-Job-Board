@@ -16,6 +16,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   categories: Category[] = [];
   unreadCount = 0;
+  profilePhotoUrl: string | null = null;
 
   constructor(
     public auth: AuthService,
@@ -26,6 +27,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadCategories();
     this.checkUnreadMessages();
+    this.loadProfilePhoto();
     // Check unread messages every 30 seconds
     this.unreadInterval = setInterval(() => this.checkUnreadMessages(), 30000);
   }
@@ -33,6 +35,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.unreadInterval) {
       clearInterval(this.unreadInterval);
+    }
+  }
+
+  loadProfilePhoto(): void {
+    const user = this.auth.getUser();
+    if (user) {
+      this.api.getProfileByUserId(user.user_id).subscribe({
+        next: (res) => {
+          if (res.success && res.data && res.data.photo_url) {
+            this.profilePhotoUrl = res.data.photo_url;
+          }
+        },
+        error: (err) => {
+          console.error('Failed to load profile photo:', err);
+        }
+      });
     }
   }
 

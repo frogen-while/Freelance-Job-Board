@@ -42,6 +42,19 @@ export const createSupportTicket = async (req: Request, res: Response) => {
 
 export const getAllSupportTickets = async (req: Request, res: Response) => {
     try {
+        // Check if user_id is provided as a query parameter
+        const userId = req.query.user_id;
+        
+        if (userId) {
+            const parsedUserId = parseInt(userId as string, 10);
+            if (isNaN(parsedUserId)) {
+                return sendError(res, 400, 'Invalid user_id format.');
+            }
+            const data = await supportTicketsRepo.getByUserId(parsedUserId);
+            return sendSuccess(res, data);
+        }
+
+        // If no user_id, return all tickets
         const data = await supportTicketsRepo.get_all()
 
         return sendSuccess(res, data);

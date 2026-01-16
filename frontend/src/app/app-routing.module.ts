@@ -6,6 +6,7 @@ import { AboutComponent } from './features/about/about.component';
 import { ProfileComponent } from './features/profile/profile.component';
 import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
+import { SupportComponent } from './features/support/support.component';
 import { AuthGuard, OnboardingGuard, GuestGuard, OnboardingPageGuard, FreelancerGuard, EmployerGuard } from './core/guards';
 
 const routes: Routes = [
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'onboarding', loadChildren: () => import('./features/onboarding/onboarding.module').then(m => m.OnboardingModule), canActivate: [OnboardingPageGuard] },
   { path: 'categories', component: CategoriesComponent },
   { path: 'about', component: AboutComponent },
+  { path: 'support', component: SupportComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard, OnboardingGuard] },
   { path: 'profile/:userId', component: ProfileComponent },
   { path: 'jobs', loadChildren: () => import('./features/jobs/jobs.module').then(m => m.JobsModule) },

@@ -10,6 +10,14 @@ export const supportTicketsRepo = {
         return result || [];
     },
 
+    async getByUserId(user_id: number): Promise<SupportTicket[]> {
+        const result = await db.connection?.all<SupportTicket[]>(
+            'SELECT ticket_id, user_id, support_id, subject, message, status, created_at, updated_at FROM supporttickets WHERE user_id = ? ORDER BY created_at DESC',
+            user_id
+        );
+        return result || [];
+    },
+
     async create(user_id: number, support_id: number, subject: string, message: string, status: TicketStatus): Promise<number | null> {
         const result = await db.connection?.run(
             `INSERT INTO supporttickets (user_id, support_id, subject, message, status) VALUES (?, ?, ?, ?, ?)`,

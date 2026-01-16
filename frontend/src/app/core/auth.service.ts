@@ -74,6 +74,10 @@ export class AuthService {
     }
   }
 
+  getUser$(): Observable<PublicUser | null> {
+    return of(this.getUser());
+  }
+
   isFreelancer(): boolean {
     const user = this.getUser();
     return user?.user_types?.includes('Freelancer') ?? false;
