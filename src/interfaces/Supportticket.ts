@@ -4,7 +4,6 @@ export type TicketPriority = 'low' | 'normal' | 'high' | 'urgent';
 export interface SupportTicket {
   ticket_id: number;
   user_id: number;
-  support_id?: number | null;
   subject: string;
   message: string;
   priority?: TicketPriority;

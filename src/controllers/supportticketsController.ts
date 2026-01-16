@@ -5,13 +5,16 @@ import { TicketStatus } from '../interfaces/Supportticket.js';
 import { sendError, sendSuccess } from '../utils/http.js';
 
 export const createSupportTicket = async (req: Request, res: Response) => {
-    const {user_id, support_id, subject, message, status} = req.body;
+    const {user_id, subject, message, status} = req.body;
 
-    if (user_id === undefined || support_id === undefined || !subject || !message || !status) {
-        return sendError(res, 400, 'user_id, support_id, subject, message and status are required.');
+    if (user_id === undefined || !subject || !message) {
+        return sendError(res, 400, 'user_id, subject and message are required.');
     }
 
-    if (!['Open', 'In Progress', 'Closed'].includes(status)) {
+    // Default status to 'Open' if not provided
+    const ticketStatus = status || 'Open';
+
+    if (!['Open', 'In Progress', 'Closed'].includes(ticketStatus)) {
         return sendError(res, 400, 'status must be Open, In Progress, or Closed.');
     }
 
@@ -21,12 +24,7 @@ export const createSupportTicket = async (req: Request, res: Response) => {
             return sendError(res, 400, 'user_id does not reference an existing user.');
         }
 
-        const support = await userRepo.findById(support_id);
-        if (!support) {
-            return sendError(res, 400, 'support_id does not reference an existing user.');
-        }
-
-        const newTicketId = await supportTicketsRepo.create(user_id, support_id, subject, message, status);
+        const newTicketId = await supportTicketsRepo.create(user_id, subject, message, ticketStatus);
 
         if (newTicketId) {
             return sendSuccess(res, { ticket_id: newTicketId }, 201);

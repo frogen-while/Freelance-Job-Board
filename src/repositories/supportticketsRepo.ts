@@ -5,23 +5,23 @@ export const supportTicketsRepo = {
 
     async get_all(): Promise<SupportTicket[]> {
         const result = await db.connection?.all<SupportTicket[]>(
-            'SELECT ticket_id, user_id, support_id, subject, message, status FROM supporttickets'
+            'SELECT ticket_id, user_id, subject, message, status FROM supporttickets'
         );
         return result || [];
     },
 
     async getByUserId(user_id: number): Promise<SupportTicket[]> {
         const result = await db.connection?.all<SupportTicket[]>(
-            'SELECT ticket_id, user_id, support_id, subject, message, status, created_at, updated_at FROM supporttickets WHERE user_id = ? ORDER BY created_at DESC',
+            'SELECT ticket_id, user_id, subject, message, status, created_at, updated_at FROM supporttickets WHERE user_id = ? ORDER BY created_at DESC',
             user_id
         );
         return result || [];
     },
 
-    async create(user_id: number, support_id: number, subject: string, message: string, status: TicketStatus): Promise<number | null> {
+    async create(user_id: number, subject: string, message: string, status: TicketStatus): Promise<number | null> {
         const result = await db.connection?.run(
-            `INSERT INTO supporttickets (user_id, support_id, subject, message, status) VALUES (?, ?, ?, ?, ?)`,
-            user_id, support_id, subject, message, status
+            `INSERT INTO supporttickets (user_id, subject, message, status) VALUES (?, ?, ?, ?)`,
+            user_id, subject, message, status
         );
         
         return result?.lastID ?? null;
@@ -34,17 +34,13 @@ export const supportTicketsRepo = {
         );
     },
 
-    async update(ticket_id: number, updateData: { user_id?: number, support_id?: number, subject?: string, message?: string, status?: TicketStatus}): Promise<boolean> {
+    async update(ticket_id: number, updateData: { user_id?: number, subject?: string, message?: string, status?: TicketStatus}): Promise<boolean> {
         const setClauses: string[] = [];
         const params: (string | number)[] = [];
 
         if (updateData.user_id !== undefined) {
             setClauses.push('user_id = ?');
             params.push(updateData.user_id);
-        }
-        if (updateData.support_id !== undefined) {
-            setClauses.push('support_id = ?');
-            params.push(updateData.support_id);
         }
         if (updateData.subject !== undefined) {
             setClauses.push('subject = ?');

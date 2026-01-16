@@ -282,7 +282,6 @@ export const supportTicketsTableDef = {
   columns: {
     ticket_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
     user_id: { type: 'INTEGER', notNull: true },
-    support_id: { type: 'INTEGER' },
     subject: { type: 'TEXT', notNull: true },
     message: { type: 'TEXT', notNull: true },
     status: { type: "TEXT DEFAULT 'Open' CHECK(status IN ('Open', 'In Progress', 'Resolved', 'Closed'))" },
@@ -290,8 +289,7 @@ export const supportTicketsTableDef = {
     updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
   foreignKeys: [
-    { column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' },
-    { column: 'support_id', references: 'users(user_id) ON DELETE SET NULL' }
+    { column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' }
   ]
 };
 

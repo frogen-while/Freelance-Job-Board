@@ -210,14 +210,12 @@ CREATE TABLE messages (
 CREATE TABLE supporttickets (
   ticket_id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
-  support_id INT,
   subject VARCHAR(255) NOT NULL,
   message TEXT NOT NULL,
   status ENUM('Open', 'In Progress', 'Resolved', 'Closed') DEFAULT 'Open',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-  FOREIGN KEY (support_id) REFERENCES users(user_id) ON DELETE SET NULL
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 
