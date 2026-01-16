@@ -254,7 +254,7 @@ export class JobDetailComponent implements OnInit {
       next: () => {
         // Send cover letter as initial message to employer
         if (this.job && this.currentUser) {
-          const messageBody = `📋 *New Proposal for "${this.job.title}"*\n\n💰 Bid Amount: $${this.bidAmount}\n\n${this.proposalText.trim()}`;
+          const messageBody = `New Proposal for "${this.job.title}"\n\nBid Amount: $${this.bidAmount}\n\n${this.proposalText.trim()}`;
           
           this.api.sendMessage({
             sender_id: this.currentUser.user_id,

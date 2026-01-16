@@ -125,15 +125,6 @@ export class FreelancersListComponent implements OnInit {
     return `${freelancer.first_name} ${freelancer.last_name?.charAt(0) || ''}.`;
   }
 
-  getAvailabilityLabel(status: string): string {
-    const labels: Record<string, string> = {
-      'available': 'Available',
-      'partially_available': 'Partially Available',
-      'not_available': 'Not Available'
-    };
-    return labels[status] || 'Available';
-  }
-
   getExperienceLabel(level: string): string {
     const labels: Record<string, string> = {
       'entry': 'Entry Level',

@@ -12,7 +12,6 @@ interface FreelancerProfileRow {
   photo_url: string | null;
   location: string | null;
   hourly_rate: number | null;
-  availability_status: string | null;
   rating: number | null;
   jobs_completed: number | null;
   first_name: string;
@@ -29,7 +28,6 @@ export interface FreelancerProfile {
   photo_url: string | null;
   location: string | null;
   hourly_rate: number | null;
-  availability_status: string | null;
   rating: number | null;
   jobs_completed: number | null;
   first_name: string;
@@ -110,7 +108,6 @@ export const profilesRepo = {
         p.photo_url,
         p.location,
         fp.hourly_rate,
-        fp.availability_status,
         fp.rating,
         fp.jobs_completed,
         u.first_name,
@@ -149,7 +146,6 @@ export const profilesRepo = {
       photo_url: row.photo_url,
       location: row.location,
       hourly_rate: row.hourly_rate,
-      availability_status: row.availability_status,
       rating: row.rating,
       jobs_completed: row.jobs_completed,
       first_name: row.first_name,
@@ -169,7 +165,6 @@ export const profilesRepo = {
         p.photo_url,
         p.location,
         fp.hourly_rate,
-        fp.availability_status,
         fp.rating,
         fp.jobs_completed,
         u.first_name,
@@ -182,7 +177,7 @@ export const profilesRepo = {
       LEFT JOIN freelancer_profiles fp ON p.user_id = fp.user_id
       LEFT JOIN profile_skills ps ON p.user_id = ps.user_id
       LEFT JOIN skills s ON ps.skill_id = s.skill_id
-      WHERE u.status = 'active' AND fp.availability_status = 'available'
+      WHERE u.status = 'active'
       GROUP BY p.profile_id
       ORDER BY RANDOM()
       LIMIT ?
@@ -201,7 +196,6 @@ export const profilesRepo = {
       photo_url: row.photo_url,
       location: row.location,
       hourly_rate: row.hourly_rate,
-      availability_status: row.availability_status,
       rating: row.rating,
       jobs_completed: row.jobs_completed,
       first_name: row.first_name,

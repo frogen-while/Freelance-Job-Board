@@ -63,7 +63,6 @@ CREATE TABLE freelancer_profiles (
   user_id INT NOT NULL UNIQUE,
   title VARCHAR(255),
   hourly_rate DECIMAL(10,2),
-  availability_status ENUM('available', 'partially_available', 'not_available') DEFAULT 'available',
   experience_level ENUM('entry', 'intermediate', 'expert'),
   github_url VARCHAR(500),
   linkedin_url VARCHAR(500),

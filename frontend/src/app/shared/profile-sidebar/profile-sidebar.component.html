@@ -29,12 +29,6 @@
   <div class="sidebar-body">
     <!-- Freelancer Stats -->
     <ng-container *ngIf="isFreelancer && freelancerStats">
-      <!-- Availability badge -->
-      <div class="availability-badge" [ngClass]="getAvailabilityClass()">
-        <span class="dot"></span>
-        {{ getAvailabilityLabel() }}
-      </div>
-
       <!-- Stats Grid -->
       <div class="stats-grid">
         <div class="stat-item" *ngIf="freelancerStats.hourly_rate">

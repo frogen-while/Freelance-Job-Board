@@ -92,7 +92,6 @@ export const freelancerProfilesTableDef = {
     user_id: { type: 'INTEGER', notNull: true, unique: true },
     title: { type: 'TEXT' }, // Professional title/specialization
     hourly_rate: { type: 'REAL' },
-    availability_status: { type: "TEXT DEFAULT 'available' CHECK(availability_status IN ('available', 'partially_available', 'not_available'))" },
     experience_level: { type: "TEXT CHECK(experience_level IN ('entry', 'intermediate', 'expert'))" },
     github_url: { type: 'TEXT' },
     linkedin_url: { type: 'TEXT' },

@@ -129,7 +129,6 @@
           <div class="freelancer-avatar">
             <img *ngIf="freelancer.photo_url" [src]="freelancer.photo_url" [alt]="getDisplayName(freelancer)" />
             <span *ngIf="!freelancer.photo_url" class="avatar-initials large">{{ getInitials(freelancer) }}</span>
-            <span class="availability-dot" [class.available]="freelancer.availability_status === 'available'"></span>
           </div>
           
           <div class="freelancer-info">

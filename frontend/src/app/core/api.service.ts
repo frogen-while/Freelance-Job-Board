@@ -16,11 +16,11 @@ import {
   JobFilters,
   CreateJobPayload,
   ExperienceLevel,
-  AvailabilityStatus,
   CompanySize,
   JobApplication,
   Message,
-  Conversation
+  Conversation,
+  Review
 } from './models';
 
 @Injectable({ providedIn: 'root' })
@@ -113,7 +113,6 @@ export class ApiService {
   updateFreelancerProfile(userId: number, data: {
     title?: string | null;
     hourly_rate?: number | null;
-    availability_status?: AvailabilityStatus | null;
     experience_level?: ExperienceLevel | null;
     github_url?: string | null;
     linkedin_url?: string | null;
@@ -236,5 +235,15 @@ export class ApiService {
 
   getConversations(userId: number): Observable<ApiResponse<Conversation[]>> {
     return this.http.get<ApiResponse<Conversation[]>>(`${this.base}/messages/user/${userId}/conversations`);
+  }
+
+  // ============ REVIEWS ============
+
+  getReviewsByUser(userId: number): Observable<ApiResponse<Review[]>> {
+    return this.http.get<ApiResponse<Review[]>>(`${this.base}/reviews/user/${userId}`);
+  }
+
+  getUserRating(userId: number): Observable<ApiResponse<{ average_rating: number; total_reviews: number }>> {
+    return this.http.get<ApiResponse<{ average_rating: number; total_reviews: number }>>(`${this.base}/reviews/user/${userId}/rating`);
   }
 }

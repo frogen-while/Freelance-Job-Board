@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService, PublicUser } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
-import { ExperienceLevel, AvailabilityStatus, CompanySize } from '../../core/models';
+import { ExperienceLevel, CompanySize } from '../../core/models';
 
 interface ProfileData {
   headline: string;
@@ -20,7 +20,6 @@ interface ProfileUserInfo {
 
 interface FreelancerData {
   hourly_rate: number | null;
-  availability_status: AvailabilityStatus;
   experience_level: ExperienceLevel | null;
   github_url: string;
   linkedin_url: string;
@@ -77,7 +76,6 @@ export class ProfileComponent implements OnInit {
   // Freelancer-specific data
   freelancerData: FreelancerData = {
     hourly_rate: null,
-    availability_status: 'available',
     experience_level: null,
     github_url: '',
     linkedin_url: '',
@@ -216,7 +214,6 @@ export class ProfileComponent implements OnInit {
           const fp = res.data;
           this.freelancerData = {
             hourly_rate: fp.hourly_rate || null,
-            availability_status: fp.availability_status || 'available',
             experience_level: fp.experience_level || null,
             github_url: fp.github_url || '',
             linkedin_url: fp.linkedin_url || '',
@@ -330,15 +327,6 @@ export class ProfileComponent implements OnInit {
     return 'User';
   }
 
-  getAvailabilityLabel(): string {
-    switch (this.freelancerData.availability_status) {
-      case 'available': return 'Available';
-      case 'partially_available': return 'Partially Available';
-      case 'not_available': return 'Not Available';
-      default: return 'Available';
-    }
-  }
-
   getExperienceLevelLabel(): string {
     switch (this.freelancerData.experience_level) {
       case 'entry': return 'Entry Level';
@@ -407,7 +395,6 @@ export class ProfileComponent implements OnInit {
     if (this.isFreelancer) {
       const freelancerPayload = {
         hourly_rate: this.freelancerData.hourly_rate,
-        availability_status: this.freelancerData.availability_status,
         experience_level: this.freelancerData.experience_level,
         github_url: this.freelancerData.github_url || null,
         linkedin_url: this.freelancerData.linkedin_url || null

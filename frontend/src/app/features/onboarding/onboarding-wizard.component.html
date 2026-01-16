@@ -29,20 +29,68 @@
           <label for="photo_url">Profile Photo URL (optional)</label>
           <input 
             type="url" 
-            id="photo_url" 
+            id="photo_url"
+            class="form-input"
             [(ngModel)]="data.photo_url" 
             placeholder="https://example.com/your-photo.jpg">
           <span class="hint">Add a professional photo to stand out</span>
         </div>
 
         <div class="form-group">
-          <label for="location">Location (optional)</label>
-          <input 
-            type="text" 
-            id="location" 
-            [(ngModel)]="data.location" 
-            placeholder="City, Country"
-            maxlength="255">
+          <label>Country (optional)</label>
+          <div class="dropdown-container">
+            <input 
+              type="text"
+              class="form-input"
+              [(ngModel)]="countrySearch"
+              (ngModelChange)="filterCountries()"
+              (focus)="onCountryFocus()"
+              (blur)="onCountryBlur()"
+              [placeholder]="loadingCountries ? 'Loading countries...' : 'Search country...'"
+              autocomplete="off">
+            <mat-icon class="dropdown-icon" *ngIf="!loadingCountries">expand_more</mat-icon>
+            <mat-icon class="dropdown-icon spinning" *ngIf="loadingCountries">sync</mat-icon>
+            <div class="dropdown-list" *ngIf="showCountryDropdown && filteredCountries.length > 0">
+              <div 
+                class="dropdown-item" 
+                *ngFor="let country of filteredCountries"
+                (mousedown)="selectCountry(country)"
+                [class.selected]="selectedCountry?.id === country.id">
+                {{ country.name }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="selectedCountry && selectedCountry.iso2 !== 'REMOTE'">
+          <label>City (optional)</label>
+          <div class="dropdown-container">
+            <input 
+              type="text"
+              class="form-input"
+              [(ngModel)]="citySearch"
+              (ngModelChange)="filterCities()"
+              (focus)="onCityFocus()"
+              (blur)="onCityBlur()"
+              [placeholder]="loadingCities ? 'Loading cities...' : 'Search city...'"
+              autocomplete="off">
+            <mat-icon class="dropdown-icon" *ngIf="!loadingCities">expand_more</mat-icon>
+            <mat-icon class="dropdown-icon spinning" *ngIf="loadingCities">sync</mat-icon>
+            <div class="dropdown-list" *ngIf="showCityDropdown && filteredCities.length > 0">
+              <div 
+                class="dropdown-item" 
+                *ngFor="let city of filteredCities"
+                (mousedown)="selectCity(city)"
+                [class.selected]="selectedCity?.id === city.id">
+                {{ city.name }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="location-preview" *ngIf="data.location">
+          <mat-icon>location_on</mat-icon>
+          <span>{{ data.location }}</span>
         </div>
       </div>
 
@@ -55,7 +103,8 @@
           <label for="headline">Your Title / Headline</label>
           <input 
             type="text" 
-            id="headline" 
+            id="headline"
+            class="form-input"
             [(ngModel)]="data.headline" 
             [placeholder]="isFreelancer ? 'e.g., Full Stack Developer | React & Node.js Expert' : 'e.g., Product Manager at Tech Startup'"
             maxlength="255">
@@ -81,7 +130,8 @@
         <div class="form-group">
           <label for="description">Description</label>
           <textarea 
-            id="description" 
+            id="description"
+            class="form-input"
             [(ngModel)]="data.description" 
             [placeholder]="isFreelancer ? 'Describe your expertise, experience, and what makes you unique...' : 'Describe your company or the type of projects you typically work on...'"
             rows="6"
@@ -96,29 +146,21 @@
         <p class="step-desc">Set your hourly rate, experience level, and select your skills</p>
 
         <div class="form-row">
-          <div class="form-group third">
+          <div class="form-group half">
             <label for="hourly_rate">Hourly Rate ($)</label>
             <input 
               type="number" 
-              id="hourly_rate" 
+              id="hourly_rate"
+              class="form-input"
               [(ngModel)]="data.hourly_rate" 
               placeholder="25"
               min="1"
               max="999">
           </div>
 
-          <div class="form-group third">
-            <label for="availability">Availability</label>
-            <select id="availability" [(ngModel)]="data.availability_status">
-              <option value="available">Available</option>
-              <option value="partially_available">Partially Available</option>
-              <option value="not_available">Not Available</option>
-            </select>
-          </div>
-
-          <div class="form-group third">
+          <div class="form-group half">
             <label for="experience_level">Experience Level</label>
-            <select id="experience_level" [(ngModel)]="data.experience_level">
+            <select id="experience_level" class="form-input" [(ngModel)]="data.experience_level">
               <option [ngValue]="null">Select level</option>
               <option value="entry">Entry Level</option>
               <option value="intermediate">Intermediate</option>
@@ -132,7 +174,8 @@
             <label for="github_url">GitHub URL (optional)</label>
             <input 
               type="url" 
-              id="github_url" 
+              id="github_url"
+              class="form-input"
               [(ngModel)]="data.github_url" 
               placeholder="https://github.com/username">
           </div>
@@ -141,7 +184,8 @@
             <label for="linkedin_url">LinkedIn URL (optional)</label>
             <input 
               type="url" 
-              id="linkedin_url" 
+              id="linkedin_url"
+              class="form-input"
               [(ngModel)]="data.linkedin_url" 
               placeholder="https://linkedin.com/in/username">
           </div>
@@ -162,7 +206,7 @@
             [(ngModel)]="skillSearch" 
             (input)="filterSkills()"
             placeholder="Search skills..."
-            class="skill-search">
+            class="form-input skill-search">
 
           <div class="skills-grid">
             <button 
@@ -187,7 +231,8 @@
           <label for="company_name">Company Name *</label>
           <input 
             type="text" 
-            id="company_name" 
+            id="company_name"
+            class="form-input"
             [(ngModel)]="data.company_name" 
             placeholder="Your company name"
             maxlength="255">
@@ -196,7 +241,7 @@
         <div class="form-row">
           <div class="form-group half">
             <label for="industry">Industry</label>
-            <select id="industry" [(ngModel)]="data.industry">
+            <select id="industry" class="form-input" [(ngModel)]="data.industry">
               <option value="">Select industry</option>
               <option *ngFor="let ind of industries" [value]="ind">{{ ind }}</option>
             </select>
@@ -204,7 +249,7 @@
 
           <div class="form-group half">
             <label for="company_size">Company Size</label>
-            <select id="company_size" [(ngModel)]="data.company_size">
+            <select id="company_size" class="form-input" [(ngModel)]="data.company_size">
               <option [ngValue]="null">Select size</option>
               <option value="1-10">1-10 employees</option>
               <option value="11-50">11-50 employees</option>
@@ -219,7 +264,8 @@
           <label for="company_website">Company Website (optional)</label>
           <input 
             type="url" 
-            id="company_website" 
+            id="company_website"
+            class="form-input"
             [(ngModel)]="data.company_website" 
             placeholder="https://yourcompany.com">
         </div>
@@ -227,7 +273,8 @@
         <div class="form-group">
           <label for="company_description">About Your Company (optional)</label>
           <textarea 
-            id="company_description" 
+            id="company_description"
+            class="form-input"
             [(ngModel)]="data.company_description" 
             placeholder="Briefly describe your company, culture, and what kind of projects you typically work on..."
             rows="4"

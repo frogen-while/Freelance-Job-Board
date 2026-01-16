@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, PublicUser } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
-import { Job } from '../../core/models';
+import { Job, Review, JobApplication } from '../../core/models';
 
 interface DashboardStats {
   label: string;
@@ -32,8 +32,12 @@ export class DashboardComponent implements OnInit {
   stats: DashboardStats[] = [];
   quickActions: QuickAction[] = [];
   recentJobs: Job[] = [];
+  recentReviews: Review[] = [];
+  recentApplications: (JobApplication & { job_title?: string })[] = [];
   loading = true;
   loadingStats = true;
+  loadingReviews = true;
+  loadingApplications = true;
   errorMessage = '';
 
   constructor(
@@ -49,6 +53,13 @@ export class DashboardComponent implements OnInit {
     
     this.setupDashboard();
     this.loadData();
+    
+    if (this.isFreelancer) {
+      this.loadRecentReviews();
+    }
+    if (this.isEmployer) {
+      this.loadRecentApplications();
+    }
   }
 
   private setupDashboard(): void {
@@ -230,5 +241,90 @@ export class DashboardComponent implements OnInit {
 
   navigateTo(route: string): void {
     this.router.navigate([route]);
+  }
+
+  private loadRecentReviews(): void {
+    if (!this.user) {
+      this.loadingReviews = false;
+      return;
+    }
+
+    this.api.getReviewsByUser(this.user.user_id).subscribe({
+      next: (res: any) => {
+        if (res.success && res.data?.reviews) {
+          this.recentReviews = res.data.reviews.slice(0, 3);
+        }
+        this.loadingReviews = false;
+      },
+      error: () => {
+        this.loadingReviews = false;
+      }
+    });
+  }
+
+  private loadRecentApplications(): void {
+    if (!this.user) {
+      this.loadingApplications = false;
+      return;
+    }
+
+    // Get all employer's jobs, then get applications for each
+    this.api.getJobsByEmployerId(this.user.user_id).subscribe({
+      next: (res) => {
+        if (res.success && res.data && res.data.length > 0) {
+          const allApplications: (JobApplication & { job_title?: string })[] = [];
+          let processed = 0;
+          const jobs = res.data;
+
+          jobs.forEach((job: Job) => {
+            this.api.getApplicationsByJobId(job.job_id).subscribe({
+              next: (appRes) => {
+                processed++;
+                if (appRes.success && appRes.data) {
+                  const pendingApps = appRes.data
+                    .filter((a: any) => a.status === 'Pending')
+                    .map((a: any) => ({ ...a, job_title: job.title }));
+                  allApplications.push(...pendingApps);
+                }
+                if (processed === jobs.length) {
+                  // Sort by date and take first 5
+                  this.recentApplications = allApplications
+                    .sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime())
+                    .slice(0, 5);
+                  this.loadingApplications = false;
+                }
+              },
+              error: () => {
+                processed++;
+                if (processed === jobs.length) {
+                  this.loadingApplications = false;
+                }
+              }
+            });
+          });
+        } else {
+          this.loadingApplications = false;
+        }
+      },
+      error: () => {
+        this.loadingApplications = false;
+      }
+    });
+  }
+
+  getStarArray(rating: number): number[] {
+    return Array(5).fill(0).map((_, i) => i < rating ? 1 : 0);
+  }
+
+  formatDate(dateStr?: string): string {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  getApplicantName(app: JobApplication): string {
+    if (app.display_name) return app.display_name;
+    if (app.first_name || app.last_name) return `${app.first_name || ''} ${app.last_name || ''}`.trim();
+    return 'Unknown';
   }
 }

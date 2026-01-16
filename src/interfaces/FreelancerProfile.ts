@@ -1,12 +1,10 @@
 export type ExperienceLevel = 'entry' | 'intermediate' | 'expert';
-export type AvailabilityStatus = 'available' | 'partially_available' | 'not_available';
 
 export interface FreelancerProfile {
   id: number;
   user_id: number;
   title?: string | null;
   hourly_rate?: number | null;
-  availability_status?: AvailabilityStatus;
   experience_level?: ExperienceLevel | null;
   github_url?: string | null;
   linkedin_url?: string | null;

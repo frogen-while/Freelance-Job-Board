@@ -18,10 +18,6 @@
             <h1 class="name">{{ getFullName() }}</h1>
             <p class="headline" *ngIf="profileData.headline">{{ profileData.headline }}</p>
             <p class="email" *ngIf="isOwnProfile && user">{{ user.email }}</p>
-            <div class="availability-badge" *ngIf="isFreelancer" [ngClass]="freelancerData.availability_status">
-              <span class="dot"></span>
-              {{ getAvailabilityLabel() }}
-            </div>
           </div>
         </div>
         <div class="header-right">
@@ -173,23 +169,14 @@
             </div>
 
             <div class="form-group half">
-              <label for="availability">Availability</label>
-              <select id="availability" [(ngModel)]="freelancerData.availability_status">
-                <option value="available">Available</option>
-                <option value="partially_available">Partially Available</option>
-                <option value="not_available">Not Available</option>
+              <label for="experience_level">Experience Level</label>
+              <select id="experience_level" [(ngModel)]="freelancerData.experience_level">
+                <option [ngValue]="null">Select experience level</option>
+                <option value="entry">Entry Level</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="expert">Expert</option>
               </select>
             </div>
-          </div>
-
-          <div class="form-group">
-            <label for="experience_level">Experience Level</label>
-            <select id="experience_level" [(ngModel)]="freelancerData.experience_level">
-              <option [ngValue]="null">Select experience level</option>
-              <option value="entry">Entry Level</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="expert">Expert</option>
-            </select>
           </div>
 
           <div class="form-row">

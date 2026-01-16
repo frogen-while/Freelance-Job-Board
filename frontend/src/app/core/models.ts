@@ -7,7 +7,6 @@ export interface ApiResponse<T> {
 // ============ TYPES ============
 
 export type ExperienceLevel = 'entry' | 'intermediate' | 'expert';
-export type AvailabilityStatus = 'available' | 'partially_available' | 'not_available';
 export type JobType = 'fixed' | 'hourly';
 export type DurationEstimate = 'less_than_week' | '1_2_weeks' | '2_4_weeks' | '1_3_months' | '3_6_months' | 'more_than_6_months';
 export type CompanySize = '1-10' | '11-50' | '51-200' | '201-500' | '501+';
@@ -65,7 +64,6 @@ export interface FreelancerProfileData {
   user_id: number;
   title?: string | null;
   hourly_rate?: number | null;
-  availability_status?: AvailabilityStatus | null;
   experience_level?: ExperienceLevel | null;
   github_url?: string | null;
   linkedin_url?: string | null;
@@ -88,7 +86,6 @@ export interface FreelancerProfile {
   // From freelancer_profiles
   title?: string | null;
   hourly_rate: number | null;
-  availability_status: AvailabilityStatus | null;
   experience_level?: ExperienceLevel | null;
   github_url?: string | null;
   linkedin_url?: string | null;
@@ -243,5 +240,22 @@ export interface Conversation {
   last_message_time: string;
   unread_count: number;
   job_id?: number;
+  job_title?: string;
+}
+
+// ============ REVIEW ============
+
+export type Rating = 1 | 2 | 3 | 4 | 5;
+
+export interface Review {
+  review_id: number;
+  job_id: number;
+  reviewer_id: number;
+  reviewee_id: number;
+  rating: Rating;
+  feedback?: string | null;
+  created_at?: string;
+  // Joined data
+  reviewer_name?: string;
   job_title?: string;
 }

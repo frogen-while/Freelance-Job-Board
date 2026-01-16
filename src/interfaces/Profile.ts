@@ -1,4 +1,4 @@
-export type AvailabilityStatus = 'available' | 'partially_available' | 'not_available';
+
 export type ProfileVisibility = 'public' | 'private' | 'clients_only';
 
 export interface Profile {

@@ -11,7 +11,6 @@ interface ProfileData {
 
 interface FreelancerStats {
   hourly_rate?: number | null;
-  availability_status?: string;
   experience_level?: string | null;
   jobs_completed?: number;
   rating?: number | null;
@@ -89,7 +88,6 @@ export class ProfileSidebarComponent implements OnInit {
         if (res.success && res.data) {
           this.freelancerStats = {
             hourly_rate: res.data.hourly_rate,
-            availability_status: res.data.availability_status || 'available',
             experience_level: res.data.experience_level,
             jobs_completed: res.data.jobs_completed || 0,
             rating: res.data.rating,
@@ -127,19 +125,6 @@ export class ProfileSidebarComponent implements OnInit {
   getDisplayName(): string {
     if (this.user) return `${this.user.first_name} ${this.user.last_name}`;
     return 'User';
-  }
-
-  getAvailabilityLabel(): string {
-    switch (this.freelancerStats?.availability_status) {
-      case 'available': return 'Available';
-      case 'partially_available': return 'Partially Available';
-      case 'not_available': return 'Not Available';
-      default: return 'Available';
-    }
-  }
-
-  getAvailabilityClass(): string {
-    return this.freelancerStats?.availability_status || 'available';
   }
 
   getExperienceLabel(): string {

@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, PublicUser } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
-import { ExperienceLevel, AvailabilityStatus, CompanySize } from '../../core/models';
+import { LocationService, Country, City } from '../../core/location.service';
+import { ExperienceLevel, CompanySize } from '../../core/models';
 
 interface OnboardingData {
   // Base profile
@@ -12,7 +13,6 @@ interface OnboardingData {
   location: string;
   // Freelancer-specific
   hourly_rate: number | null;
-  availability_status: AvailabilityStatus;
   experience_level: ExperienceLevel | null;
   github_url: string;
   linkedin_url: string;
@@ -52,13 +52,26 @@ export class OnboardingWizardComponent implements OnInit {
     'Marketing', 'Media', 'Manufacturing', 'Real Estate', 'Consulting', 'Other'
   ];
 
+  // Countries and cities from API
+  countries: Country[] = [];
+  cities: City[] = [];
+  selectedCountry: Country | null = null;
+  selectedCity: City | null = null;
+  countrySearch: string = '';
+  citySearch: string = '';
+  filteredCountries: Country[] = [];
+  filteredCities: City[] = [];
+  showCountryDropdown = false;
+  showCityDropdown = false;
+  loadingCountries = false;
+  loadingCities = false;
+
   data: OnboardingData = {
     headline: '',
     description: '',
     photo_url: '',
     location: '',
     hourly_rate: null,
-    availability_status: 'available',
     experience_level: null,
     github_url: '',
     linkedin_url: '',
@@ -73,7 +86,8 @@ export class OnboardingWizardComponent implements OnInit {
   constructor(
     private auth: AuthService,
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    private locationService: LocationService
   ) {}
 
   ngOnInit(): void {
@@ -86,10 +100,27 @@ export class OnboardingWizardComponent implements OnInit {
     this.isFreelancer = this.auth.isFreelancer();
     this.totalSteps = 4; // Both freelancer and employer have 4 steps
 
+    // Load countries
+    this.loadCountries();
+
     // Load skills for freelancers
     if (this.isFreelancer) {
       this.loadSkills();
     }
+  }
+
+  loadCountries(): void {
+    this.loadingCountries = true;
+    this.locationService.getCountries().subscribe({
+      next: (countries) => {
+        this.countries = countries;
+        this.filteredCountries = this.locationService.searchCountries('', countries);
+        this.loadingCountries = false;
+      },
+      error: () => {
+        this.loadingCountries = false;
+      }
+    });
   }
 
   loadSkills(): void {
@@ -136,6 +167,88 @@ export class OnboardingWizardComponent implements OnInit {
     if (idx > -1) {
       this.data.skills.splice(idx, 1);
     }
+  }
+
+  // ========== Country/City Dropdown Methods ==========
+  
+  filterCountries(): void {
+    this.filteredCountries = this.locationService.searchCountries(this.countrySearch, this.countries);
+  }
+
+  filterCities(): void {
+    this.filteredCities = this.locationService.searchCities(this.citySearch, this.cities);
+  }
+
+  selectCountry(country: Country): void {
+    this.selectedCountry = country;
+    this.countrySearch = country.name;
+    this.showCountryDropdown = false;
+    
+    // Reset city
+    this.selectedCity = null;
+    this.citySearch = '';
+    this.cities = [];
+    this.filteredCities = [];
+    
+    // Load cities for selected country
+    if (country.iso2 !== 'REMOTE') {
+      this.loadingCities = true;
+      this.locationService.getCities(country.iso2).subscribe({
+        next: (cities) => {
+          this.cities = cities;
+          this.filteredCities = this.locationService.searchCities('', cities);
+          this.loadingCities = false;
+        },
+        error: () => {
+          this.loadingCities = false;
+        }
+      });
+    }
+    
+    // Update location
+    this.updateLocation();
+  }
+
+  selectCity(city: City): void {
+    this.selectedCity = city;
+    this.citySearch = city.name;
+    this.showCityDropdown = false;
+    this.updateLocation();
+  }
+
+  updateLocation(): void {
+    if (this.selectedCountry?.iso2 === 'REMOTE') {
+      this.data.location = 'Remote';
+    } else if (this.selectedCity && this.selectedCountry) {
+      this.data.location = `${this.selectedCity.name}, ${this.selectedCountry.name}`;
+    } else if (this.selectedCountry) {
+      this.data.location = this.selectedCountry.name;
+    } else {
+      this.data.location = '';
+    }
+  }
+
+  onCountryFocus(): void {
+    this.filteredCountries = this.locationService.searchCountries('', this.countries);
+    this.showCountryDropdown = true;
+  }
+
+  onCountryBlur(): void {
+    // Delay to allow click on dropdown item
+    setTimeout(() => {
+      this.showCountryDropdown = false;
+    }, 200);
+  }
+
+  onCityFocus(): void {
+    this.filteredCities = this.locationService.searchCities('', this.cities);
+    this.showCityDropdown = true;
+  }
+
+  onCityBlur(): void {
+    setTimeout(() => {
+      this.showCityDropdown = false;
+    }, 200);
   }
 
   nextStep(): void {
@@ -215,7 +328,6 @@ export class OnboardingWizardComponent implements OnInit {
     if (this.isFreelancer) {
       const freelancerPayload = {
         hourly_rate: this.data.hourly_rate,
-        availability_status: this.data.availability_status,
         experience_level: this.data.experience_level,
         github_url: this.data.github_url || null,
         linkedin_url: this.data.linkedin_url || null

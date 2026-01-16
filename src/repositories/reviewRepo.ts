@@ -27,7 +27,14 @@ export const reviewRepo = {
 
     async findByReviewee(reviewee_id: number): Promise<Review[]> {
         const result = await db.connection?.all<Review[]>(
-            `SELECT * FROM reviews WHERE reviewee_id = ? ORDER BY created_at DESC`,
+            `SELECT r.*, 
+                    u.first_name || ' ' || u.last_name as reviewer_name,
+                    j.title as job_title
+             FROM reviews r
+             LEFT JOIN users u ON r.reviewer_id = u.user_id
+             LEFT JOIN jobs j ON r.job_id = j.job_id
+             WHERE r.reviewee_id = ? 
+             ORDER BY r.created_at DESC`,
             reviewee_id
         );
         return result || [];

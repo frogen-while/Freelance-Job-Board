@@ -1,12 +1,11 @@
 import { db } from '../config/init_db.js';
-import { FreelancerProfile, FreelancerProfileFull, ExperienceLevel, AvailabilityStatus } from '../interfaces/FreelancerProfile.js';
+import { FreelancerProfile, FreelancerProfileFull, ExperienceLevel } from '../interfaces/FreelancerProfile.js';
 
 interface FreelancerProfileRow {
   id: number;
   user_id: number;
   title: string | null;
   hourly_rate: number | null;
-  availability_status: string | null;
   experience_level: string | null;
   github_url: string | null;
   linkedin_url: string | null;
@@ -72,18 +71,16 @@ export const freelancerProfilesRepo = {
   async upsert(user_id: number, data: {
     title?: string | null;
     hourly_rate?: number | null;
-    availability_status?: AvailabilityStatus | null;
     experience_level?: ExperienceLevel | null;
     github_url?: string | null;
     linkedin_url?: string | null;
   }): Promise<void> {
     await db.connection?.run(
-      `INSERT INTO freelancer_profiles (user_id, title, hourly_rate, availability_status, experience_level, github_url, linkedin_url)
-       VALUES (?, ?, ?, ?, ?, ?, ?)
+      `INSERT INTO freelancer_profiles (user_id, title, hourly_rate, experience_level, github_url, linkedin_url)
+       VALUES (?, ?, ?, ?, ?, ?)
        ON CONFLICT(user_id) DO UPDATE SET
          title = COALESCE(excluded.title, freelancer_profiles.title),
          hourly_rate = COALESCE(excluded.hourly_rate, freelancer_profiles.hourly_rate),
-         availability_status = COALESCE(excluded.availability_status, freelancer_profiles.availability_status),
          experience_level = COALESCE(excluded.experience_level, freelancer_profiles.experience_level),
          github_url = COALESCE(excluded.github_url, freelancer_profiles.github_url),
          linkedin_url = COALESCE(excluded.linkedin_url, freelancer_profiles.linkedin_url),
@@ -91,7 +88,6 @@ export const freelancerProfilesRepo = {
       user_id,
       data.title,
       data.hourly_rate,
-      data.availability_status,
       data.experience_level,
       data.github_url,
       data.linkedin_url
@@ -128,7 +124,6 @@ export const freelancerProfilesRepo = {
   async getAll(options?: { 
     skill?: string; 
     experience_level?: ExperienceLevel;
-    availability?: AvailabilityStatus;
     limit?: number; 
     offset?: number;
   }): Promise<{ freelancers: FreelancerProfileFull[]; total: number }> {
@@ -146,11 +141,6 @@ export const freelancerProfilesRepo = {
     if (options?.experience_level) {
       whereConditions.push(`fp.experience_level = ?`);
       params.push(options.experience_level);
-    }
-
-    if (options?.availability) {
-      whereConditions.push(`fp.availability_status = ?`);
-      params.push(options.availability);
     }
 
     const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
@@ -195,7 +185,6 @@ export const freelancerProfilesRepo = {
 
     const freelancers: FreelancerProfileFull[] = (rows || []).map(row => ({
       ...row,
-      availability_status: row.availability_status as AvailabilityStatus | undefined,
       experience_level: row.experience_level as ExperienceLevel | null,
       first_name: row.first_name!,
       last_name: row.last_name!,
