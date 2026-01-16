@@ -17,9 +17,12 @@ export interface Job {
   duration_estimate?: DurationEstimate | null;
   is_remote?: boolean;
   location?: string | null;
+  is_hidden?: boolean;
+  hidden_reason?: string | null;
+  hidden_at?: string | null;
+  hidden_by?: number | null;
   created_at?: string;
   updated_at?: string;
-  // Relations (populated on demand)
   skills?: string[];
 }
 

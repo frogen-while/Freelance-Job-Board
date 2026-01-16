@@ -27,7 +27,7 @@ export const userTypesTableDef = {
   name: 'usertypes',
   columns: {
     type_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
-    type_name: { type: "TEXT CHECK(type_name IN ('Employer', 'Freelancer', 'Reviewer', 'Support'))", notNull: true }
+    type_name: { type: "TEXT CHECK(type_name IN ('Employer', 'Freelancer', 'Support'))", notNull: true }
   }
 };
 
@@ -39,8 +39,9 @@ export const usersTableDef = {
     last_name: { type: 'TEXT', notNull: true },
     email: { type: 'TEXT', notNull: true, unique: true },
     password_hash: { type: 'TEXT', notNull: true },
-    main_role: { type: "TEXT CHECK(main_role IN ('Administrator', 'Management', 'Regular', 'Unregistered'))", notNull: true },
+    main_role: { type: "TEXT CHECK(main_role IN ('Admin', 'Manager', 'Support', 'Employer', 'Freelancer'))", notNull: true },
     status: { type: "TEXT DEFAULT 'active' CHECK(status IN ('active', 'suspended', 'archived'))" },
+    is_blocked: { type: "INTEGER DEFAULT 0" },
     created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
     updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   }
@@ -84,13 +85,12 @@ export const profilesTableDef = {
   foreignKeys: [{ column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' }]
 };
 
-// Freelancer-specific profile data
 export const freelancerProfilesTableDef = {
   name: 'freelancer_profiles',
   columns: {
     id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
     user_id: { type: 'INTEGER', notNull: true, unique: true },
-    title: { type: 'TEXT' }, // Professional title/specialization
+    title: { type: 'TEXT' },
     hourly_rate: { type: 'REAL' },
     experience_level: { type: "TEXT CHECK(experience_level IN ('entry', 'intermediate', 'expert'))" },
     github_url: { type: 'TEXT' },
@@ -104,7 +104,6 @@ export const freelancerProfilesTableDef = {
   foreignKeys: [{ column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' }]
 };
 
-// Employer-specific profile data
 export const employerProfilesTableDef = {
   name: 'employer_profiles',
   columns: {
@@ -167,12 +166,17 @@ export const jobsTableDef = {
     duration_estimate: { type: "TEXT CHECK(duration_estimate IN ('less_than_week', '1_2_weeks', '2_4_weeks', '1_3_months', '3_6_months', 'more_than_6_months'))" },
     is_remote: { type: 'BOOLEAN DEFAULT 1' },
     location: { type: 'TEXT' },
+    is_hidden: { type: 'INTEGER DEFAULT 0' },
+    hidden_reason: { type: 'TEXT' },
+    hidden_at: { type: 'DATETIME' },
+    hidden_by: { type: 'INTEGER' },
     created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
     updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
   foreignKeys: [
     { column: 'employer_id', references: 'users(user_id) ON DELETE CASCADE' },
-    { column: 'category_id', references: 'categories(category_id) ON DELETE RESTRICT' }
+    { column: 'category_id', references: 'categories(category_id) ON DELETE RESTRICT' },
+    { column: 'hidden_by', references: 'users(user_id) ON DELETE SET NULL' }
   ]
 };
 
@@ -284,12 +288,83 @@ export const supportTicketsTableDef = {
     user_id: { type: 'INTEGER', notNull: true },
     subject: { type: 'TEXT', notNull: true },
     message: { type: 'TEXT', notNull: true },
-    status: { type: "TEXT DEFAULT 'Open' CHECK(status IN ('Open', 'In Progress', 'Resolved', 'Closed'))" },
+    status: { type: "TEXT DEFAULT 'Open' CHECK(status IN ('Open', 'In Progress', 'Escalated', 'Resolved', 'Closed'))" },
+    priority: { type: "TEXT DEFAULT 'normal' CHECK(priority IN ('low', 'normal', 'high', 'urgent'))" },
+    assigned_to: { type: 'INTEGER' },
     created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
     updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
   foreignKeys: [
+    { column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' },
+    { column: 'assigned_to', references: 'users(user_id) ON DELETE SET NULL' }
+  ]
+};
+
+export const auditLogsTableDef = {
+  name: 'audit_logs',
+  columns: {
+    log_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
+    user_id: { type: 'INTEGER' },
+    action: { type: 'TEXT', notNull: true },
+    entity_type: { type: 'TEXT', notNull: true },
+    entity_id: { type: 'INTEGER' },
+    old_value: { type: 'TEXT' },
+    new_value: { type: 'TEXT' },
+    ip_address: { type: 'TEXT' },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
+  },
+  foreignKeys: [
+    { column: 'user_id', references: 'users(user_id) ON DELETE SET NULL' }
+  ]
+};
+
+export const systemSettingsTableDef = {
+  name: 'system_settings',
+  columns: {
+    setting_key: { type: 'TEXT', primaryKey: true },
+    setting_value: { type: 'TEXT' },
+    setting_type: { type: "TEXT DEFAULT 'string' CHECK(setting_type IN ('string', 'number', 'boolean', 'json'))" },
+    description: { type: 'TEXT' },
+    updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
+    updated_by: { type: 'INTEGER' }
+  },
+  foreignKeys: [
+    { column: 'updated_by', references: 'users(user_id) ON DELETE SET NULL' }
+  ]
+};
+
+export const ticketRepliesTableDef = {
+  name: 'ticket_replies',
+  columns: {
+    reply_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
+    ticket_id: { type: 'INTEGER', notNull: true },
+    user_id: { type: 'INTEGER', notNull: true },
+    message: { type: 'TEXT', notNull: true },
+    is_internal: { type: 'INTEGER DEFAULT 0' },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
+  },
+  foreignKeys: [
+    { column: 'ticket_id', references: 'supporttickets(ticket_id) ON DELETE CASCADE' },
     { column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' }
+  ]
+};
+
+export const jobFlagsTableDef = {
+  name: 'job_flags',
+  columns: {
+    flag_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
+    job_id: { type: 'INTEGER', notNull: true },
+    flagged_by: { type: 'INTEGER', notNull: true },
+    reason: { type: 'TEXT', notNull: true },
+    status: { type: "TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'reviewed', 'dismissed'))" },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
+    reviewed_at: { type: 'DATETIME' },
+    reviewed_by: { type: 'INTEGER' }
+  },
+  foreignKeys: [
+    { column: 'job_id', references: 'jobs(job_id) ON DELETE CASCADE' },
+    { column: 'flagged_by', references: 'users(user_id) ON DELETE CASCADE' },
+    { column: 'reviewed_by', references: 'users(user_id) ON DELETE SET NULL' }
   ]
 };
 
@@ -341,7 +416,11 @@ export async function createSchemaAndData(): Promise<void> {
     reviewsTableDef,
     paymentsTableDef,
     messagesTableDef,
-    supportTicketsTableDef
+    supportTicketsTableDef,
+    auditLogsTableDef,
+    systemSettingsTableDef,
+    ticketRepliesTableDef,
+    jobFlagsTableDef
   ];
 
   for(const def of definitions) {
@@ -350,7 +429,7 @@ export async function createSchemaAndData(): Promise<void> {
 
   const existingTypes = await db.connection!.get('SELECT COUNT(*) as count FROM usertypes');
   if (existingTypes.count === 0) {
-    const types = ['Employer', 'Freelancer', 'Reviewer', 'Support'];
+    const types = ['Employer', 'Freelancer', 'Support'];
     for (const t of types) {
       await db.connection!.run('INSERT INTO usertypes (type_name) VALUES (?)', t);
     }

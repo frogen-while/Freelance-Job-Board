@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { userRepo } from '../repositories/userRepo.js';
 import { sendError, sendSuccess } from '../utils/http.js';
+import { MainRole } from '../interfaces/User.js';
 
 type JwtUserPayload = {
   sub: number;
@@ -57,7 +58,7 @@ export const register = async (req: Request, res: Response) => {
     }
 
     const password_hash = await bcrypt.hash(password, 10);
-    const newUserId = await userRepo.create(first_name.trim(), last_name.trim(), normalizedEmail, password_hash, type_name);
+    const newUserId = await userRepo.create(first_name.trim(), last_name.trim(), normalizedEmail, password_hash, type_name as MainRole);
 
     if (!newUserId) {
       return sendError(res, 500, 'Failed to create user.');
@@ -91,6 +92,10 @@ export const login = async (req: Request, res: Response) => {
     const user = await userRepo.findByEmail(normalizedEmail);
     if (!user) {
       return sendError(res, 401, 'Invalid email or password.');
+    }
+
+    if (user.is_blocked) {
+      return sendError(res, 403, 'Your account has been blocked. Please contact support.');
     }
 
     const ok = await bcrypt.compare(password, user.password_hash);

@@ -1,4 +1,4 @@
-export type TicketStatus = 'Open' | 'In Progress' | 'Waiting' | 'Resolved' | 'Closed';
+export type TicketStatus = 'Open' | 'In Progress' | 'Escalated' | 'Resolved' | 'Closed';
 export type TicketPriority = 'low' | 'normal' | 'high' | 'urgent';
 
 export interface SupportTicket {
@@ -7,6 +7,7 @@ export interface SupportTicket {
   subject: string;
   message: string;
   priority?: TicketPriority;
+  assigned_to?: number | null;
   status: TicketStatus;
   created_at?: string;
   updated_at?: string;

@@ -12,6 +12,7 @@ import skillsRoutes from './routes/skillsRoutes.js'
 import profilesRoutes from './routes/profilesRoutes.js'
 import messageRoutes from './routes/messageRoutes.js'
 import reviewRoutes from './routes/reviewRoutes.js'
+import adminRoutes from './routes/adminRoutes.js'
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -40,6 +41,7 @@ app.use('/api/payments', paymentsRoutes)
 app.use('/api/supporttickets', supportticketsRoutes)
 app.use('/api/messages', messageRoutes)
 app.use('/api/reviews', reviewRoutes)
+app.use('/api/admin', adminRoutes)
 
 app.use('/api', (req: Request, res: Response) => {
   return sendError(res, 404, 'Not Found');
