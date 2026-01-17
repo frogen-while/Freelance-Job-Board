@@ -4,12 +4,10 @@ import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 
 import { ProfileSidebarComponent } from './profile-sidebar/profile-sidebar.component';
-import { AuthPromptModalComponent } from './auth-prompt-modal/auth-prompt-modal.component';
 
 @NgModule({
   declarations: [
-    ProfileSidebarComponent,
-    AuthPromptModalComponent
+    ProfileSidebarComponent
   ],
   imports: [
     CommonModule,
@@ -18,7 +16,6 @@ import { AuthPromptModalComponent } from './auth-prompt-modal/auth-prompt-modal.
   ],
   exports: [
     ProfileSidebarComponent,
-    AuthPromptModalComponent,
     MatIconModule
   ]
 })
