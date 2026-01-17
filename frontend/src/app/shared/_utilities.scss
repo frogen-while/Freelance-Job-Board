@@ -1,25 +1,5 @@
 @use 'tokens' as *;
 
-@mixin glass-card {
-  background: $bg-glass;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: $radius-3xl;
-  box-shadow: $shadow-lg;
-  backdrop-filter: blur(18px) saturate(1.25);
-  -webkit-backdrop-filter: blur(18px) saturate(1.25);
-}
-
-@mixin glass-nav {
-  background: rgba($bg-page, 0.72);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-
-@mixin glass-nav-scrolled {
-  background: rgba($bg-page, 0.92);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
-}
-
 @mixin card-base {
   background: $bg-card;
   border: 1px solid $border-light;
@@ -36,12 +16,6 @@
     box-shadow: $shadow-md;
     border-color: $border-accent;
   }
-}
-
-@mixin card-white {
-  background: $bg-white;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-sm;
 }
 
 @mixin button-base {
@@ -191,12 +165,6 @@
     @media (max-width: $bp-2xl) { @content; }
   } @else if $breakpoint == 2xl-up {
     @media (min-width: $bp-2xl) { @content; }
-  }
-}
-
-@mixin reduced-motion {
-  @media (prefers-reduced-motion: reduce) {
-    @content;
   }
 }
 

@@ -225,17 +225,6 @@ a {
   }
 }
 
-.btn-lg {
-  padding: tokens.$space-4 tokens.$space-6;
-  font-size: tokens.$font-size-md;
-  border-radius: tokens.$radius-lg;
-
-  svg {
-    width: 18px;
-    height: 18px;
-  }
-}
-
 // Gradient buttons (for dark backgrounds)
 .btn-gradient {
   @extend .btn;
@@ -492,53 +481,6 @@ a {
   resize: vertical;
   min-height: 120px;
   line-height: 1.5;
-}
-
-// Light theme form with border (for forms on white backgrounds)
-.form-group-bordered {
-  margin-bottom: tokens.$space-4;
-
-  label {
-    display: block;
-    font-weight: tokens.$font-weight-medium;
-    color: tokens.$text-primary;
-    margin-bottom: tokens.$space-2;
-  }
-}
-
-.form-input-bordered {
-  width: 100%;
-  padding: tokens.$space-3;
-  border: 2px solid tokens.$border-light;
-  border-radius: tokens.$radius-lg;
-  font-size: tokens.$font-size-base;
-  transition: border-color 0.2s ease;
-
-  &:focus {
-    outline: none;
-    border-color: tokens.$accent;
-  }
-
-  &::placeholder {
-    color: #94a3b8;
-  }
-}
-
-.form-textarea-bordered {
-  @extend .form-input-bordered;
-  resize: vertical;
-  min-height: 120px;
-}
-
-.form-select-bordered {
-  @extend .form-input-bordered;
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right tokens.$space-3 center;
-  background-repeat: no-repeat;
-  background-size: 16px;
-  padding-right: tokens.$space-10;
 }
 
 // --------------------------------------------
@@ -991,15 +933,6 @@ a {
   50% { opacity: 0.5; }
 }
 
-// Utility classes for animations
-.animate-fade-in {
-  animation: fadeIn tokens.$transition-normal forwards;
-}
-
-.animate-slide-up {
-  animation: slideUp tokens.$transition-normal forwards;
-}
-
 // --------------------------------------------
 // UTILITY CLASSES
 // --------------------------------------------
@@ -1198,44 +1131,6 @@ a {
 // --------------------------------------------
 // GRID UTILITIES
 // --------------------------------------------
-.grid-4-2-1 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: tokens.$space-6;
-
-  @media (max-width: tokens.$bp-lg) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: tokens.$bp-sm) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.grid-3-2-1 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: tokens.$space-6;
-
-  @media (max-width: tokens.$bp-lg) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: tokens.$bp-sm) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.grid-3-1 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: tokens.$space-6;
-
-  @media (max-width: tokens.$bp-md) {
-    grid-template-columns: 1fr;
-  }
-}
-
 .grid-2-1 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1244,12 +1139,6 @@ a {
   @media (max-width: tokens.$bp-sm) {
     grid-template-columns: 1fr;
   }
-}
-
-.grid-auto-fit {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: tokens.$space-6;
 }
 
 .stats-grid {
@@ -1264,36 +1153,6 @@ a {
   @media (max-width: tokens.$bp-sm) {
     grid-template-columns: 1fr;
     gap: tokens.$space-4;
-  }
-}
-
-// --------------------------------------------
-// CARD HOVER UTILITIES
-// --------------------------------------------
-.card-hover-lift-sm {
-  transition: transform tokens.$transition-fast, box-shadow tokens.$transition-fast;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: tokens.$shadow-lg;
-  }
-}
-
-.card-hover-lift {
-  transition: transform tokens.$transition-fast, box-shadow tokens.$transition-fast;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: tokens.$shadow-xl;
-  }
-}
-
-.card-hover-lift-lg {
-  transition: transform tokens.$transition-fast, box-shadow tokens.$transition-fast;
-
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow: tokens.$shadow-xl;
   }
 }
 
