@@ -427,6 +427,8 @@ export async function createSchemaAndData(): Promise<void> {
     await db.connection!.run(createTableStatement(def));
   }
 
+  await runMigrations();
+
   const existingTypes = await db.connection!.get('SELECT COUNT(*) as count FROM usertypes');
   if (existingTypes.count === 0) {
     const types = ['Employer', 'Freelancer', 'Support'];
@@ -437,6 +439,16 @@ export async function createSchemaAndData(): Promise<void> {
 
   await seedSkills();
   await seedCategories();
+}
+
+async function runMigrations(): Promise<void> {
+  // Add is_blocked column to users if not exists
+  const usersInfo = await db.connection!.all("PRAGMA table_info(users)");
+  const hasIsBlocked = usersInfo.some((col: any) => col.name === 'is_blocked');
+  if (!hasIsBlocked) {
+    await db.connection!.run('ALTER TABLE users ADD COLUMN is_blocked INTEGER DEFAULT 0');
+    console.log('Migration: Added is_blocked column to users table');
+  }
 }
 
 async function seedSkills(): Promise<void> {

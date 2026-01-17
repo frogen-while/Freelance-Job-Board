@@ -18,7 +18,24 @@ export const userRepo = {
             first_name, last_name, email, password_hash, role
         );
         
-        return result?.lastID ?? null; 
+        const userId = result?.lastID ?? null;
+        
+        // Also add to user_usertypes if role is Employer or Freelancer
+        if (userId && (role === 'Employer' || role === 'Freelancer')) {
+            const typeRecord = await db.connection?.get<{type_id: number}>(
+                'SELECT type_id FROM usertypes WHERE type_name = ?',
+                role
+            );
+            if (typeRecord) {
+                await db.connection?.run(
+                    'INSERT INTO user_usertypes (user_id, type_id) VALUES (?, ?)',
+                    userId,
+                    typeRecord.type_id
+                );
+            }
+        }
+        
+        return userId;
     },
 
     async get_all(): Promise<User[]> {
@@ -35,11 +52,21 @@ export const userRepo = {
         );
         
         if (user) {
+            // Load onboarding status
             const profile = await db.connection?.get<{onboarding_completed: number}>(
                 `SELECT onboarding_completed FROM profiles WHERE user_id = ?`,
                 user_id
             );
             (user as any).onboarding_completed = profile?.onboarding_completed === 1;
+            
+            // Load user_types
+            const types = await db.connection?.all<{type_name: string}[]>(
+                `SELECT ut.type_name FROM user_usertypes uut 
+                 JOIN usertypes ut ON uut.type_id = ut.type_id 
+                 WHERE uut.user_id = ?`,
+                user_id
+            );
+            (user as any).user_types = types?.map(t => t.type_name) || [];
         }
         
         return user;

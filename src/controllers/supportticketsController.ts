@@ -407,13 +407,8 @@ export const getTicketsFiltered = async (req: Request, res: Response) => {
 
         const tickets = await supportTicketsRepo.getWithFilters(filters);
 
-        return sendSuccess(res, {
-            data: tickets,
-            pagination: {
-                page: pageNum,
-                limit: limitNum
-            }
-        });
+        // Return tickets array directly for frontend compatibility
+        return sendSuccess(res, tickets);
     } catch (error) {
         console.error('Error fetching filtered tickets:', error);
         return sendError(res, 500, 'An internal server error occurred while fetching tickets.');
