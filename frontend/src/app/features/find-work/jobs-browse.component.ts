@@ -28,7 +28,6 @@ export class JobsBrowseComponent implements OnInit {
   showFilters = false;
   
   isLoggedIn = false;
-  showAuthModal = false;
 
   constructor(
     private api: ApiService,
@@ -257,11 +256,7 @@ export class JobsBrowseComponent implements OnInit {
     if (this.isLoggedIn) {
       this.router.navigate(['/jobs', job.job_id]);
     } else {
-      this.showAuthModal = true;
+      this.router.navigate(['/login'], { queryParams: { returnUrl: '/jobs/' + job.job_id } });
     }
-  }
-
-  closeAuthModal(): void {
-    this.showAuthModal = false;
   }
 }

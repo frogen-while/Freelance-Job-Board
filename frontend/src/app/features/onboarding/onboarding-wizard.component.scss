@@ -1,9 +1,5 @@
 @use 'app/shared' as *;
 
-:host {
-  display: block;
-}
-
 .onboarding-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
@@ -30,7 +26,6 @@
     font-size: $font-size-2xl;
     font-weight: $font-weight-bold;
     color: $text-primary;
-    margin-bottom: $space-xs;
   }
 
   .subtitle {
@@ -39,83 +34,10 @@
   }
 }
 
-// Progress bar
-.progress-bar {
-  height: 6px;
-  background: #e2e8f0;
-  border-radius: $radius-full;
-  margin-bottom: $space-lg;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: $gradient-accent;
-  border-radius: $radius-full;
-  transition: width 0.3s ease;
-}
-
-// Step indicators
-.step-indicators {
-  display: flex;
-  justify-content: center;
-  gap: $space-md;
-  margin-bottom: $space-xl;
-}
-
-.step-dot {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #e2e8f0;
-  color: $text-muted;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  transition: all 0.3s ease;
-
-  &.active {
-    background: $gradient-accent;
-    color: white;
-    transform: scale(1.1);
-  }
-
-  &.completed {
-    background: $success;
-    color: white;
-  }
-}
-
-// Wizard body
 .wizard-body {
   min-height: 300px;
 }
 
-.step {
-  animation: fadeIn 0.3s ease;
-
-  h2 {
-    font-size: $font-size-xl;
-    font-weight: $font-weight-semibold;
-    color: $text-primary;
-    margin-bottom: $space-xs;
-  }
-
-  .step-desc {
-    color: $text-secondary;
-    margin-bottom: $space-xl;
-  }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateX(10px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-// Form styles use global .form-group-bordered, .form-input-bordered, etc.
-// Component-specific overrides
 .form-group {
   margin-bottom: $space-lg;
 
@@ -133,9 +55,17 @@
     color: $text-muted;
     margin-top: $space-xs;
   }
+
+  &.half {
+    flex: 1;
+  }
 }
 
-// Form inputs
+.form-row {
+  display: flex;
+  gap: $space-md;
+}
+
 .form-input {
   width: 100%;
   padding: $space-sm $space-md;
@@ -145,16 +75,10 @@
   border-radius: $radius-lg;
   background: white;
   color: $text-primary;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s;
 
-  &::placeholder {
-    color: $text-muted;
-  }
-
-  &:hover {
-    border-color: #cbd5e1;
-  }
-
+  &::placeholder { color: $text-muted; }
+  &:hover { border-color: #cbd5e1; }
   &:focus {
     outline: none;
     border-color: $accent;
@@ -164,135 +88,9 @@
 
 textarea.form-input {
   resize: vertical;
-  min-height: 120px;
+  min-height: 80px;
 }
 
-// Country/City Dropdown
-.dropdown-container {
-  position: relative;
-
-  .dropdown-icon {
-    position: absolute;
-    right: $space-sm;
-    top: 50%;
-    transform: translateY(-50%);
-    color: $text-muted;
-    pointer-events: none;
-    font-size: 20px;
-
-    &.spinning {
-      animation: spin 1s linear infinite;
-    }
-  }
-
-  .form-input {
-    padding-right: $space-2xl;
-  }
-}
-
-.dropdown-list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  max-height: 200px;
-  overflow-y: auto;
-  background: white;
-  border: 2px solid #e2e8f0;
-  border-top: none;
-  border-radius: 0 0 $radius-lg $radius-lg;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
-  }
-}
-
-.dropdown-item {
-  padding: $space-sm $space-md;
-  font-size: $font-size-md;
-  color: $text-primary;
-  cursor: pointer;
-  transition: background 0.15s ease;
-
-  &:hover {
-    background: $bg-page;
-  }
-
-  &.selected {
-    background: rgba($accent, 0.1);
-    color: $accent;
-    font-weight: $font-weight-medium;
-  }
-}
-
-// Location preview
-.location-preview {
-  display: flex;
-  align-items: center;
-  gap: $space-xs;
-  padding: $space-sm $space-md;
-  background: rgba($success, 0.1);
-  border-radius: $radius-lg;
-  color: $success;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-  }
-}
-
-@keyframes spin {
-  from { transform: translateY(-50%) rotate(0deg); }
-  to { transform: translateY(-50%) rotate(360deg); }
-}
-
-// Headline examples
-.headline-examples {
-  background: $bg-page;
-  border-radius: $radius-lg;
-  padding: $space-md;
-  margin-top: $space-md;
-
-  p {
-    font-weight: $font-weight-medium;
-    color: $text-secondary;
-    margin-bottom: $space-xs;
-    font-size: $font-size-sm;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  li {
-    font-size: $font-size-sm;
-    color: $text-muted;
-    padding: $space-xs 0;
-    padding-left: $space-md;
-    position: relative;
-
-    &::before {
-      content: '→';
-      position: absolute;
-      left: 0;
-      color: $accent;
-    }
-  }
-}
-
-// Skills section
 .selected-skills {
   display: flex;
   flex-wrap: wrap;
@@ -300,7 +98,26 @@ textarea.form-input {
   margin-bottom: $space-md;
 }
 
-// skill-tag uses global .skill-tag-selected (with gradient override if needed)
+.skill-tag-selected {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  padding: $space-xs $space-sm;
+  background: rgba($accent, 0.1);
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  color: $accent;
+
+  .remove-skill {
+    background: none;
+    border: none;
+    color: $accent;
+    cursor: pointer;
+    font-size: $font-size-md;
+    line-height: 1;
+    padding: 0;
+  }
+}
 
 .skill-search {
   margin-bottom: $space-md;
@@ -312,70 +129,60 @@ textarea.form-input {
   gap: $space-xs;
   max-height: 200px;
   overflow-y: auto;
-  padding: $space-sm;
-  border: 1px solid $border-light;
+  padding: $space-xs;
+  border: 1px solid #e2e8f0;
   border-radius: $radius-lg;
 }
 
 .skill-option {
   padding: $space-xs $space-sm;
-  background: #f1f5f9;
-  border: 1px solid transparent;
-  border-radius: $radius-md;
+  background: $bg-page;
+  border: 1px solid #e2e8f0;
+  border-radius: $radius-full;
   font-size: $font-size-sm;
-  color: $text-secondary;
+  color: $text-primary;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 
-  &:hover {
-    background: #e2e8f0;
-  }
-
+  &:hover { border-color: $accent; }
   &.selected {
-    background: #eef2ff;
+    background: $accent;
+    color: white;
     border-color: $accent;
-    color: $accent;
   }
 }
 
-// Error message
 .error-message {
-  background: #fef2f2;
-  color: #dc2626;
-  padding: $space-md;
-  border-radius: $radius-lg;
-  margin-bottom: $space-lg;
+  color: $danger;
   text-align: center;
+  margin-bottom: $space-md;
 }
 
-// Footer
 .wizard-footer {
   display: flex;
-  align-items: center;
-  padding-top: $space-xl;
-  border-top: 1px solid $border-light;
-  margin-top: $space-xl;
+  justify-content: center;
+  padding-top: $space-lg;
+  border-top: 1px solid #e2e8f0;
 }
 
-.spacer {
-  flex: 1;
-}
+.btn-gradient-success {
+  padding: $space-md $space-2xl;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: white;
+  background: $gradient-accent;
+  border: none;
+  border-radius: $radius-full;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
 
-// Button styles use global classes from styles.scss
-// .btn-dark-ghost, .btn-gradient, .btn-gradient-success
-
-// Responsive
-@media (max-width: $bp-sm) {
-  .onboarding-page {
-    padding: $space-md;
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($accent, 0.4);
   }
 
-  .wizard-container {
-    padding: $space-lg;
-  }
-
-  .form-row {
-    flex-direction: column;
-    gap: 0;
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }

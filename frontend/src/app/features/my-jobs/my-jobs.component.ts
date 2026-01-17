@@ -44,7 +44,6 @@ export class MyJobsComponent implements OnInit {
     this.api.getJobs().subscribe({
       next: (res) => {
         if (res.success && res.data) {
-          // Filter jobs by current user (employer)
           this.jobs = res.data.filter(job => job.employer_id === user.user_id);
           this.filteredJobs = this.jobs;
           this.calculateStats();

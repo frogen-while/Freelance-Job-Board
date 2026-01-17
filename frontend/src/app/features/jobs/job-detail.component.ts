@@ -23,8 +23,6 @@ export class JobDetailComponent implements OnInit {
   currentUser: PublicUser | null = null;
   skills: Skill[] = [];
   jobSkillNames: string[] = [];
-  
-  // Job applications (for employer view)
   applications: JobApplication[] = [];
   loadingApplications = false;
   
@@ -38,7 +36,6 @@ export class JobDetailComponent implements OnInit {
   isLoggedIn = false;
   isFreelancer = false;
   isOwner = false;
-  showAuthModal = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -70,13 +67,9 @@ export class JobDetailComponent implements OnInit {
 
   mapJobSkills() {
     if (!this.job?.skills || !this.job.skills.length) return;
-    
-    // If skills are already strings (skill names), use them directly
-    // If they are IDs, map them to names
     if (typeof this.job.skills[0] === 'string') {
       this.jobSkillNames = this.job.skills as string[];
     } else {
-      // Skills are IDs - map to names
       this.jobSkillNames = (this.job.skills as unknown as number[])
         .map(skillId => {
           const skill = this.skills.find(s => s.skill_id === skillId);
@@ -96,13 +89,9 @@ export class JobDetailComponent implements OnInit {
           this.loadEmployer(this.job.employer_id);
           this.loadCategory(this.job.category_id);
           this.mapJobSkills();
-          
-          // Load applications if owner
           if (this.isOwner) {
             this.loadApplications(id);
           }
-          
-          // Check if current user already applied
           if (this.currentUser && this.isFreelancer && !this.isOwner) {
             this.checkIfApplied(id);
           }
@@ -165,16 +154,13 @@ export class JobDetailComponent implements OnInit {
     this.api.updateApplicationStatus(applicationId, 'Accepted').subscribe({
       next: (res) => {
         if (res.success) {
-          // Update local state
           const app = this.applications.find(a => a.application_id === applicationId);
           if (app) app.status = 'Accepted';
-          // Reject all other pending applications locally
           this.applications.forEach(a => {
             if (a.application_id !== applicationId && a.status === 'Pending') {
               a.status = 'Rejected';
             }
           });
-          // Update job status to Assigned
           if (this.job) {
             this.job.status = 'Assigned';
           }
@@ -190,7 +176,6 @@ export class JobDetailComponent implements OnInit {
     this.api.updateApplicationStatus(applicationId, 'Rejected').subscribe({
       next: (res) => {
         if (res.success) {
-          // Update local state
           const app = this.applications.find(a => a.application_id === applicationId);
           if (app) app.status = 'Rejected';
         }
@@ -216,7 +201,7 @@ export class JobDetailComponent implements OnInit {
 
   apply() {
     if (!this.isLoggedIn) {
-      this.showAuthModal = true;
+      this.router.navigate(['/login'], { queryParams: { returnUrl: '/jobs/' + this.job?.job_id } });
       return;
     }
     
@@ -252,7 +237,6 @@ export class JobDetailComponent implements OnInit {
     
     this.api.applyToJob(payload).subscribe({
       next: () => {
-        // Send cover letter as initial message to employer
         if (this.job && this.currentUser) {
           const messageBody = `New Proposal for "${this.job.title}"\n\nBid Amount: $${this.bidAmount}\n\n${this.proposalText.trim()}`;
           
@@ -267,7 +251,6 @@ export class JobDetailComponent implements OnInit {
               this.applying = false;
             },
             error: () => {
-              // Application succeeded but message failed - still show success
               this.applied = true;
               this.applying = false;
             }
@@ -283,10 +266,6 @@ export class JobDetailComponent implements OnInit {
         alert(msg);
       }
     });
-  }
-
-  closeAuthModal() {
-    this.showAuthModal = false;
   }
 
   getEmployerName(): string {

@@ -284,23 +284,6 @@
   margin-bottom: $space-xl;
 }
 
-.btn-primary {
-  padding: $space-md $space-xl;
-  background: $gradient-accent;
-  color: white;
-  border: none;
-  border-radius: $radius-lg;
-  font-size: $font-size-md;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: all $transition-fast;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
-  }
-}
-
 // Jobs Grid
 .jobs-grid {
   display: grid;

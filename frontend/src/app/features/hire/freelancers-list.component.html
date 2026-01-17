@@ -59,7 +59,7 @@
 
       <!-- Loading State -->
       <div class="loading-state" *ngIf="loading">
-        <div class="loading-spinner"></div>
+        <div class="spinner"></div>
         <p>Loading freelancers...</p>
       </div>
 
@@ -68,7 +68,7 @@
         <mat-icon class="empty-icon">people</mat-icon>
         <h3>No freelancers found</h3>
         <p>Try adjusting your search or filters</p>
-        <button class="btn-primary" (click)="clearFilters()">Clear Filters</button>
+        <button class="btn-accent" (click)="clearFilters()">Clear Filters</button>
       </div>
 
       <!-- Freelancers Grid -->
@@ -163,12 +163,3 @@
     </aside>
   </div>
 </div>
-
-<!-- Auth Prompt Modal -->
-<app-auth-prompt-modal
-  [show]="showAuthModal"
-  title="Sign in to view profiles"
-  message="Create a free account or log in to view freelancer profiles and contact them about your project."
-  returnUrl="/hire/browse"
-  (closed)="closeAuthModal()">
-</app-auth-prompt-modal>

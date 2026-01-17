@@ -1,6 +1,6 @@
 <div class="job-detail-page">
   <!-- Loading State -->
-  <div class="loading-state" *ngIf="loading">
+  <div class="loading-state-dark" *ngIf="loading">
     <div class="spinner"></div>
     <p>Loading job details...</p>
   </div>
@@ -235,12 +235,3 @@
     </div>
   </div>
 </div>
-
-<!-- Auth Prompt Modal -->
-<app-auth-prompt-modal
-  [show]="showAuthModal"
-  title="Sign in to apply"
-  message="Create a free account or log in to submit proposals and start working on projects."
-  [returnUrl]="'/jobs/' + job?.job_id"
-  (closed)="closeAuthModal()">
-</app-auth-prompt-modal>

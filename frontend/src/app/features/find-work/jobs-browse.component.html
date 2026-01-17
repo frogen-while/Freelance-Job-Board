@@ -109,7 +109,7 @@
             </div>
             <h3>No jobs found</h3>
             <p>Try adjusting your search or filters to find more opportunities</p>
-            <button class="btn-primary" (click)="clearFilters()">Clear Filters</button>
+            <button class="btn-gradient" (click)="clearFilters()">Clear Filters</button>
           </div>
 
           <!-- Jobs Grid -->
@@ -170,12 +170,3 @@
     </div>
   </div>
 </div>
-
-<!-- Auth Prompt Modal -->
-<app-auth-prompt-modal
-  [show]="showAuthModal"
-  title="Sign in to view job details"
-  message="Create a free account or log in to view job details and apply for this opportunity."
-  returnUrl="/find-work/browse"
-  (closed)="closeAuthModal()">
-</app-auth-prompt-modal>

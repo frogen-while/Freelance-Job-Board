@@ -21,7 +21,6 @@ export class FreelancersListComponent implements OnInit {
   pageSize = 12;
   
   isLoggedIn = false;
-  showAuthModal = false;
 
   constructor(
     private api: ApiService,
@@ -141,9 +140,5 @@ export class FreelancersListComponent implements OnInit {
 
   onViewProfile(freelancer: FreelancerProfile): void {
     this.router.navigate(['/profile', freelancer.user_id]);
-  }
-
-  closeAuthModal(): void {
-    this.showAuthModal = false;
   }
 }

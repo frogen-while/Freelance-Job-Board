@@ -191,30 +191,6 @@
   color: $text-secondary;
 }
 
-// Loading State
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: $space-3xl;
-  color: $text-muted;
-}
-
-.loading-spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid rgba($accent, 0.2);
-  border-top-color: $accent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: $space-md;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 // Empty State
 .empty-state {
   display: flex;
@@ -243,24 +219,6 @@
     font-size: $font-size-md;
     color: $text-secondary;
     margin-bottom: $space-xl;
-  }
-}
-
-.btn-primary {
-  padding: $space-md $space-xl;
-  background: $accent;
-  color: white;
-  border: none;
-  border-radius: $radius-lg;
-  font-size: $font-size-md;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: all $transition-fast;
-
-  &:hover {
-    transform: translateY(-2px);
-    background: $accent-hover;
-    box-shadow: 0 6px 20px rgba($accent, 0.4);
   }
 }
 

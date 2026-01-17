@@ -45,6 +45,11 @@ export class LoginComponent implements OnInit {
   }
 
   private redirectAfterAuth() {
+    if (this.auth.isAdminRole()) {
+      this.router.navigate(['/admin']);
+      return;
+    }
+    
     if (this.auth.needsOnboarding()) {
       this.router.navigate(['/onboarding']);
     } else if (this.returnUrl && this.returnUrl !== '/' && !this.returnUrl.includes('/login') && !this.returnUrl.includes('/register')) {
@@ -52,7 +57,7 @@ export class LoginComponent implements OnInit {
     } else if (this.auth.isFreelancer()) {
       this.router.navigate(['/find-work/browse']);
     } else {
-      this.router.navigate(['/hire/browse']);
+      this.router.navigate(['/my-jobs']);
     }
   }
 }
