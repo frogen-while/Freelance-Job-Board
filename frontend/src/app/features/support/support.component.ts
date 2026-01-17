@@ -27,19 +27,14 @@ interface FAQ {
 })
 export class SupportComponent implements OnInit, OnDestroy {
   currentUser: PublicUser | null = null;
-  
-  // FAQ Section
   faqs: FAQ[] = [];
-  
-  // Form Section
   ticketSubject = '';
   ticketMessage = '';
   isSubmitting = false;
   submitSuccess = false;
-  
-  // Tickets History
   userTickets: SupportTicket[] = [];
   loadingTickets = false;
+  isAdminRole = false;
 
   private destroy$ = new Subject<void>();
 
@@ -49,14 +44,13 @@ export class SupportComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.isAdminRole = this.authService.isAdminRole();
     this.initializeFAQ();
-    
-    // Get current user
     this.authService.getUser$()
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {
         this.currentUser = user;
-        if (this.currentUser) {
+        if (this.currentUser && !this.isAdminRole) {
           this.loadUserTickets();
         }
       });
@@ -68,48 +62,28 @@ export class SupportComponent implements OnInit, OnDestroy {
   }
 
   private initializeFAQ(): void {
-    const allFAQs: FAQ[] = [
+    this.faqs = [
       {
         question: 'How do I create an account?',
         answer: 'Click on the Register button in the header and fill out the form with your details. You can choose to be either an Employer or Freelancer.'
       },
       {
-        question: 'What payment methods are accepted?',
-        answer: 'We accept various payment methods including credit cards, debit cards, and bank transfers. Payment processing is handled securely through our payment gateway.'
+        question: 'How do I post a job or find work?',
+        answer: 'Employers can post jobs from My Jobs page. Freelancers can browse available jobs from Find Work and submit proposals.'
       },
       {
         question: 'How long does it take to get paid?',
-        answer: 'Payments are typically processed within 5-7 business days after project completion. The exact timeframe depends on your payment method.'
-      },
-      {
-        question: 'Can I cancel a job posting?',
-        answer: 'Yes, you can cancel a job posting at any time before an agreement is reached with a freelancer. Once you hire someone, the job becomes locked.'
+        answer: 'Payments are typically processed within 5-7 business days after project completion.'
       },
       {
         question: 'How is dispute resolution handled?',
-        answer: 'Our support team mediates disputes between employers and freelancers. We encourage communication first, and if needed, we can arbitrate based on evidence provided by both parties.'
-      },
-      {
-        question: 'What is your refund policy?',
-        answer: 'Refunds are available within 30 days of purchase if you are not satisfied with the service. Please contact support for refund requests.'
+        answer: 'Our support team mediates disputes between employers and freelancers. Contact us through this page for assistance.'
       },
       {
         question: 'How do I update my profile?',
         answer: 'Navigate to your Profile page and click Edit. You can update your information, skills, and portfolio at any time.'
-      },
-      {
-        question: 'How are freelancers rated?',
-        answer: 'Freelancers are rated by employers after project completion. Ratings are based on quality of work, communication, and timeliness.'
       }
     ];
-
-    // Select 5 random FAQs
-    this.faqs = this.getRandomItems(allFAQs, 5);
-  }
-
-  private getRandomItems<T>(array: T[], count: number): T[] {
-    const shuffled = [...array].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, count);
   }
 
   submitTicket(): void {
@@ -126,10 +100,9 @@ export class SupportComponent implements OnInit, OnDestroy {
     this.isSubmitting = true;
     this.submitSuccess = false;
 
-    // Create support ticket
     this.apiService.createSupportTicket({
       user_id: this.currentUser.user_id,
-      support_id: 1, // Default support agent, can be changed later
+      support_id: 1,
       subject: this.ticketSubject,
       message: this.ticketMessage,
       status: 'Open'
@@ -138,13 +111,9 @@ export class SupportComponent implements OnInit, OnDestroy {
         this.isSubmitting = false;
         this.submitSuccess = true;
         this.resetForm();
-        
-        // Reload tickets
         if (this.currentUser) {
           this.loadUserTickets();
         }
-
-        // Clear success message after 3 seconds
         setTimeout(() => {
           this.submitSuccess = false;
         }, 3000);
@@ -166,7 +135,7 @@ export class SupportComponent implements OnInit, OnDestroy {
     if (!this.currentUser) return;
 
     this.loadingTickets = true;
-    this.apiService.getUserSupportTickets(this.currentUser.user_id).subscribe(
+    this.apiService.getMyTickets().subscribe(
       (response: any) => {
         this.loadingTickets = false;
         this.userTickets = response.data || response || [];
