@@ -1,13 +1,11 @@
 <div class="profile-page">
   <div class="container">
-    <!-- Loading -->
     <div class="loading-state-dark" *ngIf="loading">
       <div class="spinner"></div>
       <p>Loading profile...</p>
     </div>
 
     <div class="profile-content" *ngIf="!loading && profileUserId">
-      <!-- Header Section -->
       <div class="profile-header">
         <div class="header-left">
           <div class="avatar">
@@ -18,25 +16,22 @@
             <h1 class="name">{{ getFullName() }}</h1>
             <p class="headline" *ngIf="profileData.headline">{{ profileData.headline }}</p>
             <p class="email" *ngIf="isOwnProfile && user">{{ user.email }}</p>
+            <p class="member-since" *ngIf="getMemberSince()">Member since {{ getMemberSince() }}</p>
           </div>
         </div>
         <div class="header-right">
           <button class="btn-edit" (click)="toggleEdit()" *ngIf="!editMode && isOwnProfile">
-            <mat-icon>edit</mat-icon>
-            Edit Profile
+            <mat-icon>edit</mat-icon> Edit Profile
           </button>
           <button class="btn-contact" (click)="contactUser()" *ngIf="!editMode && !isOwnProfile">
-            <mat-icon>chat</mat-icon>
-            Contact
+            <mat-icon>chat</mat-icon> Contact
           </button>
         </div>
       </div>
 
-      <!-- Success/Error Messages -->
       <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
       <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-      <!-- View Mode -->
       <div class="profile-body" *ngIf="!editMode">
         <div class="info-section">
           <h2>About</h2>
@@ -48,7 +43,6 @@
             <span class="label">Location</span>
             <span class="value">{{ profileData.location }}</span>
           </div>
-          <!-- Freelancer info -->
           <ng-container *ngIf="isFreelancer">
             <div class="info-item" *ngIf="freelancerData.hourly_rate">
               <span class="label">Hourly Rate</span>
@@ -64,10 +58,9 @@
             </div>
             <div class="info-item" *ngIf="freelancerData.rating">
               <span class="label">Rating</span>
-              <span class="value">⭐ {{ formatRating(freelancerData.rating) }} ({{ freelancerData.reviews_count }} reviews)</span>
+              <span class="value">{{ formatRating(freelancerData.rating) }} ({{ freelancerData.reviews_count }} reviews)</span>
             </div>
           </ng-container>
-          <!-- Employer info -->
           <ng-container *ngIf="isEmployer">
             <div class="info-item" *ngIf="employerData.company_name">
               <span class="label">Company</span>
@@ -88,184 +81,139 @@
           </ng-container>
         </div>
 
-        <!-- Freelancer links -->
         <div class="info-section links-section" *ngIf="isFreelancer && (freelancerData.github_url || freelancerData.linkedin_url)">
           <h2>Links</h2>
           <div class="links-list">
             <a *ngIf="freelancerData.github_url" [href]="freelancerData.github_url" target="_blank" rel="noopener" class="profile-link github">
-              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-              </svg>
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
               GitHub
             </a>
             <a *ngIf="freelancerData.linkedin_url" [href]="freelancerData.linkedin_url" target="_blank" rel="noopener" class="profile-link linkedin">
-              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-              </svg>
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
               LinkedIn
             </a>
           </div>
         </div>
 
-        <!-- Employer company description -->
         <div class="info-section" *ngIf="isEmployer && employerData.company_description">
           <h2>About Company</h2>
           <p class="description">{{ employerData.company_description }}</p>
-          <a *ngIf="employerData.company_website" [href]="employerData.company_website" target="_blank" rel="noopener" class="company-website-link">
-            🌐 {{ employerData.company_website }}
-          </a>
+          <a *ngIf="employerData.company_website" [href]="employerData.company_website" target="_blank" rel="noopener" class="company-website-link">{{ employerData.company_website }}</a>
         </div>
 
         <div class="info-section" *ngIf="isFreelancer && selectedSkills.length > 0">
           <h2>Skills</h2>
           <div class="skills-list">
-            <span class="skill-tag-light" *ngFor="let skillId of selectedSkills">
-              {{ getSkillName(skillId) }}
-            </span>
+            <span class="skill-tag-light" *ngFor="let skillId of selectedSkills">{{ getSkillName(skillId) }}</span>
           </div>
         </div>
       </div>
 
-      <!-- Edit Mode -->
       <div class="profile-edit" *ngIf="editMode">
         <div class="form-section">
           <h2>Basic Information</h2>
-
           <div class="form-group">
             <label for="headline">Professional Title</label>
-            <input type="text" id="headline" [(ngModel)]="profileData.headline" 
-                   placeholder="e.g., Full Stack Developer" maxlength="255" />
+            <input type="text" id="headline" [(ngModel)]="profileData.headline" placeholder="e.g., Full Stack Developer" maxlength="255" />
           </div>
-
           <div class="form-group">
             <label for="photo_url">Photo URL</label>
-            <input type="url" id="photo_url" [(ngModel)]="profileData.photo_url" 
-                   placeholder="https://example.com/photo.jpg" />
+            <input type="url" id="photo_url" [(ngModel)]="profileData.photo_url" placeholder="https://example.com/photo.jpg" />
           </div>
-
           <div class="form-group">
             <label for="location">Location</label>
-            <input type="text" id="location" [(ngModel)]="profileData.location" 
-                   placeholder="City, Country" maxlength="255" />
+            <input type="text" id="location" [(ngModel)]="profileData.location" placeholder="City, Country" maxlength="255" />
           </div>
-
           <div class="form-group">
             <label for="description">About</label>
-            <textarea id="description" [(ngModel)]="profileData.description" 
-                      placeholder="Tell us about yourself..." rows="5" maxlength="2000"></textarea>
+            <textarea id="description" [(ngModel)]="profileData.description" placeholder="Tell us about yourself..." rows="5" maxlength="2000"></textarea>
             <span class="char-count">{{ profileData.description.length }} / 2000</span>
           </div>
         </div>
 
-        <!-- Freelancer-only fields -->
         <div class="form-section" *ngIf="isFreelancer">
           <h2>Freelancer Settings</h2>
-
           <div class="form-row">
             <div class="form-group half">
               <label for="hourly_rate">Hourly Rate ($)</label>
-              <input type="number" id="hourly_rate" [(ngModel)]="freelancerData.hourly_rate" 
-                     min="1" max="999" placeholder="25" />
+              <input type="number" id="hourly_rate" [(ngModel)]="freelancerData.hourly_rate" min="1" max="999" placeholder="25" />
             </div>
-
             <div class="form-group half">
               <label for="experience_level">Experience Level</label>
               <select id="experience_level" [(ngModel)]="freelancerData.experience_level">
-                <option [ngValue]="null">Select experience level</option>
+                <option [ngValue]="null">Select level</option>
                 <option value="entry">Entry Level</option>
                 <option value="intermediate">Intermediate</option>
                 <option value="expert">Expert</option>
               </select>
             </div>
           </div>
-
           <div class="form-row">
             <div class="form-group half">
               <label for="github_url">GitHub URL</label>
-              <input type="url" id="github_url" [(ngModel)]="freelancerData.github_url" 
-                     placeholder="https://github.com/username" />
+              <input type="url" id="github_url" [(ngModel)]="freelancerData.github_url" placeholder="https://github.com/username" />
             </div>
             <div class="form-group half">
               <label for="linkedin_url">LinkedIn URL</label>
-              <input type="url" id="linkedin_url" [(ngModel)]="freelancerData.linkedin_url" 
-                     placeholder="https://linkedin.com/in/username" />
+              <input type="url" id="linkedin_url" [(ngModel)]="freelancerData.linkedin_url" placeholder="https://linkedin.com/in/username" />
             </div>
           </div>
-
           <div class="form-group">
             <label>Skills (up to 15)</label>
-            
             <div class="selected-skills" *ngIf="selectedSkills.length > 0">
               <span class="skill-tag-selected" *ngFor="let skillId of selectedSkills">
                 {{ getSkillName(skillId) }}
                 <button type="button" class="remove-skill" (click)="removeSkill(skillId)">×</button>
               </span>
             </div>
-
-            <input type="text" [(ngModel)]="skillSearch" (input)="filterSkills()"
-                   placeholder="Search skills..." class="skill-search" />
-
+            <input type="text" [(ngModel)]="skillSearch" (input)="filterSkills()" placeholder="Search skills..." class="skill-search" />
             <div class="skills-grid">
-              <button type="button" *ngFor="let skill of filteredSkills" 
-                      class="skill-option" 
-                      [class.selected]="isSkillSelected(skill.skill_id)"
-                      (click)="toggleSkill(skill.skill_id)">
-                {{ skill.name }}
-              </button>
+              <button type="button" *ngFor="let skill of filteredSkills" class="skill-option" 
+                [class.selected]="isSkillSelected(skill.skill_id)" (click)="toggleSkill(skill.skill_id)">{{ skill.name }}</button>
             </div>
-            <span class="hint">{{ selectedSkills.length }} / 15 skills selected</span>
+            <span class="hint">{{ selectedSkills.length }} / 15 selected</span>
           </div>
         </div>
 
-        <!-- Employer-only fields -->
         <div class="form-section" *ngIf="isEmployer">
           <h2>Company Information</h2>
-
           <div class="form-group">
             <label for="company_name">Company Name</label>
-            <input type="text" id="company_name" [(ngModel)]="employerData.company_name" 
-                   placeholder="Your company name" maxlength="255" />
+            <input type="text" id="company_name" [(ngModel)]="employerData.company_name" placeholder="Your company" maxlength="255" />
           </div>
-
           <div class="form-row">
             <div class="form-group half">
               <label for="industry">Industry</label>
               <select id="industry" [(ngModel)]="employerData.industry">
-                <option value="">Select industry</option>
+                <option value="">Select</option>
                 <option *ngFor="let ind of industries" [value]="ind">{{ ind }}</option>
               </select>
             </div>
             <div class="form-group half">
               <label for="company_size">Company Size</label>
               <select id="company_size" [(ngModel)]="employerData.company_size">
-                <option [ngValue]="null">Select size</option>
-                <option value="1-10">1-10 employees</option>
-                <option value="11-50">11-50 employees</option>
-                <option value="51-200">51-200 employees</option>
-                <option value="201-500">201-500 employees</option>
-                <option value="501+">501+ employees</option>
+                <option [ngValue]="null">Select</option>
+                <option value="1-10">1-10</option>
+                <option value="11-50">11-50</option>
+                <option value="51-200">51-200</option>
+                <option value="201-500">201-500</option>
+                <option value="501+">501+</option>
               </select>
             </div>
           </div>
-
           <div class="form-group">
             <label for="company_website">Company Website</label>
-            <input type="url" id="company_website" [(ngModel)]="employerData.company_website" 
-                   placeholder="https://yourcompany.com" />
+            <input type="url" id="company_website" [(ngModel)]="employerData.company_website" placeholder="https://..." />
           </div>
-
           <div class="form-group">
             <label for="company_description">Company Description</label>
-            <textarea id="company_description" [(ngModel)]="employerData.company_description" 
-                      placeholder="Tell freelancers about your company..." rows="4" maxlength="2000"></textarea>
+            <textarea id="company_description" [(ngModel)]="employerData.company_description" placeholder="About your company..." rows="4" maxlength="2000"></textarea>
           </div>
         </div>
 
         <div class="form-actions">
           <button class="btn-cancel" (click)="cancelEdit()">Cancel</button>
-          <button class="btn-save" (click)="saveProfile()" [disabled]="saving">
-            {{ saving ? 'Saving...' : 'Save Changes' }}
-          </button>
+          <button class="btn-save" (click)="saveProfile()" [disabled]="saving">{{ saving ? 'Saving...' : 'Save Changes' }}</button>
         </div>
       </div>
     </div>

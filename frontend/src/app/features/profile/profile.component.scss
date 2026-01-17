@@ -74,7 +74,13 @@
   .email {
     font-size: $font-size-sm;
     color: $text-muted;
-    margin: 0 0 $space-sm;
+    margin: 0;
+  }
+
+  .member-since {
+    font-size: $font-size-sm;
+    color: $text-muted;
+    margin: $space-xs 0 0;
   }
 }
 
@@ -327,8 +333,6 @@
   }
 }
 
-// Form styles use global .form-group-bordered, .form-input-bordered, etc.
-// Component-specific overrides
 .form-group {
   margin-bottom: $space-lg;
 

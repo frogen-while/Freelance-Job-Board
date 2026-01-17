@@ -16,6 +16,7 @@ interface ProfileUserInfo {
   last_name: string;
   email: string;
   user_type: string;
+  created_at?: string;
 }
 
 interface FreelancerData {
@@ -59,13 +60,10 @@ export class ProfileComponent implements OnInit {
   editMode = false;
   successMessage = '';
   errorMessage = '';
-  
-  // Public profile viewing
   isOwnProfile = true;
   profileUserId: number | null = null;
   profileUserInfo: ProfileUserInfo | null = null;
 
-  // Base profile data
   profileData: ProfileData = {
     headline: '',
     description: '',
@@ -73,7 +71,6 @@ export class ProfileComponent implements OnInit {
     location: ''
   };
 
-  // Freelancer-specific data
   freelancerData: FreelancerData = {
     hourly_rate: null,
     experience_level: null,
@@ -84,7 +81,6 @@ export class ProfileComponent implements OnInit {
     reviews_count: 0
   };
 
-  // Employer-specific data
   employerData: EmployerData = {
     company_name: '',
     company_description: '',
@@ -102,7 +98,6 @@ export class ProfileComponent implements OnInit {
     'Marketing', 'Media', 'Manufacturing', 'Real Estate', 'Consulting', 'Other'
   ];
 
-  // Skills
   allSkills: Skill[] = [];
   filteredSkills: Skill[] = [];
   selectedSkills: number[] = [];
@@ -117,16 +112,12 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     const currentUser = this.auth.getUser();
-    
-    // Check if viewing specific user profile via route param
     const userIdParam = this.route.snapshot.paramMap.get('userId');
     
     if (userIdParam) {
-      // Viewing a specific user's profile (could be own or someone else's)
       this.profileUserId = Number(userIdParam);
       this.isOwnProfile = currentUser?.user_id === this.profileUserId;
     } else {
-      // Viewing own profile at /profile
       if (!currentUser) {
         this.router.navigateByUrl('/login');
         return;
@@ -153,11 +144,9 @@ export class ProfileComponent implements OnInit {
       next: (res: any) => {
         if (res.success && res.data) {
           this.profileUserInfo = res.data;
-          // Determine user type from profile data for non-own profiles
           if (!this.isOwnProfile) {
             this.isFreelancer = res.data.user_type === 'freelancer';
             this.isEmployer = res.data.user_type === 'employer';
-            // Load type-specific profile after determining user type
             if (this.isFreelancer) {
               this.loadFreelancerProfile();
             } else {
@@ -168,7 +157,6 @@ export class ProfileComponent implements OnInit {
       }
     });
     
-    // For own profile, load type-specific data immediately
     if (this.isOwnProfile) {
       if (this.isFreelancer) {
         this.loadFreelancerProfile();
@@ -191,8 +179,6 @@ export class ProfileComponent implements OnInit {
             photo_url: profile.photo_url || '',
             location: profile.location || ''
           };
-          
-          // Load selected skills
           if (profile.skills) {
             this.loadProfileSkills();
           }
@@ -360,7 +346,6 @@ export class ProfileComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // Step 1: Save base profile
     const basePayload: any = {
       headline: this.profileData.headline,
       description: this.profileData.description,
@@ -375,7 +360,6 @@ export class ProfileComponent implements OnInit {
     this.api.updateProfile(this.user.user_id, basePayload).subscribe({
       next: (res) => {
         if (res.success) {
-          // Step 2: Save type-specific profile
           this.saveTypeSpecificProfile();
         } else {
           this.saving = false;
@@ -444,5 +428,11 @@ export class ProfileComponent implements OnInit {
     } else {
       this.loadEmployerProfile();
     }
+  }
+
+  getMemberSince(): string {
+    if (!this.profileUserInfo?.created_at) return '';
+    const date = new Date(this.profileUserInfo.created_at);
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   }
 }
