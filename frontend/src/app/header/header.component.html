@@ -4,21 +4,23 @@
 
     <nav class="main-nav">
       <ng-container *ngIf="auth.isLoggedIn(); else guestNav">
-        <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-        <a class="nav-link" *ngIf="auth.isFreelancer()" routerLink="/find-work/browse" routerLinkActive="active">Find Work</a>
-        <a class="nav-link" *ngIf="auth.isFreelancer()" routerLink="/my-proposals" routerLinkActive="active">My Proposals</a>
-        <a class="nav-link" *ngIf="auth.isEmployer()" routerLink="/hire/browse" routerLinkActive="active">Find Talent</a>
-        <a class="nav-link" *ngIf="auth.isEmployer()" routerLink="/my-jobs" routerLinkActive="active">My Jobs</a>
+        <a class="nav-link" *ngIf="auth.isFreelancer() || auth.isAdminRole()" routerLink="/find-work/browse" routerLinkActive="active">Find Work</a>
+        <a class="nav-link" *ngIf="auth.isFreelancer() || auth.isAdminRole()" routerLink="/my-proposals" routerLinkActive="active">My Proposals</a>
+        <a class="nav-link" *ngIf="auth.isEmployer() || auth.isAdminRole()" routerLink="/hire/browse" routerLinkActive="active">Find Talent</a>
+        <a class="nav-link" *ngIf="auth.isEmployer() || auth.isAdminRole()" routerLink="/my-jobs" routerLinkActive="active">My Jobs</a>
         <a class="nav-link messages-link" routerLink="/messages" routerLinkActive="active">
           Messages
           <span class="unread-badge" *ngIf="unreadCount > 0">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
         </a>
-        <a class="nav-link" routerLink="/about" routerLinkActive="active">About Us</a>
+        <a class="nav-link admin-link" *ngIf="auth.isAdminRole()" routerLink="/admin" routerLinkActive="active">
+          Admin
+        </a>
+        <a class="nav-link" *ngIf="!auth.isAdminRole()" routerLink="/about" routerLinkActive="active">About Us</a>
       </ng-container>
       
       <ng-template #guestNav>
-        <a class="nav-link" routerLink="/find-work" routerLinkActive="active">Find Work</a>
-        <a class="nav-link" routerLink="/hire" routerLinkActive="active">Hire Freelancers</a>
+        <a class="nav-link" routerLink="/find-work/browse" routerLinkActive="active">Find Work</a>
+        <a class="nav-link" routerLink="/hire/browse" routerLinkActive="active">Hire Freelancers</a>
         <a class="nav-link" routerLink="/about" routerLinkActive="active">About Us</a>
       </ng-template>
     </nav>
