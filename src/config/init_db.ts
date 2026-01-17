@@ -42,6 +42,8 @@ export const usersTableDef = {
     main_role: { type: "TEXT CHECK(main_role IN ('Admin', 'Manager', 'Support', 'Employer', 'Freelancer'))", notNull: true },
     status: { type: "TEXT DEFAULT 'active' CHECK(status IN ('active', 'suspended', 'archived'))" },
     is_blocked: { type: "INTEGER DEFAULT 0" },
+    failed_attempts: { type: 'INTEGER DEFAULT 0' },
+    lock_until: { type: 'DATETIME' },
     created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
     updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   }
@@ -448,6 +450,18 @@ async function runMigrations(): Promise<void> {
   if (!hasIsBlocked) {
     await db.connection!.run('ALTER TABLE users ADD COLUMN is_blocked INTEGER DEFAULT 0');
     console.log('Migration: Added is_blocked column to users table');
+  }
+
+  const hasFailedAttempts = usersInfo.some((col: any) => col.name === 'failed_attempts');
+  if (!hasFailedAttempts) {
+    await db.connection!.run('ALTER TABLE users ADD COLUMN failed_attempts INTEGER DEFAULT 0');
+    console.log('Migration: Added failed_attempts column to users table');
+  }
+
+  const hasLockUntil = usersInfo.some((col: any) => col.name === 'lock_until');
+  if (!hasLockUntil) {
+    await db.connection!.run('ALTER TABLE users ADD COLUMN lock_until DATETIME');
+    console.log('Migration: Added lock_until column to users table');
   }
 }
 

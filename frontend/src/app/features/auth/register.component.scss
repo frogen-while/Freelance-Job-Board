@@ -22,7 +22,7 @@
   padding: $space-3xl;
   box-shadow: $shadow-lg;
   border: 1px solid $border-light;
-
+  margin-top: 70px;
   @include respond-to(sm) {
     padding: $space-2xl;
     border-radius: $radius-xl;

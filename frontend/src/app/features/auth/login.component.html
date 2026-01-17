@@ -37,6 +37,11 @@
 
       <div *ngIf="error" class="form-error">{{ error }}</div>
 
+      <div *ngIf="attemptsLeft !== null || retryInMinutes !== null" class="form-hint">
+        <span *ngIf="attemptsLeft !== null">Attempts left: {{ attemptsLeft }}</span>
+        <span *ngIf="retryInMinutes !== null">Try again in {{ retryInMinutes }} minute{{ retryInMinutes === 1 ? '' : 's' }}.</span>
+      </div>
+
       <button
         type="submit"
         [disabled]="loading || f.invalid"

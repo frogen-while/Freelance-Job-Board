@@ -10,6 +10,8 @@ export interface User {
   main_role: MainRole;
   status?: UserStatus;
   is_blocked?: boolean;
+  failed_attempts?: number;
+  lock_until?: string | null;
   onboarding_completed?: boolean;
   created_at?: string;
   updated_at?: string;

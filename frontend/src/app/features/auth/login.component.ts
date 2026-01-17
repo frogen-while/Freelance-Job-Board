@@ -11,6 +11,8 @@ export class LoginComponent implements OnInit {
   email = '';
   password = '';
   error: string | null = null;
+  attemptsLeft: number | null = null;
+  retryInMinutes: number | null = null;
   loading = false;
   private returnUrl: string = '/';
 
@@ -26,20 +28,31 @@ export class LoginComponent implements OnInit {
 
   submit() {
     this.error = null;
+    this.attemptsLeft = null;
+    this.retryInMinutes = null;
     this.loading = true;
+
+    type AttemptDetails = { attempts_left?: number; retry_in_minutes?: number };
 
     this.auth.login(this.email, this.password).subscribe({
       next: (res) => {
         this.loading = false;
         if (res.success !== true) {
           this.error = ('error' in res && res.error?.message) ? res.error.message : 'Login failed.';
+          const details = ('error' in res && res.error?.details) ? res.error.details as AttemptDetails : undefined;
+          this.attemptsLeft = typeof details?.attempts_left === 'number' ? details.attempts_left : null;
+          this.retryInMinutes = typeof details?.retry_in_minutes === 'number' ? details.retry_in_minutes : null;
           return;
         }
         this.redirectAfterAuth();
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
-        this.error = 'Login failed.';
+        const apiError = err?.error?.error;
+        this.error = apiError?.message || 'Login failed.';
+        const details = apiError?.details as AttemptDetails | undefined;
+        this.attemptsLeft = typeof details?.attempts_left === 'number' ? details.attempts_left : null;
+        this.retryInMinutes = typeof details?.retry_in_minutes === 'number' ? details.retry_in_minutes : null;
       }
     });
   }

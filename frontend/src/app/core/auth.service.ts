@@ -4,7 +4,13 @@ import { tap } from 'rxjs/operators';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-type ApiEnvelope<T> = { success: true; data: T } | { success: false; error: { message: string } };
+type ApiEnvelope<T> = {
+  success: true;
+  data: T;
+} | {
+  success: false;
+  error: { message: string; code?: string; details?: unknown };
+};
 
 export type UserType = 'Employer' | 'Freelancer';
 

@@ -117,6 +117,22 @@ export const userRepo = {
         return (result?.changes ?? 0) > 0;
     },
 
+    async setLoginFailure(userId: number, failedAttempts: number, lockUntil: Date | null): Promise<void> {
+        await db.connection?.run(
+            'UPDATE users SET failed_attempts = ?, lock_until = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?',
+            failedAttempts,
+            lockUntil ? lockUntil.toISOString() : null,
+            userId
+        );
+    },
+
+    async resetLoginFailures(userId: number): Promise<void> {
+        await db.connection?.run(
+            'UPDATE users SET failed_attempts = 0, lock_until = NULL, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?',
+            userId
+        );
+    },
+
     async bulkUpdateBlockStatus(userIds: number[], isBlocked: boolean): Promise<number> {
         if (userIds.length === 0) return 0;
         const placeholders = userIds.map(() => '?').join(',');

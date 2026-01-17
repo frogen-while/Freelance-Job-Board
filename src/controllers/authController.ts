@@ -98,10 +98,50 @@ export const login = async (req: Request, res: Response) => {
       return sendError(res, 403, 'Your account has been blocked. Please contact support.');
     }
 
+    // Temporary lockout check for repeated failed attempts
+    const now = new Date();
+    const lockUntil = user.lock_until ? new Date(user.lock_until) : null;
+    if (lockUntil && lockUntil > now) {
+      const minutesLeft = Math.max(1, Math.ceil((lockUntil.getTime() - now.getTime()) / 60000));
+      return sendError(
+        res,
+        429,
+        `Too many failed attempts. Try again in ${minutesLeft} minute(s).`,
+        'LOCKED',
+        { retry_in_minutes: minutesLeft }
+      );
+    }
+
     const ok = await bcrypt.compare(password, user.password_hash);
     if (!ok) {
-      return sendError(res, 401, 'Invalid email or password.');
+      const currentFailed = user.failed_attempts ?? 0;
+      const nextFailed = currentFailed + 1;
+
+      if (nextFailed >= 3) {
+        const lock = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+        await userRepo.setLoginFailure(user.user_id, 0, lock);
+        return sendError(
+          res,
+          429,
+          'Too many failed attempts. Try again in 5 minutes.',
+          'LOCKED',
+          { retry_in_minutes: 5, attempts_left: 0 }
+        );
+      }
+
+      await userRepo.setLoginFailure(user.user_id, nextFailed, null);
+      const attemptsLeft = Math.max(0, 3 - nextFailed);
+      return sendError(
+        res,
+        401,
+        'Invalid email or password.',
+        'INVALID_CREDENTIALS',
+        { attempts_left: attemptsLeft }
+      );
     }
+
+    // Successful login: reset counters/lock
+    await userRepo.resetLoginFailures(user.user_id);
 
     const publicUser = await userRepo.findById(user.user_id);
     if (!publicUser) {

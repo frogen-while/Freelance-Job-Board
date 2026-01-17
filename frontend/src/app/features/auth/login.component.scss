@@ -92,6 +92,15 @@
   border-radius: $radius-md;
 }
 
+.form-hint {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  text-align: center;
+  padding: $space-sm;
+  display: flex;
+  flex-direction: column;
+}
+
 .auth-btn {
   @include button-primary;
   width: 100%;
