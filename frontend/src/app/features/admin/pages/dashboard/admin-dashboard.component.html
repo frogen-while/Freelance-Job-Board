@@ -1,0 +1,60 @@
+<div class="page-header">
+  <h1 class="page-title">Dashboard</h1>
+  <p class="page-subtitle">Platform overview</p>
+</div>
+
+<div class="stats-grid" *ngIf="!loading">
+  <div class="stat-card-dark" *ngFor="let s of stats" [attr.data-color]="s.color">
+    <div class="stat-icon"><mat-icon>{{ s.icon }}</mat-icon></div>
+    <div class="stat-value">{{ s.value }}</div>
+    <div class="stat-label">{{ s.label }}</div>
+  </div>
+</div>
+
+<div class="loading-state-dark" *ngIf="loading">
+  <div class="spinner"></div>
+</div>
+
+<div class="grid-2-1" style="margin-top: 1.5rem;">
+  <section class="glass-card" style="padding: 1rem;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+      <h3 style="color: #fff; font-size: 1rem;">Pending Flags</h3>
+      <a routerLink="/admin/moderation" class="see-all-link-dark">See all →</a>
+    </div>
+    <div *ngIf="pendingFlags.length > 0">
+      <div *ngFor="let f of pendingFlags" class="list-item">
+        <mat-icon style="color: #f59e0b;">flag</mat-icon>
+        <div style="flex: 1; min-width: 0;">
+          <div style="color: #fff;">{{ f.job_title || 'Job #' + f.job_id }}</div>
+          <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">{{ f.reason | slice:0:40 }}</div>
+        </div>
+        <span style="color: rgba(255,255,255,0.4); font-size: 0.75rem;">{{ formatDate(f.created_at) }}</span>
+      </div>
+    </div>
+    <div *ngIf="pendingFlags.length === 0" class="empty-state-dark" style="padding: 2rem;">
+      <mat-icon>check_circle</mat-icon>
+      <p>No pending flags</p>
+    </div>
+  </section>
+
+  <section class="glass-card" style="padding: 1rem;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+      <h3 style="color: #fff; font-size: 1rem;">Open Tickets</h3>
+      <a routerLink="/admin/tickets" class="see-all-link-dark">See all →</a>
+    </div>
+    <div *ngIf="openTickets.length > 0">
+      <div *ngFor="let t of openTickets" class="list-item">
+        <mat-icon style="color: #6366f1;">confirmation_number</mat-icon>
+        <div style="flex: 1; min-width: 0;">
+          <div style="color: #fff;">{{ t.subject }}</div>
+          <div style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">{{ t.user_name || 'User' }}</div>
+        </div>
+        <span style="color: rgba(255,255,255,0.4); font-size: 0.75rem;">{{ formatDate(t.created_at) }}</span>
+      </div>
+    </div>
+    <div *ngIf="openTickets.length === 0" class="empty-state-dark" style="padding: 2rem;">
+      <mat-icon>check_circle</mat-icon>
+      <p>No open tickets</p>
+    </div>
+  </section>
+</div>

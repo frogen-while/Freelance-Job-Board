@@ -1,0 +1,11 @@
+.page-header { margin-bottom: 1.5rem; }
+.page-title { font-size: 1.5rem; font-weight: 700; color: #fff; margin: 0; }
+.page-subtitle { color: rgba(255,255,255,0.6); margin: 0.25rem 0 0; }
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  &:last-child { border-bottom: none; }
+}

@@ -1,0 +1,150 @@
+<div class="admin-statistics">
+  <header class="page-header">
+    <h1 class="page-title">Statistics</h1>
+    <p class="page-subtitle">Platform analytics and insights</p>
+  </header>
+
+  <div class="stats-content" *ngIf="!loading">
+    <!-- Overview Cards -->
+    <section class="overview-section">
+      <div class="stats-grid">
+        <div class="stat-card" data-color="blue">
+          <div class="stat-icon">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ overviewStats?.total_users || 0 }}</span>
+            <span class="stat-label">Total Users</span>
+            <span class="stat-change" *ngIf="overviewStats?.new_users_this_month">
+              +{{ overviewStats?.new_users_this_month }} this month
+            </span>
+          </div>
+        </div>
+
+        <div class="stat-card" data-color="green">
+          <div class="stat-icon">
+            <mat-icon>work</mat-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ overviewStats?.total_jobs || 0 }}</span>
+            <span class="stat-label">Total Jobs</span>
+            <span class="stat-change">{{ overviewStats?.active_jobs || 0 }} active</span>
+          </div>
+        </div>
+
+        <div class="stat-card" data-color="purple">
+          <div class="stat-icon">
+            <mat-icon>attach_money</mat-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ formatCurrency(revenueStats?.total_revenue) }}</span>
+            <span class="stat-label">Total Revenue</span>
+            <span class="stat-change">{{ formatCurrency(revenueStats?.revenue_this_month) }} this month</span>
+          </div>
+        </div>
+
+        <div class="stat-card" data-color="orange">
+          <div class="stat-icon">
+            <mat-icon>description</mat-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ overviewStats?.total_applications || 0 }}</span>
+            <span class="stat-label">Applications</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Row -->
+    <section class="charts-section">
+      <div class="charts-grid">
+        <!-- User Distribution -->
+        <div class="chart-card">
+          <h3 class="chart-title">User Distribution</h3>
+          <div class="chart-container">
+            <canvas #userChart></canvas>
+          </div>
+          <div class="chart-stats" *ngIf="userStats">
+            <div class="chart-stat">
+              <span class="stat-num">{{ userStats.active_employers }}</span>
+              <span class="stat-text">Active Employers</span>
+            </div>
+            <div class="chart-stat">
+              <span class="stat-num">{{ userStats.active_freelancers }}</span>
+              <span class="stat-text">Active Freelancers</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Job Status -->
+        <div class="chart-card">
+          <h3 class="chart-title">Jobs by Status</h3>
+          <div class="chart-container">
+            <canvas #jobChart></canvas>
+          </div>
+          <div class="chart-stats" *ngIf="jobStats">
+            <div class="chart-stat">
+              <span class="stat-num">{{ formatCurrency(jobStats.average_budget) }}</span>
+              <span class="stat-text">Avg Budget</span>
+            </div>
+            <div class="chart-stat">
+              <span class="stat-num">{{ jobStats.jobs_this_month }}</span>
+              <span class="stat-text">This Month</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Revenue Chart -->
+    <section class="revenue-section" *ngIf="revenueStats?.top_categories?.length">
+      <div class="chart-card wide">
+        <h3 class="chart-title">Revenue by Category</h3>
+        <div class="chart-container wide">
+          <canvas #revenueChart></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Stats -->
+    <section class="quick-stats-section">
+      <h2 class="section-title">Quick Stats</h2>
+      <div class="quick-stats-grid">
+        <div class="quick-stat">
+          <mat-icon>trending_up</mat-icon>
+          <div class="quick-stat-content">
+            <span class="quick-stat-value">{{ overviewStats?.new_users_this_week || 0 }}</span>
+            <span class="quick-stat-label">New Users This Week</span>
+          </div>
+        </div>
+        <div class="quick-stat">
+          <mat-icon>check_circle</mat-icon>
+          <div class="quick-stat-content">
+            <span class="quick-stat-value">{{ overviewStats?.completed_jobs || 0 }}</span>
+            <span class="quick-stat-label">Completed Jobs</span>
+          </div>
+        </div>
+        <div class="quick-stat">
+          <mat-icon>support_agent</mat-icon>
+          <div class="quick-stat-content">
+            <span class="quick-stat-value">{{ overviewStats?.open_tickets || 0 }}</span>
+            <span class="quick-stat-label">Open Tickets</span>
+          </div>
+        </div>
+        <div class="quick-stat">
+          <mat-icon>flag</mat-icon>
+          <div class="quick-stat-content">
+            <span class="quick-stat-value">{{ jobStats?.flagged_jobs || 0 }}</span>
+            <span class="quick-stat-label">Flagged Jobs</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <span>Loading statistics...</span>
+  </div>
+</div>

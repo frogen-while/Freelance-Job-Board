@@ -1,0 +1,132 @@
+<div class="admin-users">
+  <header class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">User Management</h1>
+      <p class="page-subtitle">Manage users, roles, and access</p>
+    </div>
+  </header>
+
+  <!-- Messages -->
+  <div class="success-message" *ngIf="successMessage">
+    <mat-icon>check_circle</mat-icon>
+    <span>{{ successMessage }}</span>
+  </div>
+  
+  <div class="error-message" *ngIf="errorMessage">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input type="text" 
+             placeholder="Search by name or email..." 
+             [(ngModel)]="searchQuery"
+             (input)="onSearchChange()">
+    </div>
+    
+    <div class="filter-group">
+      <select [(ngModel)]="roleFilter" (change)="onFilterChange()">
+        <option value="">All Roles</option>
+        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+      </select>
+      
+      <select [(ngModel)]="blockedFilter" (change)="onFilterChange()">
+        <option value="">All Status</option>
+        <option value="false">Active</option>
+        <option value="true">Blocked</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Bulk Actions -->
+  <div class="bulk-actions" *ngIf="selectedUsers.size > 0">
+    <span class="selected-count">{{ selectedUsers.size }} selected</span>
+    <div class="bulk-buttons">
+      <button class="btn-danger" (click)="bulkBlock()" *ngIf="auth.isAdmin()">
+        <mat-icon>block</mat-icon> Block Selected
+      </button>
+      <button class="btn-success" (click)="bulkUnblock()" *ngIf="auth.isAdmin()">
+        <mat-icon>check_circle</mat-icon> Unblock Selected
+      </button>
+    </div>
+  </div>
+
+  <!-- Users Table -->
+  <div class="table-container" *ngIf="!loading">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th class="checkbox-col">
+            <input type="checkbox" 
+                   [checked]="selectedUsers.size === filteredUsers.length && filteredUsers.length > 0"
+                   (change)="selectAll()">
+          </th>
+          <th>User</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Joined</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers" [class.blocked]="user.is_blocked">
+          <td class="checkbox-col">
+            <input type="checkbox" 
+                   [checked]="isSelected(user.user_id)"
+                   (change)="toggleUserSelection(user.user_id)">
+          </td>
+          <td>
+            <div class="user-cell">
+              <div class="user-avatar">{{ user.first_name[0] }}{{ user.last_name[0] }}</div>
+              <span class="user-name">{{ user.first_name }} {{ user.last_name }}</span>
+            </div>
+          </td>
+          <td class="email-cell">{{ user.email }}</td>
+          <td>
+            <select class="role-select" 
+                    [value]="user.main_role"
+                    (change)="assignRole(user, $any($event.target).value)"
+                    [disabled]="!auth.isAdmin()">
+              <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+            </select>
+          </td>
+          <td>
+            <span class="status-badge" [class.blocked]="user.is_blocked">
+              {{ user.is_blocked ? 'Blocked' : 'Active' }}
+            </span>
+          </td>
+          <td class="date-cell">{{ formatDate(user.created_at) }}</td>
+          <td class="actions-cell">
+            <button class="action-btn" 
+                    *ngIf="!user.is_blocked && auth.isAdmin()"
+                    (click)="blockUser(user)"
+                    title="Block user">
+              <mat-icon>block</mat-icon>
+            </button>
+            <button class="action-btn success" 
+                    *ngIf="user.is_blocked && auth.isAdmin()"
+                    (click)="unblockUser(user)"
+                    title="Unblock user">
+              <mat-icon>check_circle</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="empty-state" *ngIf="filteredUsers.length === 0">
+      <mat-icon>people_outline</mat-icon>
+      <p>No users found</p>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <span>Loading users...</span>
+  </div>
+</div>

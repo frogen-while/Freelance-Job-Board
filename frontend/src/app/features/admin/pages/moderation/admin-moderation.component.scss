@@ -1,0 +1,18 @@
+﻿.page-header { margin-bottom: 1.5rem; }
+.page-title { font-size: 1.5rem; font-weight: 700; color: #fff; margin: 0; }
+.page-subtitle { color: rgba(255,255,255,0.6); margin: 0.25rem 0 0; }
+.tabs { display: flex; gap: 1rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.tab { padding: 0.75rem 1rem; color: rgba(255,255,255,0.6); cursor: pointer; border-bottom: 2px solid transparent; &.active { color: #fff; border-color: #6366f1; } &:hover { color: #fff; } }
+.filters-bar { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+select { padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; option { background: #1e293b; } }
+.flags-list, .hidden-list { display: flex; flex-direction: column; gap: 1rem; }
+.flag-item, .hidden-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.75rem; padding: 1rem; }
+.flag-header, .hidden-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+.job-title { font-weight: 600; color: #fff; font-size: 1rem; }
+.flag-reason { color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 0.75rem; }
+.flag-meta, .hidden-meta { display: flex; gap: 1rem; font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+.flag-actions, .hidden-actions { display: flex; gap: 0.5rem; }
+.btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8rem; border-radius: 0.375rem; cursor: pointer; }
+.btn-success { background: rgba(34,197,94,0.2); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); &:hover { background: rgba(34,197,94,0.3); } }
+.btn-danger { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); &:hover { background: rgba(239,68,68,0.3); } }
+.btn-outline { background: transparent; color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.2); &:hover { background: rgba(255,255,255,0.05); color: #fff; } }
