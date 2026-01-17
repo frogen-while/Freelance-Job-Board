@@ -102,6 +102,42 @@
   border-radius: $radius-md;
 }
 
+.password-requirements {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  padding: $space-md;
+  background: rgba($text-secondary, 0.05);
+  border-radius: $radius-md;
+  font-size: $font-size-xs;
+}
+
+.requirement {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  color: $text-secondary;
+  transition: color $transition-fast;
+
+  &.met {
+    color: #10b981;
+
+    .requirement-icon {
+      font-weight: bold;
+    }
+  }
+
+  &:not(.met) {
+    color: $text-secondary;
+  }
+}
+
+.requirement-icon {
+  min-width: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
 .type-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

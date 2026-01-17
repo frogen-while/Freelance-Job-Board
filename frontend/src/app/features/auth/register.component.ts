@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
+import { validatePassword, type PasswordValidation } from '../../core/password-validator';
 
 type UserType = 'Employer' | 'Freelancer';
 
@@ -17,6 +18,7 @@ export class RegisterComponent {
   type_name: UserType | null = null;
 
   error: string | null = null;
+  passwordValidation: PasswordValidation | null = null;
   loading = false;
 
   constructor(private auth: AuthService, private router: Router) {}
@@ -49,10 +51,15 @@ export class RegisterComponent {
           // After registration, always go to onboarding
           this.router.navigate(['/onboarding']);
         },
-        error: () => {
+        error: (err) => {
           this.loading = false;
-          this.error = 'Registration failed.';
+          const apiError = err?.error?.error;
+          this.error = apiError?.message || 'Registration failed.';
         }
       });
+  }
+
+  onPasswordChange() {
+    this.passwordValidation = this.password.length > 0 ? validatePassword(this.password) : null;
   }
 }

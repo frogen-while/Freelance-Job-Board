@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { userRepo } from '../repositories/userRepo.js';
 import { sendError, sendSuccess } from '../utils/http.js';
+import { validatePassword } from '../utils/passwordValidator.js';
 import { MainRole } from '../interfaces/User.js';
 
 type JwtUserPayload = {
@@ -43,9 +44,21 @@ export const register = async (req: Request, res: Response) => {
   if (typeof email !== 'string' || !isValidEmail(email)) {
     return sendError(res, 400, 'Valid email is required.');
   }
-  if (typeof password !== 'string' || password.length < 8) {
-    return sendError(res, 400, 'Password is required and must be at least 8 characters.');
+  if (typeof password !== 'string' || password.length === 0) {
+    return sendError(res, 400, 'Password is required.');
   }
+
+  const passwordValidation = validatePassword(password);
+  if (!passwordValidation.isValid) {
+    return sendError(
+      res,
+      400,
+      'Password does not meet security requirements.',
+      'WEAK_PASSWORD',
+      { requirements: passwordValidation.errors }
+    );
+  }
+
   if (typeof type_name !== 'string' || !['Employer', 'Freelancer'].includes(type_name)) {
     return sendError(res, 400, 'type_name must be one of: Employer, Freelancer.');
   }

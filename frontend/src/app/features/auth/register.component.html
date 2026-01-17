@@ -56,11 +56,34 @@
           type="password"
           name="password"
           [(ngModel)]="password"
+          (input)="onPasswordChange()"
           required
           minlength="8"
           class="form-input"
           placeholder="Min 8 characters"
         />
+        <div *ngIf="passwordValidation" class="password-requirements">
+          <div [class.met]="passwordValidation.isLongEnough" class="requirement">
+            <span class="requirement-icon">{{ passwordValidation.isLongEnough ? '✓' : '✗' }}</span>
+            <span>At least 8 characters</span>
+          </div>
+          <div [class.met]="passwordValidation.hasUppercase" class="requirement">
+            <span class="requirement-icon">{{ passwordValidation.hasUppercase ? '✓' : '✗' }}</span>
+            <span>One uppercase letter (A-Z)</span>
+          </div>
+          <div [class.met]="passwordValidation.hasLowercase" class="requirement">
+            <span class="requirement-icon">{{ passwordValidation.hasLowercase ? '✓' : '✗' }}</span>
+            <span>One lowercase letter (a-z)</span>
+          </div>
+          <div [class.met]="passwordValidation.hasNumber" class="requirement">
+            <span class="requirement-icon">{{ passwordValidation.hasNumber ? '✓' : '✗' }}</span>
+            <span>One number (0-9)</span>
+          </div>
+          <div [class.met]="passwordValidation.hasSpecialChar" class="requirement">
+            <span class="requirement-icon">{{ passwordValidation.hasSpecialChar ? '✓' : '✗' }}</span>
+            <span>One special character (! @ # $ % ^ & *)</span>
+          </div>
+        </div>
       </div>
 
       <div class="form-group">
