@@ -20,7 +20,18 @@ import {
   JobApplication,
   Message,
   Conversation,
-  Review
+  Review,
+  AdminUser,
+  OverviewStats,
+  RevenueStats,
+  UserStats,
+  JobStats,
+  AuditLog,
+  JobFlag,
+  SupportTicket,
+  TicketReply,
+  HiddenJob,
+  UserRole
 } from './models';
 
 @Injectable({ providedIn: 'root' })
@@ -271,6 +282,10 @@ export class ApiService {
     return this.http.get<ApiResponse<any[]>>(`${this.base}/supporttickets?user_id=${userId}`);
   }
 
+  getMyTickets(): Observable<ApiResponse<any[]>> {
+    return this.http.get<ApiResponse<any[]>>(`${this.base}/supporttickets/my`);
+  }
+
   updateSupportTicket(ticketId: number, data: {
     subject?: string;
     message?: string;
@@ -281,5 +296,142 @@ export class ApiService {
 
   deleteSupportTicket(ticketId: number): Observable<ApiResponse<any>> {
     return this.http.delete<ApiResponse<any>>(`${this.base}/supporttickets/${ticketId}`);
+  }
+
+  // ============ ADMIN: STATISTICS ============
+
+  getOverviewStats(): Observable<ApiResponse<OverviewStats>> {
+    return this.http.get<ApiResponse<OverviewStats>>(`${this.base}/admin/stats/overview`);
+  }
+
+  getRevenueStats(): Observable<ApiResponse<RevenueStats>> {
+    return this.http.get<ApiResponse<RevenueStats>>(`${this.base}/admin/stats/revenue`);
+  }
+
+  getUserStats(): Observable<ApiResponse<UserStats>> {
+    return this.http.get<ApiResponse<UserStats>>(`${this.base}/admin/stats/users`);
+  }
+
+  getJobStats(): Observable<ApiResponse<JobStats>> {
+    return this.http.get<ApiResponse<JobStats>>(`${this.base}/admin/stats/jobs`);
+  }
+
+  // ============ ADMIN: USER MANAGEMENT ============
+
+  getAdminUsers(filters?: { role?: string; blocked?: boolean; search?: string }): Observable<ApiResponse<AdminUser[]>> {
+    let url = `${this.base}/admin/users`;
+    const params: string[] = [];
+    
+    if (filters?.role) params.push(`role=${filters.role}`);
+    if (filters?.blocked !== undefined) params.push(`blocked=${filters.blocked}`);
+    if (filters?.search) params.push(`search=${encodeURIComponent(filters.search)}`);
+    
+    if (params.length > 0) url += `?${params.join('&')}`;
+    
+    return this.http.get<ApiResponse<AdminUser[]>>(url);
+  }
+
+  assignUserRole(userId: number, role: UserRole): Observable<ApiResponse<{ message: string }>> {
+    return this.http.patch<ApiResponse<{ message: string }>>(`${this.base}/admin/users/${userId}/role`, { role });
+  }
+
+  blockUser(userId: number): Observable<ApiResponse<{ message: string }>> {
+    return this.http.patch<ApiResponse<{ message: string }>>(`${this.base}/admin/users/${userId}/block`, {});
+  }
+
+  unblockUser(userId: number): Observable<ApiResponse<{ message: string }>> {
+    return this.http.patch<ApiResponse<{ message: string }>>(`${this.base}/admin/users/${userId}/unblock`, {});
+  }
+
+  bulkBlockUsers(userIds: number[]): Observable<ApiResponse<{ message: string; affected: number }>> {
+    return this.http.post<ApiResponse<{ message: string; affected: number }>>(`${this.base}/admin/users/bulk/block`, { user_ids: userIds });
+  }
+
+  bulkUnblockUsers(userIds: number[]): Observable<ApiResponse<{ message: string; affected: number }>> {
+    return this.http.post<ApiResponse<{ message: string; affected: number }>>(`${this.base}/admin/users/bulk/unblock`, { user_ids: userIds });
+  }
+
+  // ============ ADMIN: JOB MODERATION ============
+
+  flagJob(jobId: number, reason: string): Observable<ApiResponse<{ id: number }>> {
+    return this.http.post<ApiResponse<{ id: number }>>(`${this.base}/admin/jobs/${jobId}/flag`, { reason });
+  }
+
+  getJobFlags(jobId: number): Observable<ApiResponse<JobFlag[]>> {
+    return this.http.get<ApiResponse<JobFlag[]>>(`${this.base}/admin/jobs/${jobId}/flags`);
+  }
+
+  getPendingFlags(): Observable<ApiResponse<JobFlag[]>> {
+    return this.http.get<ApiResponse<JobFlag[]>>(`${this.base}/admin/jobs/flags/pending`);
+  }
+
+  reviewFlag(flagId: number, status: 'reviewed' | 'dismissed'): Observable<ApiResponse<{ message: string }>> {
+    return this.http.patch<ApiResponse<{ message: string }>>(`${this.base}/admin/jobs/flags/${flagId}/review`, { status });
+  }
+
+  hideJob(jobId: number, reason: string): Observable<ApiResponse<{ message: string }>> {
+    return this.http.post<ApiResponse<{ message: string }>>(`${this.base}/admin/jobs/${jobId}/hide`, { reason });
+  }
+
+  restoreJob(jobId: number): Observable<ApiResponse<{ message: string }>> {
+    return this.http.post<ApiResponse<{ message: string }>>(`${this.base}/admin/jobs/${jobId}/restore`, {});
+  }
+
+  getHiddenJobs(): Observable<ApiResponse<HiddenJob[]>> {
+    return this.http.get<ApiResponse<HiddenJob[]>>(`${this.base}/admin/jobs/hidden`);
+  }
+
+  // ============ ADMIN: TICKET MANAGEMENT ============
+
+  getFilteredTickets(filters?: { status?: string; priority?: string; assigned_to?: number }): Observable<ApiResponse<SupportTicket[]>> {
+    let url = `${this.base}/supporttickets/filtered`;
+    const params: string[] = [];
+    
+    if (filters?.status) params.push(`status=${filters.status}`);
+    if (filters?.priority) params.push(`priority=${filters.priority}`);
+    if (filters?.assigned_to) params.push(`assigned_to=${filters.assigned_to}`);
+    
+    if (params.length > 0) url += `?${params.join('&')}`;
+    
+    return this.http.get<ApiResponse<SupportTicket[]>>(url);
+  }
+
+  assignTicket(ticketId: number, assignedTo: number): Observable<ApiResponse<{ message: string }>> {
+    return this.http.post<ApiResponse<{ message: string }>>(`${this.base}/supporttickets/${ticketId}/assign`, { assigned_to: assignedTo });
+  }
+
+  updateTicketPriority(ticketId: number, priority: string): Observable<ApiResponse<{ message: string }>> {
+    return this.http.patch<ApiResponse<{ message: string }>>(`${this.base}/supporttickets/${ticketId}/priority`, { priority });
+  }
+
+  addTicketNote(ticketId: number, content: string, isInternal: boolean = true): Observable<ApiResponse<{ id: number }>> {
+    return this.http.post<ApiResponse<{ id: number }>>(`${this.base}/supporttickets/${ticketId}/notes`, { content, is_internal: isInternal });
+  }
+
+  getTicketNotes(ticketId: number): Observable<ApiResponse<TicketReply[]>> {
+    return this.http.get<ApiResponse<TicketReply[]>>(`${this.base}/supporttickets/${ticketId}/notes`);
+  }
+
+  bulkUpdateTicketStatus(ticketIds: number[], status: string): Observable<ApiResponse<{ message: string; affected: number }>> {
+    return this.http.post<ApiResponse<{ message: string; affected: number }>>(`${this.base}/admin/tickets/bulk-status`, { ticket_ids: ticketIds, status });
+  }
+
+  // ============ ADMIN: AUDIT LOGS ============
+
+  getAuditLogs(filters?: { user_id?: number; action?: string; entity_type?: string; from?: string; to?: string; limit?: number; offset?: number }): Observable<ApiResponse<AuditLog[]>> {
+    let url = `${this.base}/admin/audit-logs`;
+    const params: string[] = [];
+    
+    if (filters?.user_id) params.push(`user_id=${filters.user_id}`);
+    if (filters?.action) params.push(`action=${encodeURIComponent(filters.action)}`);
+    if (filters?.entity_type) params.push(`entity_type=${encodeURIComponent(filters.entity_type)}`);
+    if (filters?.from) params.push(`from=${filters.from}`);
+    if (filters?.to) params.push(`to=${filters.to}`);
+    if (filters?.limit) params.push(`limit=${filters.limit}`);
+    if (filters?.offset) params.push(`offset=${filters.offset}`);
+    
+    if (params.length > 0) url += `?${params.join('&')}`;
+    
+    return this.http.get<ApiResponse<AuditLog[]>>(url);
   }
 }

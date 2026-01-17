@@ -93,6 +93,43 @@ export class AuthService {
     return user?.onboarding_completed === false;
   }
 
+  // Admin role checks (using standard: Admin, Manager, Support)
+  isAdmin(): boolean {
+    const user = this.getUser();
+    return user?.main_role === 'Admin';
+  }
+
+  isManager(): boolean {
+    const user = this.getUser();
+    return user?.main_role === 'Manager' || user?.main_role === 'Admin';
+  }
+
+  isSupport(): boolean {
+    const user = this.getUser();
+    return ['Support', 'Manager', 'Admin'].includes(user?.main_role || '');
+  }
+
+  isAdminRole(): boolean {
+    const user = this.getUser();
+    return ['Admin', 'Manager', 'Support'].includes(user?.main_role || '');
+  }
+
+  isAdmin$(): Observable<boolean> {
+    return of(this.isAdmin());
+  }
+
+  isManager$(): Observable<boolean> {
+    return of(this.isManager());
+  }
+
+  isSupport$(): Observable<boolean> {
+    return of(this.isSupport());
+  }
+
+  isAdminRole$(): Observable<boolean> {
+    return of(this.isAdminRole());
+  }
+
   updateUser(user: PublicUser): void {
     localStorage.setItem(this.userKey, JSON.stringify(user));
   }

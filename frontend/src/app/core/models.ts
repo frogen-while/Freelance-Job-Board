@@ -259,3 +259,131 @@ export interface Review {
   reviewer_name?: string;
   job_title?: string;
 }
+
+// ============ ADMIN MODELS ============
+
+export type UserRole = 'Admin' | 'Manager' | 'Support' | 'Employer' | 'Freelancer';
+
+export interface AdminUser {
+  user_id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  main_role: UserRole;
+  is_blocked: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface OverviewStats {
+  total_users: number;
+  total_jobs: number;
+  total_applications: number;
+  open_tickets: number;
+  new_users_this_week: number;
+  new_users_this_month: number;
+  active_jobs: number;
+  completed_jobs: number;
+}
+
+export interface RevenueStats {
+  total_revenue: number;
+  revenue_this_month: number;
+  revenue_this_week: number;
+  average_job_value: number;
+  top_categories: { category_id: number; category_name: string; total: number }[];
+}
+
+export interface UserStats {
+  total_employers: number;
+  total_freelancers: number;
+  new_employers_this_month: number;
+  new_freelancers_this_month: number;
+  active_employers: number;
+  active_freelancers: number;
+  blocked_users: number;
+}
+
+export interface JobStats {
+  total_jobs: number;
+  open_jobs: number;
+  assigned_jobs: number;
+  completed_jobs: number;
+  cancelled_jobs: number;
+  jobs_this_month: number;
+  average_budget: number;
+  hidden_jobs: number;
+  flagged_jobs: number;
+}
+
+export interface AuditLog {
+  id: number;
+  user_id: number;
+  action: string;
+  entity_type: string;
+  entity_id: number | null;
+  details: string | null;
+  ip_address: string | null;
+  created_at: string;
+  // Joined
+  user_email?: string;
+  user_name?: string;
+}
+
+export interface JobFlag {
+  id: number;
+  job_id: number;
+  reporter_id: number;
+  reason: string;
+  status: 'pending' | 'reviewed' | 'dismissed';
+  reviewed_by: number | null;
+  reviewed_at: string | null;
+  created_at: string;
+  // Joined
+  job_title?: string;
+  reporter_name?: string;
+  reviewer_name?: string;
+}
+
+export interface SupportTicket {
+  ticket_id: number;
+  user_id: number;
+  subject: string;
+  message: string;
+  status: 'Open' | 'In Progress' | 'Resolved' | 'Closed';
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  assigned_to?: number | null;
+  created_at?: string;
+  updated_at?: string;
+  // Joined
+  user_email?: string;
+  user_name?: string;
+  assigned_name?: string;
+}
+
+export interface TicketReply {
+  id: number;
+  ticket_id: number;
+  user_id: number;
+  content: string;
+  is_internal: boolean;
+  created_at: string;
+  // Joined
+  user_name?: string;
+}
+
+export interface HiddenJob {
+  job_id: number;
+  employer_id: number;
+  title: string;
+  description: string;
+  budget: number;
+  status: string;
+  is_hidden: boolean;
+  hidden_reason?: string;
+  hidden_at?: string;
+  hidden_by?: number;
+  // Joined
+  employer_name?: string;
+  hidden_by_name?: string;
+}
