@@ -19,8 +19,7 @@ Register a new user.
   "last_name": "string",
   "email": "string",
   "password": "string",
-  "main_role": "Administrator | Management | Regular | Unregistered",
-  "user_types": ["Employer", "Freelancer", "Reviewer", "Support"]
+  "type_name": "Employer | Freelancer"
 }
 ```
 
@@ -29,11 +28,23 @@ Register a new user.
 {
   "success": true,
   "data": {
-    "user_id": 1,
-    "token": "jwt_token"
+    "token": "jwt_token",
+    "user": {
+      "user_id": 1,
+      "first_name": "John",
+      "last_name": "Doe",
+      "email": "john@example.com",
+      "main_role": "Regular",
+      "status": "active",
+      "is_blocked": false
+    }
   }
 }
 ```
+
+**Error Responses:**
+- `400 Bad Request` - Invalid input, weak password (must be 8+ chars, uppercase, lowercase, number, special char)
+- `409 Conflict` - Email already exists
 
 ### POST /api/auth/login
 Login with credentials.
@@ -51,18 +62,168 @@ Login with credentials.
 {
   "success": true,
   "data": {
-    "user_id": 1,
-    "token": "jwt_token"
+    "token": "jwt_token",
+    "user": {
+      "user_id": 1,
+      "first_name": "John",
+      "last_name": "Doe",
+      "email": "john@example.com",
+      "main_role": "Regular"
+    }
   }
 }
 ```
+
+**Error Responses:**
+- `400 Bad Request` - Invalid email format
+- `401 Unauthorized` - Invalid credentials
+- `403 Forbidden` - Account blocked
+- `429 Too Many Requests` - Account locked after 3 failed attempts (5 minute cooldown)
+
+---
+
+## Admin
+
+### GET /api/admin/stats/overview
+Get overview statistics.
+
+**Required Role:** Manager or Admin
+
+**Response:** `200 OK`
+```json
+{
+  "success": true,
+  "data": {
+    "total_users": 150,
+    "active_users": 120,
+    "new_users_this_month": 25,
+    "total_jobs": 450,
+    "completed_jobs": 380,
+    "pending_jobs": 70,
+    "revenue": 50000.00,
+    "blocked": 5
+  }
+}
+```
+
+### GET /api/admin/stats/revenue
+Get revenue statistics.
+
+**Required Role:** Manager or Admin
+
+### GET /api/admin/stats/users
+Get user statistics.
+
+**Required Role:** Manager or Admin
+
+### GET /api/admin/stats/jobs
+Get job statistics.
+
+**Required Role:** Manager or Admin
+
+### GET /api/admin/users
+Get all users with filters.
+
+**Required Role:** Manager or Admin
+
+**Query Parameters:**
+- `search` - Search by name or email
+- `role` - Filter by role
+- `status` - Filter by status
+
+### PATCH /api/admin/users/:id/role
+Assign role to user.
+
+**Required Role:** Manager
+
+**Request Body:**
+```json
+{
+  "main_role": "Admin | Manager | Support | Regular"
+}
+```
+
+### PATCH /api/admin/users/:id/block
+Block a user.
+
+**Required Role:** Admin
+
+### PATCH /api/admin/users/:id/unblock
+Unblock a user.
+
+**Required Role:** Admin
+
+### POST /api/admin/users/bulk/block
+Block multiple users.
+
+**Required Role:** Admin
+
+**Request Body:**
+```json
+{
+  "user_ids": [1, 2, 3]
+}
+```
+
+### POST /api/admin/users/bulk/unblock
+Unblock multiple users.
+
+**Required Role:** Admin
+
+### POST /api/admin/users/bulk/role
+Assign role to multiple users.
+
+**Required Role:** Manager
+
+### GET /api/admin/jobs/flags/pending
+Get pending job flags.
+
+**Required Role:** Support or Admin
+
+### GET /api/admin/jobs/hidden
+Get hidden jobs.
+
+**Required Role:** Manager
+
+### POST /api/admin/jobs/flags
+Flag a job as inappropriate.
+
+**Required Role:** Authenticated user
+
+**Request Body:**
+```json
+{
+  "job_id": 1,
+  "reason": "string"
+}
+```
+
+### POST /api/admin/jobs/:id/hide
+Hide a job from marketplace.
+
+**Required Role:** Manager
+
+### POST /api/admin/jobs/:id/restore
+Restore a hidden job.
+
+**Required Role:** Manager
+
+### GET /api/admin/audit-logs
+Get audit logs.
+
+**Required Role:** Admin
+
+**Query Parameters:**
+- `user_id` - Filter by user
+- `action` - Filter by action
+- `entity_type` - Filter by entity type
 
 ---
 
 ## Users
 
 ### GET /api/users
-Get all users.
+Get all users (Admin only).
 
 **Response:** `200 OK`
 ```json
@@ -76,6 +237,7 @@ Get all users.
       "email": "john@example.com",
       "main_role": "Regular",
       "status": "active",
+      "is_blocked": false,
       "created_at": "2024-01-01T00:00:00.000Z"
     }
   ]
@@ -85,14 +247,19 @@ Get all users.
 ### GET /api/users/:id
 Get user by ID.
 
-### POST /api/users
-Create a new user.
-
 ### PUT /api/users/:id
-Update user.
+Update user profile.
+
+**Request Body:**
+```json
+{
+  "first_name": "string",
+  "last_name": "string"
+}
+```
 
 ### DELETE /api/users/:id
-Delete user.
+Delete user (Admin only).
 
 ---
 
@@ -170,11 +337,10 @@ Get all skills.
 }
 ```
 
-### GET /api/skills/:id
-Get skill by ID.
-
 ### POST /api/skills
-Create a new skill.
+Create a new skill (Manager or Admin only).
+
+**Required Role:** Manager or Admin
 
 **Request Body:**
 ```json
@@ -183,11 +349,10 @@ Create a new skill.
 }
 ```
 
-### PUT /api/skills/:id
-Update skill.
-
 ### DELETE /api/skills/:id
-Delete skill.
+Delete skill (Manager or Admin only).
+
+**Required Role:** Manager or Admin
 
 ---
 
@@ -237,12 +402,13 @@ Delete category.
 ## Jobs
 
 ### GET /api/jobs
-Get all jobs.
+Get all jobs with filters.
 
 **Query Parameters:**
-- `status` - Filter by status (Open, Assigned, In Progress, Completed, Cancelled)
-- `category_id` - Filter by category
-- `employer_id` - Filter by employer
+- `q` - Search by title/description
+- `category` - Filter by category_id
+- `limit` - Limit results (default: 10)
+- `offset` - Pagination offset (default: 0)
 
 **Response:** `200 OK`
 ```json
@@ -265,20 +431,25 @@ Get all jobs.
 ```
 
 ### GET /api/jobs/:id
-Get job by ID.
+Get job by ID with full details.
+
+### GET /api/jobs/employer/:employerId
+Get all jobs by a specific employer.
 
 ### POST /api/jobs
 Create a new job.
 
+**Required Role:** Employer or Admin
+
 **Request Body:**
 ```json
 {
-  "employer_id": 1,
   "category_id": 1,
   "title": "string",
   "description": "string",
   "budget": 1000.00,
-  "deadline": "2024-12-31"
+  "deadline": "2024-12-31",
+  "required_skills": [1, 2, 3]
 }
 ```
 
@@ -297,7 +468,9 @@ Update job.
 ```
 
 ### DELETE /api/jobs/:id
-Delete job.
+Delete job (Employer or Admin only).
+
+---
 
 ---
 
@@ -644,6 +817,38 @@ Delete support ticket.
 
 ---
 
+---
+
+## Authentication & Authorization
+
+### JWT Token Format
+All authenticated requests require an `Authorization` header with a Bearer token:
+
+```
+Authorization: Bearer <jwt_token>
+```
+
+### Token Details
+- **Expiry:** 7 days
+- **Issued at:** User registration or login
+- **Payload:** Contains user_id, email, and main_role
+
+### User Roles & Permissions
+| Role | Can Access |
+|------|-----------|
+| Admin | All endpoints + audit logs |
+| Manager | User management, stats, job moderation |
+| Support | Support tickets, flag management |
+| Employer | Create/manage jobs, hire freelancers, messages |
+| Freelancer | Browse jobs, apply, messages, reviews |
+| Regular | Limited to own profile, messages, support tickets |
+
+### Brute-force Protection
+- After 3 failed login attempts, account is locked for 5 minutes
+- Tracked via `failed_attempts` and `lock_until` fields
+
+---
+
 ## Error Responses
 
 All endpoints return errors in this format:
@@ -651,7 +856,9 @@ All endpoints return errors in this format:
 ```json
 {
   "success": false,
-  "error": "Error message here"
+  "error": "Error message here",
+  "code": "ERROR_CODE",
+  "details": {}
 }
 ```
 
@@ -659,10 +866,18 @@ All endpoints return errors in this format:
 - `200 OK` - Successful request
 - `201 Created` - Resource created successfully
 - `400 Bad Request` - Invalid input
-- `401 Unauthorized` - Authentication required
-- `403 Forbidden` - Access denied
+- `401 Unauthorized` - Authentication required / Invalid token
+- `403 Forbidden` - Access denied / Account blocked
 - `404 Not Found` - Resource not found
+- `409 Conflict` - Resource already exists
+- `429 Too Many Requests` - Rate limited / Account locked
 - `500 Internal Server Error` - Server error
+
+### Common Error Codes:
+- `WEAK_PASSWORD` - Password doesn't meet security requirements
+- `LOCKED` - Account locked due to failed attempts
+- `INVALID_TOKEN` - JWT token invalid or expired
+- `INSUFFICIENT_PERMISSIONS` - User lacks required role
 
 ---
 
