@@ -45,12 +45,23 @@ export class SupportComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.isAdminRole = this.authService.isAdminRole();
+    this.currentUser = this.authService.getUser();
+    console.log('Support ngOnInit: currentUser', this.currentUser);
+    console.log('Support ngOnInit: isAdminRole', this.isAdminRole);
     this.initializeFAQ();
+    
+    // Load tickets immediately if user is logged in and not admin
+    if (this.currentUser && !this.isAdminRole) {
+      console.log('Support ngOnInit: Loading tickets immediately');
+      this.loadUserTickets();
+    }
+    
+    // Also subscribe to user changes
     this.authService.getUser$()
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {
         this.currentUser = user;
-        if (this.currentUser && !this.isAdminRole) {
+        if (this.currentUser && !this.isAdminRole && this.userTickets.length === 0) {
           this.loadUserTickets();
         }
       });
@@ -132,13 +143,19 @@ export class SupportComponent implements OnInit, OnDestroy {
   }
 
   private loadUserTickets(): void {
-    if (!this.currentUser) return;
+    if (!this.currentUser) {
+      console.log('loadUserTickets: No current user');
+      return;
+    }
 
+    console.log('loadUserTickets: Loading for user', this.currentUser.user_id);
     this.loadingTickets = true;
     this.apiService.getMyTickets().subscribe(
       (response: any) => {
+        console.log('loadUserTickets: Response', response);
         this.loadingTickets = false;
         this.userTickets = response.data || response || [];
+        console.log('loadUserTickets: userTickets', this.userTickets);
       },
       (error) => {
         this.loadingTickets = false;

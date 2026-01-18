@@ -215,10 +215,18 @@ export const escalateSupportTicket = async (req: Request, res: Response) => {
 };
 
 export const getMySupportTickets = async (req: Request, res: Response) => {
-    const currentUser = (req as any).currentUser as User;
+    // Get user_id from JWT token (req.user.sub) or from currentUser if loaded by role middleware
+    const currentUser = (req as any).currentUser as User | undefined;
+    const tokenUser = (req as any).user as { sub: number } | undefined;
+    
+    const userId = currentUser?.user_id ?? tokenUser?.sub;
+    
+    if (!userId) {
+        return sendError(res, 401, 'User not authenticated.');
+    }
 
     try {
-        const tickets = await supportTicketsRepo.getByUserId(currentUser.user_id);
+        const tickets = await supportTicketsRepo.getByUserId(userId);
         return sendSuccess(res, tickets);
     } catch (error) {
         console.error('Error fetching user tickets:', error);
