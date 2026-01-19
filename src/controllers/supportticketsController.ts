@@ -422,3 +422,44 @@ export const getTicketsFiltered = async (req: Request, res: Response) => {
         return sendError(res, 500, 'An internal server error occurred while fetching tickets.');
     }
 };
+
+export const bulkUpdateTicketStatus = async (req: Request, res: Response) => {
+    const { ticket_ids, status } = req.body;
+    const currentUser = (req as any).currentUser as User;
+
+    if (!Array.isArray(ticket_ids) || ticket_ids.length === 0) {
+        return sendError(res, 400, 'ticket_ids must be a non-empty array.');
+    }
+
+    if (!status || !VALID_STATUSES.includes(status as TicketStatus)) {
+        return sendError(res, 400, `status must be one of: ${VALID_STATUSES.join(', ')}`);
+    }
+
+    try {
+        let affected = 0;
+        for (const ticketId of ticket_ids) {
+            const ticket = await supportTicketsRepo.findById(ticketId);
+            if (ticket && ticket.status !== status) {
+                const oldStatus = ticket.status;
+                const success = await supportTicketsRepo.update(ticketId, { status: status as TicketStatus });
+                if (success) {
+                    affected++;
+                    await auditLogRepo.logAction({
+                        user_id: currentUser.user_id,
+                        action: AuditActions.TICKET_STATUS_CHANGED,
+                        entity_type: EntityTypes.TICKET,
+                        entity_id: ticketId,
+                        old_value: { status: oldStatus },
+                        new_value: { status },
+                        ip_address: req.ip || req.socket.remoteAddress
+                    });
+                }
+            }
+        }
+
+        return sendSuccess(res, { message: `Updated ${affected} ticket(s).`, affected });
+    } catch (error) {
+        console.error('Error bulk updating ticket status:', error);
+        return sendError(res, 500, 'An internal server error occurred while updating tickets.');
+    }
+};

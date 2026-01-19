@@ -28,6 +28,11 @@ app.get('/api/health', (req: Request, res: Response) => {
   return sendSuccess(res, { status: 'ok' }, 200);
 });
 
+// Favicon - return empty response to prevent 404 spam
+app.get('/favicon.ico', (req: Request, res: Response) => {
+  res.status(204).end();
+});
+
 
 app.use('/api/auth', authRoutes)
 app.use('/api/skills', skillsRoutes)

@@ -11,7 +11,8 @@ import {
     updateTicketPriority,
     addTicketNote,
     getTicketNotes,
-    getTicketsFiltered
+    getTicketsFiltered,
+    bulkUpdateTicketStatus
 } from '../controllers/supportticketsController.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
 import { requireSupport, requireManager } from '../middleware/roleMiddleware.js';
@@ -23,6 +24,8 @@ router.post('/', requireAuth, createSupportTicket);
 router.get('/my', requireAuth, getMySupportTickets);
 
 router.get('/filtered', requireAuth, requireSupport, getTicketsFiltered);
+
+router.post('/bulk-status', requireAuth, requireSupport, bulkUpdateTicketStatus);
 
 router.get('/', requireAuth, requireSupport, getAllSupportTickets);
 

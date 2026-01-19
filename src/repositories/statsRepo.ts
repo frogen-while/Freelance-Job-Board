@@ -216,7 +216,7 @@ export const statsRepo = {
         break;
     }
 
-    const [total, growth, roles, topEmployers, topFreelancers] = await Promise.all([
+    const [total, growth, roles] = await Promise.all([
       db.connection?.get<{ count: number }>('SELECT COUNT(*) as count FROM users'),
       db.connection?.all<{ period: string; count: number }[]>(`
         SELECT ${groupBy} as period, COUNT(*) as count
@@ -224,26 +224,7 @@ export const statsRepo = {
         GROUP BY ${groupBy}
         ORDER BY period ASC
       `),
-      db.connection?.all<{ main_role: string; count: number }[]>('SELECT main_role, COUNT(*) as count FROM users GROUP BY main_role'),
-      db.connection?.all<{ user_id: number; name: string; jobsPosted: number }[]>(`
-        SELECT u.user_id, (u.first_name || ' ' || u.last_name) as name, COUNT(j.job_id) as jobsPosted
-        FROM users u
-        LEFT JOIN jobs j ON u.user_id = j.employer_id
-        WHERE u.main_role = 'Employer'
-        GROUP BY u.user_id
-        ORDER BY jobsPosted DESC
-        LIMIT 10
-      `),
-      db.connection?.all<{ user_id: number; name: string; jobsCompleted: number; rating: number }[]>(`
-        SELECT u.user_id, (u.first_name || ' ' || u.last_name) as name, 
-               COALESCE(fp.jobs_completed, 0) as jobsCompleted,
-               COALESCE(fp.rating, 0) as rating
-        FROM users u
-        LEFT JOIN freelancer_profiles fp ON u.user_id = fp.user_id
-        WHERE u.main_role = 'Freelancer'
-        ORDER BY jobsCompleted DESC, rating DESC
-        LIMIT 10
-      `)
+      db.connection?.all<{ main_role: string; count: number }[]>('SELECT main_role, COUNT(*) as count FROM users GROUP BY main_role')
     ]);
 
     const roleDistribution: Record<string, number> = {};
@@ -253,8 +234,8 @@ export const statsRepo = {
       totalUsers: total?.count || 0,
       growthByPeriod: growth || [],
       roleDistribution,
-      topEmployers: topEmployers || [],
-      topFreelancers: topFreelancers || []
+      topEmployers: [],
+      topFreelancers: []
     };
   },
 
