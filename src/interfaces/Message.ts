@@ -6,4 +6,7 @@ export interface Message {
   body: string;
   is_read?: number;
   sent_at?: string;
+  sender_name?: string;
+  receiver_name?: string;
+  job_title?: string;
 }

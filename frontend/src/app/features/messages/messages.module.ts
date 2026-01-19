@@ -3,16 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { MessagesComponent } from './messages.component';
-import { ConversationComponent } from './conversation.component';
 import { SharedModule } from '../../shared/shared.module';
 
 const routes: Routes = [
-  { path: '', component: MessagesComponent },
-  { path: ':userId', component: ConversationComponent }
+  { path: '', component: MessagesComponent }
 ];
 
 @NgModule({
-  declarations: [MessagesComponent, ConversationComponent],
+  declarations: [MessagesComponent],
   imports: [
     CommonModule,
     FormsModule,

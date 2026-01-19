@@ -1,51 +1,152 @@
-<div class="messages-page">
-  <div class="messages-header">
-    <h1>Messages</h1>
-  </div>
-
-  <!-- Loading State -->
-  <div class="loading-state" *ngIf="loading">
-    <div class="spinner"></div>
-    <p>Loading conversations...</p>
-  </div>
-
-  <!-- Empty State -->
-  <div class="empty-state" *ngIf="!loading && conversations.length === 0">
-    <div class="empty-icon">
-      <mat-icon>chat_bubble_outline</mat-icon>
+<div class="messages-layout">
+  <!-- Sidebar with conversations list -->
+  <aside class="conversations-sidebar">
+    <div class="sidebar-header">
+      <h1>Messages</h1>
     </div>
-    <h2>No Messages Yet</h2>
-    <p>When you apply to jobs or receive proposals, your conversations will appear here.</p>
-  </div>
 
-  <!-- Conversations List -->
-  <div class="conversations-list" *ngIf="!loading && conversations.length > 0">
-    <div 
-      class="conversation-item" 
-      *ngFor="let conv of conversations"
-      [class.unread]="conv.unread_count > 0"
-      (click)="openConversation(conv.other_user_id)">
-      
-      <div class="avatar">
-        <img *ngIf="conv.other_user_photo" [src]="conv.other_user_photo" [alt]="conv.other_user_name" />
-        <span *ngIf="!conv.other_user_photo" class="avatar-initials">{{ getInitials(conv.other_user_name) }}</span>
-      </div>
-      
-      <div class="conversation-content">
-        <div class="conversation-header">
-          <span class="user-name">{{ conv.other_user_name }}</span>
-          <span class="time">{{ formatTime(conv.last_message_time) }}</span>
+    <!-- Tabs -->
+    <div class="tabs">
+      <button 
+        class="tab" 
+        [class.active]="activeTab === 'personal'"
+        (click)="setActiveTab('personal')">
+        <mat-icon>chat</mat-icon>
+        <span>Personal</span>
+      </button>
+      <button 
+        class="tab" 
+        [class.active]="activeTab === 'help'"
+        (click)="setActiveTab('help')">
+        <mat-icon>help_outline</mat-icon>
+        <span>Help</span>
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="sidebar-loading" *ngIf="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Conversations List -->
+    <div class="conversations-list" *ngIf="!loading">
+      <div 
+        class="conversation-item" 
+        *ngFor="let conv of filteredConversations"
+        [class.unread]="conv.unread_count > 0"
+        [class.active]="isConversationSelected(conv.other_user_id)"
+        (click)="selectConversation(conv.other_user_id)">
+        
+        <div class="avatar">
+          <img *ngIf="conv.other_user_photo" [src]="conv.other_user_photo" [alt]="conv.other_user_name" />
+          <span *ngIf="!conv.other_user_photo" class="avatar-initials">{{ getInitials(conv.other_user_name) }}</span>
         </div>
         
-        <div class="conversation-preview">
-          <span class="job-tag" *ngIf="conv.job_title">{{ conv.job_title }}</span>
-          <p class="last-message">{{ truncateMessage(conv.last_message) }}</p>
+        <div class="conversation-content">
+          <span class="user-name">{{ conv.other_user_name }}</span>
+        </div>
+        
+        <div class="unread-badge" *ngIf="conv.unread_count > 0">
+          {{ conv.unread_count }}
         </div>
       </div>
-      
-      <div class="unread-badge" *ngIf="conv.unread_count > 0">
-        {{ conv.unread_count }}
+
+      <!-- Empty State for tab -->
+      <div class="empty-sidebar" *ngIf="filteredConversations.length === 0">
+        <mat-icon>{{ activeTab === 'personal' ? 'chat_bubble_outline' : 'support_agent' }}</mat-icon>
+        <p *ngIf="activeTab === 'personal'">No conversations yet</p>
+        <p *ngIf="activeTab === 'help'">No help conversations</p>
       </div>
     </div>
-  </div>
+  </aside>
+
+  <!-- Main chat area -->
+  <main class="chat-area">
+    <!-- No conversation selected -->
+    <div class="no-conversation" *ngIf="!selectedUserId">
+      <div class="no-conversation-content">
+        <mat-icon>forum</mat-icon>
+        <h2>Select a conversation</h2>
+        <p>Choose a conversation from the list to start messaging</p>
+      </div>
+    </div>
+
+    <!-- Conversation selected -->
+    <ng-container *ngIf="selectedUserId">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <button class="back-btn mobile-only" (click)="closeConversation()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        
+        <div class="chat-user-info">
+          <div class="avatar">
+            <span class="avatar-initials">{{ getSelectedUserInitials() }}</span>
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ getSelectedUserName() }}</span>
+          </div>
+        </div>
+
+        <div class="chat-actions">
+          <button class="action-btn" title="View profile" [routerLink]="['/profile', selectedUserId]">
+            <mat-icon>person</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages Loading -->
+      <div class="messages-loading" *ngIf="loadingMessages">
+        <div class="spinner"></div>
+        <p>Loading messages...</p>
+      </div>
+
+      <!-- Messages Container -->
+      <div class="messages-container" #messagesContainer *ngIf="!loadingMessages">
+        <!-- Empty State -->
+        <div class="empty-messages" *ngIf="messages.length === 0">
+          <mat-icon>chat</mat-icon>
+          <p>No messages yet. Start the conversation!</p>
+        </div>
+
+        <!-- Messages List -->
+        <div class="messages-list" *ngIf="messages.length > 0">
+          <ng-container *ngFor="let msg of messages; let i = index">
+            <!-- Date Separator -->
+            <div class="date-separator" *ngIf="shouldShowDateSeparator(i)">
+              <span>{{ formatMessageDate(msg.sent_at) }}</span>
+            </div>
+            
+            <!-- Message Bubble -->
+            <div class="message" [class.own]="isOwnMessage(msg)" [class.other]="!isOwnMessage(msg)">
+              <div class="message-bubble">
+                <p class="message-text">{{ msg.body }}</p>
+                <span class="message-time">{{ formatMessageTime(msg.sent_at) }}</span>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="input-area" *ngIf="!loadingMessages">
+        <div class="input-wrapper">
+          <textarea 
+            [(ngModel)]="newMessage"
+            placeholder="Type a message..."
+            rows="1"
+            (keypress)="onKeyPress($event)"
+            [disabled]="sending">
+          </textarea>
+          <button 
+            class="send-btn" 
+            (click)="sendMessage()" 
+            [disabled]="sending || !newMessage.trim()">
+            <mat-icon *ngIf="!sending">send</mat-icon>
+            <span class="sending-spinner" *ngIf="sending"></span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </main>
 </div>

@@ -27,7 +27,16 @@ export const messageRepo = {
 
     async findByUser(user_id: number): Promise<Message[]> {
         const result = await db.connection?.all<Message[]>(
-            `SELECT * FROM messages WHERE sender_id = ? OR receiver_id = ? ORDER BY sent_at DESC`,
+            `SELECT m.*, 
+                    s.first_name || ' ' || s.last_name as sender_name,
+                    r.first_name || ' ' || r.last_name as receiver_name,
+                    j.title as job_title
+             FROM messages m
+             LEFT JOIN users s ON m.sender_id = s.user_id
+             LEFT JOIN users r ON m.receiver_id = r.user_id
+             LEFT JOIN jobs j ON m.job_id = j.job_id
+             WHERE m.sender_id = ? OR m.receiver_id = ? 
+             ORDER BY m.sent_at DESC`,
             user_id, user_id
         );
         return result || [];
@@ -35,7 +44,13 @@ export const messageRepo = {
 
     async findByJob(job_id: number): Promise<Message[]> {
         const result = await db.connection?.all<Message[]>(
-            `SELECT * FROM messages WHERE job_id = ? ORDER BY sent_at ASC`,
+            `SELECT m.*,
+                    s.first_name || ' ' || s.last_name as sender_name,
+                    r.first_name || ' ' || r.last_name as receiver_name
+             FROM messages m
+             LEFT JOIN users s ON m.sender_id = s.user_id
+             LEFT JOIN users r ON m.receiver_id = r.user_id
+             WHERE m.job_id = ? ORDER BY m.sent_at ASC`,
             job_id
         );
         return result || [];
@@ -43,9 +58,14 @@ export const messageRepo = {
 
     async findConversation(user_id_1: number, user_id_2: number): Promise<Message[]> {
         const result = await db.connection?.all<Message[]>(
-            `SELECT * FROM messages 
-             WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
-             ORDER BY sent_at ASC`,
+            `SELECT m.*,
+                    s.first_name || ' ' || s.last_name as sender_name,
+                    r.first_name || ' ' || r.last_name as receiver_name
+             FROM messages m
+             LEFT JOIN users s ON m.sender_id = s.user_id
+             LEFT JOIN users r ON m.receiver_id = r.user_id
+             WHERE (m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?)
+             ORDER BY m.sent_at ASC`,
             user_id_1, user_id_2, user_id_2, user_id_1
         );
         return result || [];

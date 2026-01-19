@@ -10,6 +10,10 @@ import { Router } from '@angular/router';
 export class AppComponent {
   constructor(private router: Router) {}
 
+  get isMessagesPage(): boolean {
+    return this.router.url.startsWith('/messages');
+  }
+
   openSupport() {
     this.router.navigate(['/support']);
   }
