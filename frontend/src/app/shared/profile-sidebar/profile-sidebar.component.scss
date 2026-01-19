@@ -192,9 +192,6 @@
   gap: $space-xs;
 }
 
-// skill-tag uses global .skill-tag-dark
-// skill-more uses global .skill-more
-
 .sidebar-footer {
   padding: $space-md $space-lg;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -300,7 +297,4 @@
   width: 100%;
   gap: $space-sm;
   margin-top: $space-sm;
-  
-  // Button styles use global classes from styles.scss
-  // .btn-gradient, .btn-dark-secondary
 }

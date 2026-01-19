@@ -213,8 +213,6 @@
   gap: $space-sm;
 }
 
-// skill-tag uses global .skill-tag-pill
-
 .job-title {
   font-size: $font-size-3xl;
   font-weight: $font-weight-bold;
@@ -426,10 +424,6 @@
   }
 }
 
-// Form styles use global .form-group-dark, .form-input-dark, .form-textarea-dark
-
-// btn-apply uses global .btn-gradient .btn-block styles
-
 // Closed State
 .closed-state, .employer-view, .guest-view {
   text-align: center;
@@ -449,9 +443,6 @@
     margin-bottom: $space-lg;
   }
 }
-
-// btn-secondary uses global .btn-dark-secondary
-// btn-primary uses global .btn-gradient
 
 // Guest View
 .guest-view {
@@ -656,5 +647,3 @@
   display: flex;
   gap: $space-sm;
 }
-
-// btn-accept and btn-reject use global classes from styles.scss

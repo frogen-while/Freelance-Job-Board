@@ -15,8 +15,6 @@
   margin: 0 auto;
 }
 
-// Loading state uses global .loading-state-dark class
-
 // Profile Header
 .profile-header {
   display: flex;
@@ -306,8 +304,6 @@
   gap: $space-xs;
 }
 
-// skill-tag uses global .skill-tag-light
-
 // Profile Edit Mode
 .profile-edit {
   background: white;
@@ -421,8 +417,6 @@
   gap: $space-xs;
   margin-bottom: $space-md;
 }
-
-// skill-tag.selected uses global .skill-tag-selected (with gradient override if needed)
 
 .skill-search {
   margin-bottom: $space-md;

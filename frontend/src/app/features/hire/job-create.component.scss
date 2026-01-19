@@ -284,8 +284,6 @@
   text-align: center;
 }
 
-// skill-tag uses global .skill-tag-selected
-
 .skill-search {
   margin-bottom: $space-md;
 }
@@ -381,7 +379,4 @@
   padding-top: $space-xl;
   border-top: 1px solid $border-light;
 }
-
-// Button styles are defined globally in styles.scss
-// Use: .btn-dark-ghost, .btn-gradient, .btn-gradient-success
 
