@@ -8,10 +8,7 @@
         <a class="nav-link" *ngIf="auth.isFreelancer() || auth.isAdminRole()" routerLink="/my-proposals" routerLinkActive="active">My Proposals</a>
         <a class="nav-link" *ngIf="auth.isEmployer() || auth.isAdminRole()" routerLink="/hire/browse" routerLinkActive="active">Find Talent</a>
         <a class="nav-link" *ngIf="auth.isEmployer() || auth.isAdminRole()" routerLink="/my-jobs" routerLinkActive="active">My Jobs</a>
-        <a class="nav-link messages-link" routerLink="/messages" routerLinkActive="active">
-          Messages
-          <span class="unread-badge" *ngIf="unreadCount > 0">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
-        </a>
+        <a class="nav-link" routerLink="/messages" routerLinkActive="active">Messages</a>
         <a class="nav-link admin-link" *ngIf="auth.isAdminRole()" routerLink="/admin" routerLinkActive="active">
           Admin
         </a>
