@@ -78,7 +78,7 @@
           <div class="card-header">
             <div class="freelancer-avatar">
               <img *ngIf="freelancer.photo_url" [src]="freelancer.photo_url" [alt]="getDisplayName(freelancer)" />
-              <span *ngIf="!freelancer.photo_url" class="avatar-initials">{{ getInitials(freelancer) }}</span>
+              <span *ngIf="!freelancer.photo_url" class="avatar-initials">{{ fmt.getInitials(freelancer) }}</span>
             </div>
             <div class="freelancer-basic">
               <h3 class="freelancer-name">{{ getDisplayName(freelancer) }}</h3>
@@ -99,7 +99,7 @@
           <div class="freelancer-stats">
             <div class="stat-item" *ngIf="freelancer.experience_level">
               <span class="stat-label">Experience</span>
-              <span class="stat-value">{{ getExperienceLabel(freelancer.experience_level) }}</span>
+              <span class="stat-value">{{ fmt.getExperienceLabel(freelancer.experience_level) }}</span>
             </div>
             <div class="stat-item" *ngIf="freelancer.jobs_completed && freelancer.jobs_completed > 0">
               <span class="stat-label">Jobs Done</span>

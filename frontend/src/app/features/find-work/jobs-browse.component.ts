@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { AuthService } from '../../core/auth.service';
+import { FormatService } from '../../core/format.service';
+import { DateService } from '../../core/date.service';
 import { Job, Category, Skill, JobFilters, ExperienceLevel, JobType } from '../../core/models';
 
 @Component({
@@ -33,7 +35,9 @@ export class JobsBrowseComponent implements OnInit {
     private api: ApiService,
     private auth: AuthService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public fmt: FormatService,
+    public date: DateService
   ) {}
 
   ngOnInit() {
@@ -197,15 +201,6 @@ export class JobsBrowseComponent implements OnInit {
     return count;
   }
 
-  getExperienceLabel(exp: string): string {
-    const labels: Record<string, string> = {
-      'entry': 'Entry Level',
-      'intermediate': 'Intermediate',
-      'expert': 'Expert'
-    };
-    return labels[exp] || '';
-  }
-
   getJobTypeLabel(type: string): string {
     const labels: Record<string, string> = {
       'fixed': 'Fixed Price',
@@ -225,31 +220,6 @@ export class JobsBrowseComponent implements OnInit {
   getCategoryName(categoryId: number): string {
     const cat = this.categories.find(c => c.category_id === categoryId);
     return cat?.name || '';
-  }
-
-  formatBudget(budget: number): string {
-    if (budget >= 1000) {
-      return `$${(budget / 1000).toFixed(budget % 1000 === 0 ? 0 : 1)}k`;
-    }
-    return `$${budget}`;
-  }
-
-  getTimeAgo(dateStr: string): string {
-    if (!dateStr) return 'Recently posted';
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-    
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins} min ago`;
-    if (diffHours < 24) return `${diffHours} hours ago`;
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    return date.toLocaleDateString();
   }
 
   onViewJob(job: Job): void {

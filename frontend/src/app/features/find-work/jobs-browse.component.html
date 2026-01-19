@@ -133,7 +133,7 @@
 
               <!-- Job Tags -->
               <div class="job-tags" *ngIf="job.experience_level || job.job_type || (job.skills && job.skills.length)">
-                <span class="tag experience" *ngIf="job.experience_level">{{ getExperienceLabel(job.experience_level) }}</span>
+                <span class="tag experience" *ngIf="job.experience_level">{{ fmt.getExperienceLabel(job.experience_level) }}</span>
                 <span class="tag job-type" *ngIf="job.job_type">{{ getJobTypeLabel(job.job_type) }}</span>
                 <span class="tag skill" *ngFor="let skillId of (job.skills || []).slice(0, 3)">
                   {{ getSkillName(skillId) }}
@@ -146,7 +146,7 @@
               <div class="card-bottom">
                 <div class="job-info">
                   <span class="info-item budget" *ngIf="job.budget">
-                    {{ formatBudget(job.budget) }}
+                    {{ fmt.formatBudget(job.budget) }}
                   </span>
                   <span class="info-item location" *ngIf="job.location && !job.is_remote">
                     📍 {{ job.location }}

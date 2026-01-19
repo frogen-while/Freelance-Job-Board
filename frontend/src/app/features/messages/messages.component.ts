@@ -2,12 +2,14 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { AuthService, PublicUser } from '../../core/auth.service';
+import { FormatService } from '../../core/format.service';
 import { Message } from '../../core/models';
 
 interface ConversationPreview {
   other_user_id: number;
   other_user_name: string;
   unread_count: number;
+  is_support?: boolean;
 }
 
 @Component({
@@ -34,7 +36,8 @@ export class MessagesComponent implements OnInit {
   constructor(
     private api: ApiService,
     private auth: AuthService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public fmt: FormatService
   ) {}
 
   ngOnInit() {
@@ -95,22 +98,26 @@ export class MessagesComponent implements OnInit {
 
   loadUserNames() {
     for (const conv of this.conversations) {
-      if (conv.other_user_name.startsWith('User #')) {
-        this.api.getUserById(conv.other_user_id).subscribe({
-          next: (res) => {
-            if (res.success && res.data) {
-              conv.other_user_name = `${res.data.first_name} ${res.data.last_name}`.trim() || conv.other_user_name;
-            }
+      this.api.getUserById(conv.other_user_id).subscribe({
+        next: (res) => {
+          if (res.success && res.data) {
+            const user = res.data as any;
+            conv.other_user_name = `${user.first_name} ${user.last_name}`.trim() || conv.other_user_name;
+            // Mark as support if user is Admin, Manager, or Support
+            conv.is_support = ['Admin', 'Manager', 'Support'].includes(user.main_role);
           }
-        });
-      }
+        }
+      });
     }
   }
 
   get filteredConversations(): ConversationPreview[] {
-    return this.activeTab === 'help' 
-      ? [] 
-      : this.conversations;
+    if (this.activeTab === 'help') {
+      // Show conversations with support staff (Admin, Manager, Support roles)
+      return this.conversations.filter(c => c.is_support);
+    }
+    // Personal - show non-support conversations
+    return this.conversations.filter(c => !c.is_support);
   }
 
   setActiveTab(tab: 'personal' | 'help') {
@@ -185,14 +192,6 @@ export class MessagesComponent implements OnInit {
     this.selectedUserId = null;
     this.selectedUser = null;
     this.messages = [];
-  }
-
-  // Helper methods
-  getInitials(name: string): string {
-    const parts = name.split(' ');
-    return parts.length >= 2 
-      ? (parts[0][0] + parts[1][0]).toUpperCase()
-      : name.substring(0, 2).toUpperCase();
   }
 
   getSelectedUserName(): string {

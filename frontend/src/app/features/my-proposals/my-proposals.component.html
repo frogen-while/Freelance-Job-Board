@@ -76,16 +76,16 @@
             <div class="proposal-meta">
               <span class="meta-item">
                 <mat-icon>attach_money</mat-icon>
-                {{ formatBudget(proposal.job_budget) }}
+                {{ fmt.formatBudget(proposal.job_budget) }}
               </span>
               <span class="meta-item">
                 <mat-icon>event</mat-icon>
-                {{ getTimeAgo(proposal.created_at) }}
+                {{ date.relative(proposal.created_at) }}
               </span>
             </div>
           </div>
           <div class="proposal-side">
-            <span class="bid-amount">{{ formatBudget(proposal.bid_amount) }}</span>
+            <span class="bid-amount">{{ fmt.formatBudget(proposal.bid_amount) }}</span>
             <span class="proposal-status" [class]="getStatusClass(proposal.status)">{{ proposal.status }}</span>
           </div>
         </div>

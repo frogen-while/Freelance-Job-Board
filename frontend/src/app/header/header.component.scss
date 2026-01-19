@@ -160,29 +160,15 @@
 }
 
 .profile-pic {
+  @include avatar-sm;
   width: 28px;
   height: 28px;
-  border-radius: 50%;
-  overflow: hidden;
-  flex-shrink: 0;
-  background: rgba(0,0,0,0.06);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: $text-white;
-  font-weight: $font-weight-semibold;
-}
-
-.profile-pic img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+  background: rgba($primary, 0.1);
 }
 
 .initials {
-  font-size: 0.75rem;
-  color: $text-primary;
+  font-size: 0.7rem;
+  color: $text-white;
 }
 
 

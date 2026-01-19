@@ -193,33 +193,7 @@
 
 // Empty State
 .empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: $space-3xl;
-  text-align: center;
-
-  .empty-icon, mat-icon.empty-icon {
-    font-size: 80px;
-    width: 80px;
-    height: 80px;
-    color: $text-muted;
-    margin-bottom: $space-lg;
-  }
-
-  h3 {
-    font-size: $font-size-xl;
-    font-weight: $font-weight-semibold;
-    color: $text-primary;
-    margin-bottom: $space-sm;
-  }
-
-  p {
-    font-size: $font-size-md;
-    color: $text-secondary;
-    margin-bottom: $space-xl;
-  }
+  @include empty-state;
 }
 
 // Freelancers Grid
@@ -251,30 +225,8 @@
 }
 
 .freelancer-avatar {
+  @include avatar-lg;
   position: relative;
-  width: 56px;
-  height: 56px;
-  flex-shrink: 0;
-
-  img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-
-  .avatar-initials {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: linear-gradient(135deg, lighten($accent, 20%), $accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: $font-size-lg;
-    font-weight: $font-weight-bold;
-    color: white;
-  }
 
   .availability-dot {
     position: absolute;
@@ -397,9 +349,6 @@
   gap: $space-xs;
   margin-bottom: $space-md;
 }
-
-// skill-tag uses global .skill-tag-light
-// skill-more uses global .skill-more
 
 .card-footer {
   display: flex;

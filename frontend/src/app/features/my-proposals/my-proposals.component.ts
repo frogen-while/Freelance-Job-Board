@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
+import { FormatService } from '../../core/format.service';
+import { DateService } from '../../core/date.service';
 import { JobApplication } from '../../core/models';
 
 @Component({
@@ -26,7 +28,9 @@ export class MyProposalsComponent implements OnInit {
   constructor(
     private auth: AuthService,
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    public fmt: FormatService,
+    public date: DateService
   ) {}
 
   ngOnInit(): void {
@@ -82,23 +86,4 @@ export class MyProposalsComponent implements OnInit {
     this.router.navigate(['/jobs', jobId]);
   }
 
-  formatBudget(budget: number): string {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(budget);
-  }
-
-  getTimeAgo(dateStr: string): string {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-    
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString();
-  }
 }

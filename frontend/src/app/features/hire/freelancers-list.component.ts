@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { AuthService } from '../../core/auth.service';
+import { FormatService } from '../../core/format.service';
 import { FreelancerProfile, Category } from '../../core/models';
 
 @Component({
@@ -26,7 +27,8 @@ export class FreelancersListComponent implements OnInit {
     private api: ApiService,
     private auth: AuthService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public fmt: FormatService
   ) {}
 
   ngOnInit() {
@@ -114,23 +116,8 @@ export class FreelancersListComponent implements OnInit {
     }
   }
 
-  getInitials(freelancer: FreelancerProfile): string {
-    const fn = freelancer.first_name?.charAt(0).toUpperCase() || '';
-    const ln = freelancer.last_name?.charAt(0).toUpperCase() || '';
-    return fn + ln;
-  }
-
   getDisplayName(freelancer: FreelancerProfile): string {
     return `${freelancer.first_name} ${freelancer.last_name?.charAt(0) || ''}.`;
-  }
-
-  getExperienceLabel(level: string): string {
-    const labels: Record<string, string> = {
-      'entry': 'Entry Level',
-      'intermediate': 'Intermediate',
-      'expert': 'Expert'
-    };
-    return labels[level] || '';
   }
 
   formatRating(rating: number | null): string {

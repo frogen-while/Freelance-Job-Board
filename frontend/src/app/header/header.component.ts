@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { ApiService } from '../core/api.service';
+import { FormatService } from '../core/format.service';
 import { Category } from '../core/models';
 
 @Component({
@@ -20,7 +21,8 @@ export class HeaderComponent implements OnInit {
   constructor(
     public auth: AuthService,
     private router: Router,
-    private api: ApiService
+    private api: ApiService,
+    public fmt: FormatService
   ) {}
 
   ngOnInit() {
@@ -98,12 +100,5 @@ export class HeaderComponent implements OnInit {
   logout() {
     this.auth.logout();
     this.router.navigateByUrl('/');
-  }
-
-  getInitials(user: any): string {
-    if (!user) return '';
-    const fn = user.first_name ? user.first_name.charAt(0).toUpperCase() : '';
-    const ln = user.last_name ? user.last_name.charAt(0).toUpperCase() : '';
-    return (fn + ln).trim();
   }
 }

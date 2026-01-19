@@ -18,8 +18,8 @@
         class="tab" 
         [class.active]="activeTab === 'help'"
         (click)="setActiveTab('help')">
-        <mat-icon>help_outline</mat-icon>
-        <span>Help</span>
+        <mat-icon>support_agent</mat-icon>
+        <span>Support</span>
       </button>
     </div>
 
@@ -39,7 +39,7 @@
         
         <div class="avatar">
           <img *ngIf="conv.other_user_photo" [src]="conv.other_user_photo" [alt]="conv.other_user_name" />
-          <span *ngIf="!conv.other_user_photo" class="avatar-initials">{{ getInitials(conv.other_user_name) }}</span>
+          <span *ngIf="!conv.other_user_photo" class="avatar-initials">{{ fmt.getInitials(conv.other_user_name) }}</span>
         </div>
         
         <div class="conversation-content">
