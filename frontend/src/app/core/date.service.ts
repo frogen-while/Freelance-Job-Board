@@ -4,9 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class DateService {
-  /**
-   * Format date to locale string
-   */
+
   format(date: string | Date | undefined | null, style: 'full' | 'short' | 'date' | 'time' = 'short'): string {
     if (!date) return '';
     

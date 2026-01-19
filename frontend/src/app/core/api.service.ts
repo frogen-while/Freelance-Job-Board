@@ -405,7 +405,7 @@ export class ApiService {
   }
 
   addTicketNote(ticketId: number, content: string, isInternal: boolean = true): Observable<ApiResponse<{ id: number }>> {
-    return this.http.post<ApiResponse<{ id: number }>>(`${this.base}/supporttickets/${ticketId}/notes`, { content, is_internal: isInternal });
+    return this.http.post<ApiResponse<{ id: number }>>(`${this.base}/supporttickets/${ticketId}/notes`, { message: content, is_internal: isInternal });
   }
 
   getTicketNotes(ticketId: number): Observable<ApiResponse<TicketReply[]>> {
@@ -413,7 +413,7 @@ export class ApiService {
   }
 
   bulkUpdateTicketStatus(ticketIds: number[], status: string): Observable<ApiResponse<{ message: string; affected: number }>> {
-    return this.http.post<ApiResponse<{ message: string; affected: number }>>(`${this.base}/admin/tickets/bulk-status`, { ticket_ids: ticketIds, status });
+    return this.http.post<ApiResponse<{ message: string; affected: number }>>(`${this.base}/supporttickets/bulk-status`, { ticket_ids: ticketIds, status });
   }
 
   // ============ ADMIN: AUDIT LOGS ============

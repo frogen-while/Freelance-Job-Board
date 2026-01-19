@@ -120,6 +120,15 @@ export class AuthService {
     return ['Admin', 'Manager', 'Support'].includes(user?.main_role || '');
   }
 
+  // Staff-only: Admin/Manager/Support role WITHOUT Employer/Freelancer user types
+  isStaffOnly(): boolean {
+    const user = this.getUser();
+    if (!user) return false;
+    const isStaff = ['Admin', 'Manager', 'Support'].includes(user.main_role || '');
+    const hasUserType = (user.user_types?.length || 0) > 0;
+    return isStaff && !hasUserType;
+  }
+
   isAdmin$(): Observable<boolean> {
     return of(this.isAdmin());
   }
