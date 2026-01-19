@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "init-db": "tsx src/config/init_db.ts",
+    "seed": "tsx src/config/seed.ts",
     "dev": "tsx src/server.ts",
     "start:frontend": "npm --prefix frontend install --no-audit --no-fund && npm --prefix frontend run start -- --open",
     "build:frontend": "npm --prefix frontend run build"
@@ -22,6 +23,7 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.2.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",

@@ -45,8 +45,7 @@ export class AdminUsersComponent implements OnInit {
     this.api.getAdminUsers(filters).subscribe({
       next: (res: any) => {
         if (res.success) {
-          // Handle both formats: direct array or {data: array, pagination: {...}}
-          this.users = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+          this.users = res.data || [];
           this.applyFilters();
         }
         this.loading = false;

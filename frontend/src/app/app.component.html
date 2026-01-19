@@ -3,7 +3,6 @@
   <router-outlet></router-outlet>
 </div>
 
-<!-- Support Button (hidden on messages page) -->
-<button class="support-button" (click)="openSupport()" title="Support" *ngIf="!isMessagesPage">
+<button class="support-button" (click)="openSupport()" title="Support" *ngIf="showSupportButton">
   <img src="./pictures/support_icon.png" alt="Support Icon" class="support-icon">
 </button>

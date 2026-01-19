@@ -13,7 +13,7 @@ const validTicketStatuses: TicketStatus[] = ['Open', 'In Progress', 'Escalated',
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const { role, is_blocked, search, page = '1', limit = '10' } = req.query;
+    const { role, is_blocked, search } = req.query;
 
     let users = await userRepo.get_all();
 
@@ -35,25 +35,9 @@ export const getAllUsers = async (req: Request, res: Response) => {
       );
     }
 
-    const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
-    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 10));
-    const total = users.length;
-    const totalPages = Math.ceil(total / limitNum);
-    const offset = (pageNum - 1) * limitNum;
+    const safeUsers = users.map(({ password_hash, ...user }) => user);
 
-    const paginated = users.slice(offset, offset + limitNum);
-
-    const safeUsers = paginated.map(({ password_hash, ...user }) => user);
-
-    return sendSuccess(res, {
-      data: safeUsers,
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total,
-        totalPages
-      }
-    });
+    return sendSuccess(res, safeUsers);
   } catch (error) {
     console.error('Error getting all users:', error);
     return sendError(res, 500, 'Failed to get users.');
