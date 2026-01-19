@@ -1,10 +1,9 @@
 <div class="admin-tickets">
   <header class="page-header">
     <h1 class="page-title">Support Tickets</h1>
-    <p class="page-subtitle">Manage and respond to support requests</p>
+    <p class="page-subtitle">Manage support requests</p>
   </header>
 
-  <!-- Messages -->
   <div class="success-message" *ngIf="successMessage">
     <mat-icon>check_circle</mat-icon>
     <span>{{ successMessage }}</span>
@@ -15,17 +14,13 @@
     <span>{{ errorMessage }}</span>
   </div>
 
-  <!-- Filters -->
   <div class="filters-bar">
-    <div class="filter-group">
-      <select [(ngModel)]="statusFilter" (change)="onFilterChange()">
-        <option value="">All Status</option>
-        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
-      </select>
-    </div>
+    <select [(ngModel)]="statusFilter" (change)="onFilterChange()">
+      <option value="">All Status</option>
+      <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+    </select>
   </div>
 
-  <!-- Tickets Table -->
   <div class="table-container" *ngIf="!loading">
     <table class="data-table">
       <thead>
@@ -53,9 +48,6 @@
             <button class="action-btn" (click)="openDetailModal(ticket)" title="View details">
               <mat-icon>visibility</mat-icon>
             </button>
-            <button class="action-btn" (click)="openMessageModal(ticket)" title="Send message">
-              <mat-icon>message</mat-icon>
-            </button>
             <select class="action-select" 
                     [value]="ticket.status"
                     (change)="updateStatus(ticket, $any($event.target).value); $any($event.target).value = ticket.status">
@@ -73,7 +65,6 @@
     </div>
   </div>
 
-  <!-- Loading -->
   <div class="loading-state-dark" *ngIf="loading">
     <div class="spinner"></div>
     <span>Loading tickets...</span>
@@ -81,7 +72,7 @@
 
   <!-- Detail Modal -->
   <div class="modal-overlay" *ngIf="showDetailModal" (click)="closeDetailModal()">
-    <div class="modal modal-large" (click)="$event.stopPropagation()">
+    <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <div class="modal-title-group">
           <h2>{{ selectedTicket?.subject }}</h2>
@@ -116,78 +107,6 @@
           <h4>Message</h4>
           <p>{{ selectedTicket.message }}</p>
         </div>
-        
-        <div class="ticket-notes">
-          <h4>Conversation</h4>
-          
-          <div class="notes-list" *ngIf="!loadingNotes">
-            <div class="note-item" *ngFor="let note of ticketNotes">
-              <div class="note-header">
-                <span class="note-author support-author" *ngIf="note.is_internal">
-                  <mat-icon>support_agent</mat-icon> Support
-                </span>
-                <span class="note-author" *ngIf="!note.is_internal">User #{{ note.user_id }}</span>
-                <span class="note-date">{{ dateService.format(note.created_at, 'short') }}</span>
-              </div>
-              <p class="note-content">{{ note.content }}</p>
-            </div>
-            
-            <div class="empty-notes" *ngIf="ticketNotes.length === 0">
-              No messages yet
-            </div>
-          </div>
-          
-          <div class="loading-notes" *ngIf="loadingNotes">
-            <div class="spinner small"></div>
-          </div>
-          
-          <div class="add-note">
-            <textarea 
-              [(ngModel)]="newNote" 
-              placeholder="Reply to user..."
-              rows="2"></textarea>
-            <button class="btn-primary" (click)="addNote()" [disabled]="!newNote.trim()">
-              <mat-icon>send</mat-icon> Send
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Message Modal -->
-  <div class="modal-overlay" *ngIf="showMessageModal" (click)="closeMessageModal()">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2>Send Message</h2>
-        <button class="close-btn" (click)="closeMessageModal()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-      
-      <div class="modal-body">
-        <div class="info-row">
-          <span class="info-label">To:</span>
-          <span>User #{{ messageTicket?.user_id }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Regarding:</span>
-          <span>{{ messageTicket?.subject }}</span>
-        </div>
-        
-        <div class="message-input">
-          <textarea 
-            [(ngModel)]="messageText" 
-            placeholder="Type your message..."
-            rows="4"></textarea>
-        </div>
-      </div>
-      
-      <div class="modal-footer">
-        <button class="btn-outline" (click)="closeMessageModal()">Cancel</button>
-        <button class="btn-primary" (click)="sendMessage()" [disabled]="!messageText.trim()">
-          <mat-icon>send</mat-icon> Send Message
-        </button>
       </div>
     </div>
   </div>

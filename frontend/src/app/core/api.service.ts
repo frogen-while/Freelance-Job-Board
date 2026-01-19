@@ -29,7 +29,6 @@ import {
   AuditLog,
   JobFlag,
   SupportTicket,
-  TicketReply,
   HiddenJob,
   UserRole
 } from './models';
@@ -402,14 +401,6 @@ export class ApiService {
 
   updateTicketPriority(ticketId: number, priority: string): Observable<ApiResponse<{ message: string }>> {
     return this.http.patch<ApiResponse<{ message: string }>>(`${this.base}/supporttickets/${ticketId}/priority`, { priority });
-  }
-
-  addTicketNote(ticketId: number, content: string, isInternal: boolean = true): Observable<ApiResponse<{ id: number }>> {
-    return this.http.post<ApiResponse<{ id: number }>>(`${this.base}/supporttickets/${ticketId}/notes`, { message: content, is_internal: isInternal });
-  }
-
-  getTicketNotes(ticketId: number): Observable<ApiResponse<TicketReply[]>> {
-    return this.http.get<ApiResponse<TicketReply[]>>(`${this.base}/supporttickets/${ticketId}/notes`);
   }
 
   bulkUpdateTicketStatus(ticketIds: number[], status: string): Observable<ApiResponse<{ message: string; affected: number }>> {

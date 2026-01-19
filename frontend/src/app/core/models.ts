@@ -361,17 +361,6 @@ export interface SupportTicket {
   assigned_name?: string;
 }
 
-export interface TicketReply {
-  id: number;
-  ticket_id: number;
-  user_id: number;
-  content: string;
-  is_internal: boolean;
-  created_at: string;
-  // Joined
-  user_name?: string;
-}
-
 export interface HiddenJob {
   job_id: number;
   employer_id: number;

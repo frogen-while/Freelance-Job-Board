@@ -5,24 +5,6 @@
       <h1>Messages</h1>
     </div>
 
-    <!-- Tabs -->
-    <div class="tabs">
-      <button 
-        class="tab" 
-        [class.active]="activeTab === 'personal'"
-        (click)="setActiveTab('personal')">
-        <mat-icon>chat</mat-icon>
-        <span>Personal</span>
-      </button>
-      <button 
-        class="tab" 
-        [class.active]="activeTab === 'help'"
-        (click)="setActiveTab('help')">
-        <mat-icon>support_agent</mat-icon>
-        <span>Support</span>
-      </button>
-    </div>
-
     <!-- Loading State -->
     <div class="sidebar-loading" *ngIf="loading">
       <div class="spinner"></div>
@@ -32,7 +14,7 @@
     <div class="conversations-list" *ngIf="!loading">
       <div 
         class="conversation-item" 
-        *ngFor="let conv of filteredConversations"
+        *ngFor="let conv of conversations"
         [class.unread]="conv.unread_count > 0"
         [class.active]="isConversationSelected(conv.other_user_id)"
         (click)="selectConversation(conv.other_user_id)">
@@ -47,11 +29,10 @@
         </div>
       </div>
 
-      <!-- Empty State for tab -->
-      <div class="empty-sidebar" *ngIf="filteredConversations.length === 0">
-        <mat-icon>{{ activeTab === 'personal' ? 'chat_bubble_outline' : 'support_agent' }}</mat-icon>
-        <p *ngIf="activeTab === 'personal'">No conversations yet</p>
-        <p *ngIf="activeTab === 'help'">No help conversations</p>
+      <!-- Empty State -->
+      <div class="empty-sidebar" *ngIf="conversations.length === 0">
+        <mat-icon>chat_bubble_outline</mat-icon>
+        <p>No conversations yet</p>
       </div>
     </div>
   </aside>

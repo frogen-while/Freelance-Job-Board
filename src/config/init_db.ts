@@ -320,37 +320,6 @@ export const auditLogsTableDef = {
   ]
 };
 
-export const systemSettingsTableDef = {
-  name: 'system_settings',
-  columns: {
-    setting_key: { type: 'TEXT', primaryKey: true },
-    setting_value: { type: 'TEXT' },
-    setting_type: { type: "TEXT DEFAULT 'string' CHECK(setting_type IN ('string', 'number', 'boolean', 'json'))" },
-    description: { type: 'TEXT' },
-    updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
-    updated_by: { type: 'INTEGER' }
-  },
-  foreignKeys: [
-    { column: 'updated_by', references: 'users(user_id) ON DELETE SET NULL' }
-  ]
-};
-
-export const ticketRepliesTableDef = {
-  name: 'ticket_replies',
-  columns: {
-    reply_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
-    ticket_id: { type: 'INTEGER', notNull: true },
-    user_id: { type: 'INTEGER', notNull: true },
-    message: { type: 'TEXT', notNull: true },
-    is_internal: { type: 'INTEGER DEFAULT 0' },
-    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
-  },
-  foreignKeys: [
-    { column: 'ticket_id', references: 'supporttickets(ticket_id) ON DELETE CASCADE' },
-    { column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' }
-  ]
-};
-
 export const jobFlagsTableDef = {
   name: 'job_flags',
   columns: {
@@ -420,8 +389,6 @@ export async function createSchemaAndData(): Promise<void> {
     messagesTableDef,
     supportTicketsTableDef,
     auditLogsTableDef,
-    systemSettingsTableDef,
-    ticketRepliesTableDef,
     jobFlagsTableDef
   ];
 

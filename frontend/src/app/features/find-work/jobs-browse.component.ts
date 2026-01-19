@@ -79,7 +79,9 @@ export class JobsBrowseComponent implements OnInit {
   loadJobs() {
     this.loading = true;
 
-    const filters: JobFilters = {};
+    const filters: JobFilters = {
+      status: 'Open'  // Only show open jobs in Find Work
+    };
     if (this.selectedCategory) filters.category_id = this.selectedCategory;
     if (this.selectedExperience) filters.experience_level = this.selectedExperience;
     if (this.selectedJobType) filters.job_type = this.selectedJobType;
@@ -91,7 +93,9 @@ export class JobsBrowseComponent implements OnInit {
     this.api.getJobs(filters).subscribe({
       next: (res) => {
         if (res.success && res.data) {
-          this.allJobs = res.data;
+          // Handle both formats: direct array or {jobs: array, total: number}
+          const data = res.data as any;
+          this.allJobs = Array.isArray(data) ? data : (data.jobs || []);
           this.filterJobs();
         }
         this.loading = false;

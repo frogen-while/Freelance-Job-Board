@@ -9,8 +9,6 @@ import {
     getMySupportTickets,
     assignTicket,
     updateTicketPriority,
-    addTicketNote,
-    getTicketNotes,
     getTicketsFiltered,
     bulkUpdateTicketStatus
 } from '../controllers/supportticketsController.js';
@@ -38,10 +36,6 @@ router.post('/:id/escalate', requireAuth, requireSupport, escalateSupportTicket)
 router.post('/:id/assign', requireAuth, requireManager, assignTicket);
 
 router.patch('/:id/priority', requireAuth, requireSupport, updateTicketPriority);
-
-router.post('/:id/notes', requireAuth, requireSupport, addTicketNote);
-
-router.get('/:id/notes', requireAuth, requireSupport, getTicketNotes);
 
 router.delete('/:id', requireAuth, requireManager, deleteSupportTicket);
 

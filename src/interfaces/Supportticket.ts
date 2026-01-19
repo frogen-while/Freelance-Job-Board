@@ -12,12 +12,3 @@ export interface SupportTicket {
   created_at?: string;
   updated_at?: string;
 }
-
-export interface TicketReply {
-  reply_id: number;
-  ticket_id: number;
-  user_id: number;
-  message: string;
-  is_internal?: boolean;
-  created_at?: string;
-}

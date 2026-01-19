@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { supportTicketsRepo } from '../repositories/supportticketsRepo.js';
-import { ticketRepliesRepo } from '../repositories/ticketRepliesRepo.js';
+
 import { userRepo } from '../repositories/userRepo.js';
 import { auditLogRepo, AuditActions, EntityTypes } from '../repositories/auditLogRepo.js';
 import { TicketStatus, TicketPriority } from '../interfaces/Supportticket.js';
@@ -325,71 +325,6 @@ export const updateTicketPriority = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(`Error updating ticket priority ${ticketId}:`, error);
         return sendError(res, 500, 'An internal server error occurred while updating the ticket priority.');
-    }
-};
-
-export const addTicketNote = async (req: Request, res: Response) => {
-    const ticketId = parseInt(req.params.id, 10);
-    const { message, is_internal = false } = req.body;
-    const currentUser = (req as any).currentUser as User;
-
-    if (isNaN(ticketId)) {
-        return sendError(res, 400, 'Invalid ticket ID format.');
-    }
-
-    if (!message || typeof message !== 'string' || message.trim().length === 0) {
-        return sendError(res, 400, 'Message is required.');
-    }
-
-    try {
-        const ticket = await supportTicketsRepo.findById(ticketId);
-        if (!ticket) {
-            return sendError(res, 404, 'Support ticket not found.');
-        }
-
-        const replyId = await ticketRepliesRepo.create(ticketId, currentUser.user_id, message.trim(), is_internal);
-
-        if (replyId) {
-            await auditLogRepo.logAction({
-                user_id: currentUser.user_id,
-                action: AuditActions.TICKET_NOTE_ADDED,
-                entity_type: EntityTypes.TICKET,
-                entity_id: ticketId,
-                new_value: { reply_id: replyId, is_internal },
-                ip_address: req.ip || req.socket.remoteAddress
-            });
-
-            return sendSuccess(res, { message: 'Note added successfully.', reply_id: replyId }, 201);
-        } else {
-            return sendError(res, 500, 'Failed to add note.');
-        }
-    } catch (error) {
-        console.error(`Error adding note to ticket ${ticketId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while adding the note.');
-    }
-};
-
-export const getTicketNotes = async (req: Request, res: Response) => {
-    const ticketId = parseInt(req.params.id, 10);
-    const currentUser = (req as any).currentUser as User;
-
-    if (isNaN(ticketId)) {
-        return sendError(res, 400, 'Invalid ticket ID format.');
-    }
-
-    try {
-        const ticket = await supportTicketsRepo.findById(ticketId);
-        if (!ticket) {
-            return sendError(res, 404, 'Support ticket not found.');
-        }
-
-        const isStaff = ['Support', 'Manager', 'Admin'].includes(currentUser.main_role);
-        const notes = await ticketRepliesRepo.getByTicketId(ticketId, isStaff);
-
-        return sendSuccess(res, notes);
-    } catch (error) {
-        console.error(`Error fetching notes for ticket ${ticketId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while fetching notes.');
     }
 };
 

@@ -9,7 +9,6 @@ interface ConversationPreview {
   other_user_id: number;
   other_user_name: string;
   unread_count: number;
-  is_support?: boolean;
 }
 
 @Component({
@@ -23,7 +22,6 @@ export class MessagesComponent implements OnInit {
   currentUser: PublicUser | null = null;
   conversations: ConversationPreview[] = [];
   loading = true;
-  activeTab: 'personal' | 'help' = 'personal';
   
   selectedUserId: number | null = null;
   selectedUser: { first_name: string; last_name: string } | null = null;
@@ -103,25 +101,10 @@ export class MessagesComponent implements OnInit {
           if (res.success && res.data) {
             const user = res.data as any;
             conv.other_user_name = `${user.first_name} ${user.last_name}`.trim() || conv.other_user_name;
-            // Mark as support if user is Admin, Manager, or Support
-            conv.is_support = ['Admin', 'Manager', 'Support'].includes(user.main_role);
           }
         }
       });
     }
-  }
-
-  get filteredConversations(): ConversationPreview[] {
-    if (this.activeTab === 'help') {
-      // Show conversations with support staff (Admin, Manager, Support roles)
-      return this.conversations.filter(c => c.is_support);
-    }
-    // Personal - show non-support conversations
-    return this.conversations.filter(c => !c.is_support);
-  }
-
-  setActiveTab(tab: 'personal' | 'help') {
-    this.activeTab = tab;
   }
 
   selectConversation(userId: number) {
