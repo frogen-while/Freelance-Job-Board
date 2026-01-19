@@ -175,3 +175,349 @@
     transform: translateY($distance);
   }
 }
+
+// Avatar with initials fallback
+@mixin avatar($size: 40px) {
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: linear-gradient(135deg, $accent, $accent-light);
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .initials, .avatar-initials {
+    color: $text-white;
+    font-weight: $font-weight-semibold;
+    font-size: calc(#{$size} * 0.4);
+    text-transform: uppercase;
+  }
+}
+
+@mixin avatar-sm { @include avatar(32px); }
+@mixin avatar-md { @include avatar(40px); }
+@mixin avatar-lg { @include avatar(56px); }
+@mixin avatar-xl { @include avatar(80px); }
+
+// Status badge
+@mixin status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: capitalize;
+  
+  &.open {
+    background: rgba($warning, 0.15);
+    color: darken($warning, 10%);
+  }
+  
+  &.in-progress, &.assigned {
+    background: rgba($info, 0.15);
+    color: darken($info, 10%);
+  }
+  
+  &.completed, &.resolved, &.accepted {
+    background: rgba($success, 0.15);
+    color: $success;
+  }
+  
+  &.closed, &.cancelled, &.rejected {
+    background: rgba($text-muted, 0.15);
+    color: $text-secondary;
+  }
+  
+  &.pending {
+    background: rgba($warning, 0.15);
+    color: darken($warning, 10%);
+  }
+}
+
+// Empty state
+@mixin empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $space-12 $space-6;
+  text-align: center;
+  
+  .empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba($accent, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: $space-6;
+    
+    mat-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+      color: $accent;
+    }
+  }
+  
+  h3, .empty-title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin-bottom: $space-2;
+  }
+  
+  p, .empty-desc {
+    color: $text-secondary;
+    margin-bottom: $space-6;
+  }
+}
+
+// Page header (dark theme)
+@mixin page-header-dark {
+  background: $bg-dark;
+  padding: $space-10 0;
+  margin-bottom: $space-8;
+  
+  .page-title {
+    font-size: 2rem;
+    font-weight: $font-weight-bold;
+    color: $text-white;
+    margin-bottom: $space-2;
+  }
+  
+  .page-subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: $font-size-lg;
+  }
+}
+
+// Filter tabs
+@mixin filter-tabs {
+  display: flex;
+  gap: $space-2;
+  padding: $space-1;
+  background: rgba($primary, 0.05);
+  border-radius: $radius-lg;
+  
+  .tab-btn {
+    padding: $space-2 $space-4;
+    border: none;
+    background: transparent;
+    border-radius: $radius-md;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-secondary;
+    cursor: pointer;
+    transition: all $transition-fast;
+    
+    &:hover {
+      color: $text-primary;
+    }
+    
+    &.active {
+      background: $bg-white;
+      color: $text-primary;
+      box-shadow: $shadow-sm;
+    }
+  }
+}
+
+// Stats card
+@mixin stat-card {
+  background: $bg-card;
+  border: 1px solid $border-light;
+  border-radius: $radius-xl;
+  padding: $space-5;
+  
+  .stat-value {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: $text-primary;
+    line-height: 1.2;
+  }
+  
+  .stat-label {
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    margin-top: $space-1;
+  }
+  
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba($accent, 0.1);
+    
+    mat-icon {
+      color: $accent;
+      font-size: 24px;
+    }
+  }
+}
+
+// Dark theme stat card
+@mixin stat-card-dark {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: $radius-lg;
+  padding: $space-5;
+  text-align: center;
+  
+  .stat-value {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: $font-weight-bold;
+    color: #fff;
+  }
+  
+  .stat-label {
+    font-size: $font-size-sm;
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+// Dark theme glass card
+@mixin card-dark-glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: $radius-2xl;
+  padding: $space-6;
+  transition: all 0.25s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+// Dark theme filter tabs
+@mixin filter-tabs-dark {
+  display: flex;
+  gap: $space-2;
+  flex-wrap: wrap;
+  
+  .filter-tab {
+    padding: $space-2 $space-4;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: $radius-md;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: $font-size-sm;
+    cursor: pointer;
+    transition: all $transition-fast;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    &.active {
+      background: rgba($accent, 0.2);
+      border-color: rgba($accent, 0.5);
+      color: lighten($accent, 15%);
+    }
+  }
+}
+
+// Dark theme empty state
+@mixin empty-state-dark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: $space-12 $space-6;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: $radius-2xl;
+  
+  .empty-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba($accent, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: $space-6;
+    
+    mat-icon {
+      font-size: 40px;
+      width: 40px;
+      height: 40px;
+      color: lighten($accent, 15%);
+    }
+  }
+  
+  .empty-title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: #fff;
+    margin-bottom: $space-2;
+  }
+  
+  .empty-desc {
+    font-size: $font-size-base;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: $space-6;
+  }
+}
+
+// Dark page background
+@mixin page-dark-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $bg-dark 0%, $bg-dark-card 100%);
+  position: relative;
+  overflow: hidden;
+  padding-bottom: $space-10;
+}
+
+// Status badge for dark theme
+@mixin status-badge-dark {
+  font-size: 0.7rem;
+  font-weight: $font-weight-semibold;
+  padding: 0.3rem 0.75rem;
+  border-radius: $radius-full;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  &.open {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+  }
+  
+  &.pending {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+  }
+  
+  &.assigned, &.in-progress {
+    background: rgba(99, 102, 241, 0.2);
+    color: #818cf8;
+  }
+  
+  &.completed, &.accepted, &.resolved {
+    background: rgba(168, 85, 247, 0.2);
+    color: #c084fc;
+  }
+  
+  &.cancelled, &.rejected, &.closed {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+  }
+}
