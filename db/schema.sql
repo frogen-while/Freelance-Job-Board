@@ -184,9 +184,7 @@ CREATE TABLE payments (
   payer_id INT NOT NULL,
   payee_id INT NOT NULL,
   amount DECIMAL(10,2) NOT NULL,
-  status ENUM('pending', 'completed', 'failed', 'refunded') DEFAULT 'pending',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  completed_at DATETIME,
   FOREIGN KEY (job_id) REFERENCES jobs(job_id) ON DELETE CASCADE,
   FOREIGN KEY (payer_id) REFERENCES users(user_id) ON DELETE CASCADE,
   FOREIGN KEY (payee_id) REFERENCES users(user_id) ON DELETE CASCADE

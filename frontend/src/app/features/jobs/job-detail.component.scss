@@ -10,6 +10,43 @@
   padding-top: 80px;
 }
 
+// Success Banner
+.success-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-sm;
+  padding: $space-md $space-lg;
+  background: linear-gradient(135deg, rgba($success, 0.15), rgba($success, 0.08));
+  border: 1px solid rgba($success, 0.3);
+  border-radius: $radius-lg;
+  margin-bottom: $space-lg;
+  animation: slideIn 0.3s ease;
+  
+  mat-icon {
+    color: $success;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+  
+  span {
+    color: #4ade80;
+    font-weight: $font-weight-medium;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 // Not Found State
 .not-found {
   display: flex;

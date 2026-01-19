@@ -68,7 +68,8 @@ export const getJobApplicationById = async (req: Request, res: Response) => {
     }
 
     try {
-        const application = await jobAplRepo.findById(applicationId);
+        // Use findByIdWithDetails to get freelancer info for checkout page
+        const application = await jobAplRepo.findByIdWithDetails(applicationId);
 
         if (!application) {
             return sendError(res, 404, 'Job application not found.');

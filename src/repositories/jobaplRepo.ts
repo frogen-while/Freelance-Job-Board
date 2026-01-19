@@ -23,6 +23,21 @@ export const jobAplRepo = {
                 `SELECT * FROM jobapplications WHERE application_id = ?`,
                 application_id
             )},
+
+    async findByIdWithDetails(application_id: number): Promise<JobApl | undefined> {
+        return await db.connection?.get<JobApl | undefined>(
+            `SELECT ja.*, u.first_name, u.last_name, u.email,
+                    p.display_name, p.headline, p.photo_url,
+                    fp.hourly_rate, fp.experience_level
+             FROM jobapplications ja
+             LEFT JOIN users u ON ja.freelancer_id = u.user_id
+             LEFT JOIN profiles p ON ja.freelancer_id = p.user_id
+             LEFT JOIN freelancer_profiles fp ON ja.freelancer_id = fp.user_id
+             WHERE ja.application_id = ?`,
+            application_id
+        );
+    },
+
     async update(application_id: number, updateData: { job_id?: number, freelancer_id?: number, bid_amount?:number, proposal_text?:string, status?:JobApplicationStatus}): Promise<boolean> {
         const setClauses: string[] = [];
         const params: (string | number | null)[] = [];

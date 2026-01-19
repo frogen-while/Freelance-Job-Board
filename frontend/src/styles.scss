@@ -1419,3 +1419,59 @@ a {
   width: 32px !important;
   height: 32px !important;
 }
+
+// --------------------------------------------
+// UTILITY CLASSES FOR DARK BACKGROUNDS
+// --------------------------------------------
+.glass-card-dark {
+  @extend .glass-card;
+  padding: tokens.$space-8;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  border-radius: tokens.$radius-xl;
+
+  h2 { margin: 0 0 tokens.$space-1; }
+}
+
+.text-muted-light {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.text-2xl {
+  font-size: 2rem;
+  font-weight: tokens.$font-weight-bold;
+}
+
+.icon-lg {
+  font-size: 48px !important;
+  width: 48px !important;
+  height: 48px !important;
+  margin-bottom: tokens.$space-4;
+}
+
+.accent-color {
+  color: tokens.$accent-light;
+}
+
+.info-box {
+  padding: tokens.$space-4;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: tokens.$radius-md;
+  margin: tokens.$space-4 0;
+  font-size: tokens.$font-size-sm;
+}
+
+.amount-display {
+  margin: tokens.$space-6 0;
+  
+  span { display: block; margin-bottom: tokens.$space-1; }
+}
+
+.btn-row {
+  display: flex;
+  gap: tokens.$space-3;
+  
+  button { flex: 1; }
+}

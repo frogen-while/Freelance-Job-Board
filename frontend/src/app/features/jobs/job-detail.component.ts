@@ -29,6 +29,7 @@ export class JobDetailComponent implements OnInit {
   loading = true;
   applying = false;
   applied = false;
+  paymentSuccess = false;
   
   bidAmount: number | null = null;
   proposalText = '';
@@ -48,6 +49,14 @@ export class JobDetailComponent implements OnInit {
     this.isLoggedIn = this.auth.isLoggedIn();
     this.isFreelancer = this.auth.isFreelancer();
     this.currentUser = this.auth.getUser();
+    
+    // Check for payment success
+    this.route.queryParams.subscribe(params => {
+      if (params['paymentSuccess'] === 'true') {
+        this.paymentSuccess = true;
+        setTimeout(() => this.paymentSuccess = false, 5000);
+      }
+    });
     
     this.loadSkills();
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -151,25 +160,8 @@ export class JobDetailComponent implements OnInit {
   }
 
   acceptApplication(applicationId: number) {
-    this.api.updateApplicationStatus(applicationId, 'Accepted').subscribe({
-      next: (res) => {
-        if (res.success) {
-          const app = this.applications.find(a => a.application_id === applicationId);
-          if (app) app.status = 'Accepted';
-          this.applications.forEach(a => {
-            if (a.application_id !== applicationId && a.status === 'Pending') {
-              a.status = 'Rejected';
-            }
-          });
-          if (this.job) {
-            this.job.status = 'Assigned';
-          }
-        }
-      },
-      error: () => {
-        alert('Failed to accept application. Please try again.');
-      }
-    });
+    // Redirect to checkout page instead of directly accepting
+    this.router.navigate(['/jobs/checkout', applicationId]);
   }
 
   rejectApplication(applicationId: number) {

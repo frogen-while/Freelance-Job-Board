@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/authMiddleware.js';
-import { createPayment, updatePayment, getAllPayments, getPaymentById, deletePayment} from '../controllers/paymentsController.js';
+import { createPayment, updatePayment, getAllPayments, getPaymentById, deletePayment, processCheckout } from '../controllers/paymentsController.js';
 
 const router = Router();
 
+router.post('/checkout', requireAuth, processCheckout);
 router.post('/', requireAuth, createPayment); 
 router.get('/', requireAuth, getAllPayments);
 router.get('/:id', requireAuth, getPaymentById);

@@ -205,8 +205,23 @@ export class ApiService {
     return this.http.get<ApiResponse<JobApplication[]>>(`${this.base}/jobapplications/freelancer/${freelancerId}`);
   }
 
+  getApplicationById(applicationId: number): Observable<ApiResponse<JobApplication>> {
+    return this.http.get<ApiResponse<JobApplication>>(`${this.base}/jobapplications/${applicationId}`);
+  }
+
   updateApplicationStatus(applicationId: number, status: 'Pending' | 'Accepted' | 'Rejected'): Observable<ApiResponse<{ message: string }>> {
     return this.http.patch<ApiResponse<{ message: string }>>(`${this.base}/jobapplications/${applicationId}/status`, { status });
+  }
+
+  // Process payment and accept application (combined endpoint)
+  processPaymentAndAccept(payload: {
+    application_id: number;
+    job_id: number;
+    payer_id: number;
+    payee_id: number;
+    amount: number;
+  }): Observable<ApiResponse<{ payment_id: number; message: string }>> {
+    return this.http.post<ApiResponse<{ payment_id: number; message: string }>>(`${this.base}/payments/checkout`, payload);
   }
 
   // ============ MESSAGES ============

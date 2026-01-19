@@ -1,19 +1,19 @@
 import { db } from '../config/init_db.js';
-import { PaymentStatus, Payment } from '../interfaces/Payments.js';
+import { Payment } from '../interfaces/Payments.js';
 
 export const paymentsRepo = {
 
     async get_all(): Promise<Payment[]> {
         const result = await db.connection?.all<Payment[]>(
-            'SELECT payment_id, job_id, payer_id, payee_id, amount, status FROM payments'
+            'SELECT payment_id, job_id, payer_id, payee_id, amount, created_at FROM payments'
         );
         return result || [];
     },
     
-    async create(job_id: number, payer_id: number, payee_id: number, amount: number, status: PaymentStatus): Promise<number | null> {
+    async create(job_id: number, payer_id: number, payee_id: number, amount: number): Promise<number | null> {
         const result = await db.connection?.run(
-            `INSERT INTO payments (job_id, payer_id, payee_id, amount, status) VALUES (?, ?, ?, ?, ?)`,
-            job_id, payer_id, payee_id, amount, status
+            `INSERT INTO payments (job_id, payer_id, payee_id, amount) VALUES (?, ?, ?, ?)`,
+            job_id, payer_id, payee_id, amount
         );
         
         return result?.lastID ?? null;
@@ -26,7 +26,7 @@ export const paymentsRepo = {
         );
     },
     
-    async update(payment_id: number, updateData: { job_id?: number, payer_id?: number, payee_id?: number, amount?: number, status?: PaymentStatus}): Promise<boolean> {
+    async update(payment_id: number, updateData: { job_id?: number, payer_id?: number, payee_id?: number, amount?: number }): Promise<boolean> {
         const setClauses: string[] = [];
         const params: (string | number)[] = [];
 
@@ -45,10 +45,6 @@ export const paymentsRepo = {
         if (updateData.amount !== undefined) {
             setClauses.push('amount = ?');
             params.push(updateData.amount);
-        }
-        if (updateData.status !== undefined) {
-            setClauses.push('status = ?');
-            params.push(updateData.status);
         }
 
         if (setClauses.length === 0) {
