@@ -39,7 +39,7 @@
           </div>
           <div class="flag-info">
             <h3 class="flag-title">{{ flag.job_title || 'Job #' + flag.job_id }}</h3>
-            <span class="flag-meta">Reported by {{ flag.reporter_name || 'User #' + flag.reporter_id }} • {{ formatDate(flag.created_at) }}</span>
+            <span class="flag-meta">Reported by {{ flag.reporter_name || 'User #' + flag.reporter_id }} • {{ dateService.format(flag.created_at, 'short') }}</span>
           </div>
         </div>
         
@@ -67,13 +67,13 @@
       </div>
     </div>
 
-    <div class="empty-state" *ngIf="!loadingFlags && pendingFlags.length === 0">
+    <div class="empty-state-dark" *ngIf="!loadingFlags && pendingFlags.length === 0">
       <mat-icon>check_circle</mat-icon>
       <p>No pending flags</p>
       <span>All flagged content has been reviewed</span>
     </div>
 
-    <div class="loading-state" *ngIf="loadingFlags">
+    <div class="loading-state-dark" *ngIf="loadingFlags">
       <div class="spinner"></div>
       <span>Loading flags...</span>
     </div>
@@ -91,7 +91,7 @@
             <h3 class="hidden-title">{{ job.title }}</h3>
             <span class="hidden-meta">
               By {{ job.employer_name || 'User #' + job.employer_id }} • 
-              Hidden {{ formatDate(job.hidden_at) }}
+              Hidden {{ dateService.format(job.hidden_at, 'short') }}
             </span>
           </div>
           <span class="hidden-budget">${{ job.budget }}</span>
@@ -110,13 +110,13 @@
       </div>
     </div>
 
-    <div class="empty-state" *ngIf="!loadingHidden && hiddenJobs.length === 0">
+    <div class="empty-state-dark" *ngIf="!loadingHidden && hiddenJobs.length === 0">
       <mat-icon>visibility</mat-icon>
       <p>No hidden jobs</p>
       <span>All jobs are currently visible</span>
     </div>
 
-    <div class="loading-state" *ngIf="loadingHidden">
+    <div class="loading-state-dark" *ngIf="loadingHidden">
       <div class="spinner"></div>
       <span>Loading hidden jobs...</span>
     </div>

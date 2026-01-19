@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../../core/api.service';
 import { AuthService } from '../../../../core/auth.service';
+import { DateService } from '../../../../core/date.service';
 import { AdminUser, UserRole } from '../../../../core/models';
 
 @Component({
@@ -11,7 +12,6 @@ import { AdminUser, UserRole } from '../../../../core/models';
 export class AdminUsersComponent implements OnInit {
   users: AdminUser[] = [];
   filteredUsers: AdminUser[] = [];
-  selectedUsers: Set<number> = new Set();
   
   loading = true;
   errorMessage = '';
@@ -20,14 +20,14 @@ export class AdminUsersComponent implements OnInit {
   // Filters
   searchQuery = '';
   roleFilter = '';
-  blockedFilter = '';
   
   // Available roles
   roles: UserRole[] = ['Admin', 'Manager', 'Support', 'Employer', 'Freelancer'];
   
   constructor(
     private api: ApiService,
-    public auth: AuthService
+    public auth: AuthService,
+    public dateService: DateService
   ) {}
 
   ngOnInit(): void {
@@ -40,7 +40,6 @@ export class AdminUsersComponent implements OnInit {
     
     const filters: any = {};
     if (this.roleFilter) filters.role = this.roleFilter;
-    if (this.blockedFilter) filters.blocked = this.blockedFilter === 'true';
     if (this.searchQuery) filters.search = this.searchQuery;
     
     this.api.getAdminUsers(filters).subscribe({
@@ -62,16 +61,11 @@ export class AdminUsersComponent implements OnInit {
   applyFilters(): void {
     this.filteredUsers = this.users.filter(user => {
       const matchesSearch = !this.searchQuery || 
-        user.first_name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        user.last_name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(this.searchQuery.toLowerCase());
       
       const matchesRole = !this.roleFilter || user.main_role === this.roleFilter;
-      const matchesBlocked = !this.blockedFilter || 
-        (this.blockedFilter === 'true' && user.is_blocked) ||
-        (this.blockedFilter === 'false' && !user.is_blocked);
       
-      return matchesSearch && matchesRole && matchesBlocked;
+      return matchesSearch && matchesRole;
     });
   }
 
@@ -83,24 +77,29 @@ export class AdminUsersComponent implements OnInit {
     this.loadUsers();
   }
 
-  toggleUserSelection(userId: number): void {
-    if (this.selectedUsers.has(userId)) {
-      this.selectedUsers.delete(userId);
-    } else {
-      this.selectedUsers.add(userId);
+  // Check if current user can edit the target user
+  canEditUser(user: AdminUser): boolean {
+    // Admin can edit anyone except other admins
+    if (this.auth.isAdmin()) {
+      return user.main_role !== 'Admin';
     }
+    // Manager can edit Support, Employer, Freelancer (not Admin, Manager)
+    if (this.auth.isManager()) {
+      return !['Admin', 'Manager'].includes(user.main_role);
+    }
+    return false;
   }
 
-  selectAll(): void {
-    if (this.selectedUsers.size === this.filteredUsers.length) {
-      this.selectedUsers.clear();
-    } else {
-      this.filteredUsers.forEach(u => this.selectedUsers.add(u.user_id));
+  // Get available roles based on current user's role
+  getAvailableRoles(): UserRole[] {
+    if (this.auth.isAdmin()) {
+      return this.roles; // Admin can assign any role
     }
-  }
-
-  isSelected(userId: number): boolean {
-    return this.selectedUsers.has(userId);
+    if (this.auth.isManager()) {
+      // Manager can only assign Support, Employer, Freelancer
+      return ['Support', 'Employer', 'Freelancer'];
+    }
+    return [];
   }
 
   assignRole(user: AdminUser, role: UserRole): void {
@@ -145,42 +144,6 @@ export class AdminUsersComponent implements OnInit {
     });
   }
 
-  bulkBlock(): void {
-    const ids = Array.from(this.selectedUsers);
-    if (ids.length === 0) return;
-    
-    this.api.bulkBlockUsers(ids).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.users.filter(u => ids.includes(u.user_id)).forEach(u => u.is_blocked = true);
-          this.selectedUsers.clear();
-          this.showSuccess(`${res.data?.affected || ids.length} users blocked`);
-        }
-      },
-      error: () => {
-        this.showError('Failed to block users');
-      }
-    });
-  }
-
-  bulkUnblock(): void {
-    const ids = Array.from(this.selectedUsers);
-    if (ids.length === 0) return;
-    
-    this.api.bulkUnblockUsers(ids).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.users.filter(u => ids.includes(u.user_id)).forEach(u => u.is_blocked = false);
-          this.selectedUsers.clear();
-          this.showSuccess(`${res.data?.affected || ids.length} users unblocked`);
-        }
-      },
-      error: () => {
-        this.showError('Failed to unblock users');
-      }
-    });
-  }
-
   private showSuccess(message: string): void {
     this.successMessage = message;
     setTimeout(() => this.successMessage = '', 3000);
@@ -191,12 +154,4 @@ export class AdminUsersComponent implements OnInit {
     setTimeout(() => this.errorMessage = '', 3000);
   }
 
-  formatDate(date: string | undefined): string {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  }
 }

@@ -23,17 +23,7 @@
         <option *ngFor="let entity of entityTypes" [value]="entity">{{ entity }}</option>
       </select>
       
-      <div class="date-filter">
-        <label>From:</label>
-        <input type="date" [(ngModel)]="dateFrom" (change)="onFilterChange()">
-      </div>
-      
-      <div class="date-filter">
-        <label>To:</label>
-        <input type="date" [(ngModel)]="dateTo" (change)="onFilterChange()">
-      </div>
-      
-      <button class="btn-outline" (click)="clearFilters()">
+      <button class="btn-outline" (click)="clearFilters()" *ngIf="actionFilter || entityFilter">
         <mat-icon>clear</mat-icon> Clear
       </button>
     </div>
@@ -70,7 +60,7 @@
           <div class="log-meta">
             <span class="log-time">
               <mat-icon>schedule</mat-icon>
-              {{ formatDate(log.created_at) }}
+              {{ dateService.format(log.created_at, 'full') }}
             </span>
             <span class="log-ip" *ngIf="log.ip_address">
               <mat-icon>public</mat-icon>
@@ -81,7 +71,7 @@
       </div>
     </div>
 
-    <div class="empty-state" *ngIf="logs.length === 0">
+    <div class="empty-state-dark" *ngIf="logs.length === 0">
       <mat-icon>history</mat-icon>
       <p>No audit logs found</p>
       <span>Try adjusting your filters</span>
@@ -95,7 +85,7 @@
   </div>
 
   <!-- Loading -->
-  <div class="loading-state" *ngIf="loading">
+  <div class="loading-state-dark" *ngIf="loading">
     <div class="spinner"></div>
     <span>Loading audit logs...</span>
   </div>

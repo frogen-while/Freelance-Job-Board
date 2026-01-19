@@ -1,5 +1,5 @@
-<div class="admin-layout">
-  <aside class="sidebar">
+<div class="admin-layout" [class.support-only]="isSupportOnly()">
+  <aside class="sidebar" *ngIf="!isSupportOnly()">
     <div class="sidebar-header">
       <mat-icon>admin_panel_settings</mat-icon>
       <span>Admin Panel</span>
@@ -12,10 +12,6 @@
         </a>
       </ng-container>
     </nav>
-    <a routerLink="/dashboard" class="back-link">
-      <mat-icon>arrow_back</mat-icon>
-      Back to App
-    </a>
   </aside>
   <main class="admin-main">
     <router-outlet></router-outlet>

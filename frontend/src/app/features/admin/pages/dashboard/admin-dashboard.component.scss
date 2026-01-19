@@ -1,11 +1,105 @@
-.page-header { margin-bottom: 1.5rem; }
-.page-title { font-size: 1.5rem; font-weight: 700; color: #fff; margin: 0; }
-.page-subtitle { color: rgba(255,255,255,0.6); margin: 0.25rem 0 0; }
+@use 'app/shared' as t;
+
+.admin-dashboard { color: #fff; }
+
+.page-header { margin-bottom: t.$space-6; }
+.page-title { color: #fff; }
+.page-subtitle { color: rgba(255,255,255,0.7); }
+
+// Overview stats grid
+.overview-section { margin-bottom: t.$space-6; }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: t.$space-4;
+  @media (max-width: t.$bp-md) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: t.$bp-sm) { grid-template-columns: 1fr; }
+}
+
+.stat-card-dark--horizontal {
+  .stat-value { font-size: t.$font-size-xl; line-height: 1.2; }
+  .stat-label { font-size: t.$font-size-sm; }
+  .stat-change { font-size: t.$font-size-xs; color: rgba(255,255,255,0.5); margin-top: t.$space-1; }
+}
+
+// Charts section
+.charts-section { margin-bottom: t.$space-6; }
+.charts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: t.$space-6;
+  @media (max-width: t.$bp-md) { grid-template-columns: 1fr; }
+}
+
+.chart-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: t.$radius-lg;
+  padding: t.$space-5;
+  &.wide { grid-column: 1 / -1; }
+}
+
+.chart-title { font-size: t.$font-size-base; font-weight: 600; color: #fff; margin: 0 0 t.$space-4; }
+.chart-container { position: relative; height: 280px; &.wide { height: 200px; } }
+
+.chart-stats {
+  display: flex;
+  justify-content: center;
+  gap: t.$space-8;
+  margin-top: t.$space-4;
+  padding-top: t.$space-4;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.chart-stat { text-align: center; }
+.stat-num { font-size: t.$font-size-xl; font-weight: 700; color: #fff; display: block; }
+.stat-text { font-size: t.$font-size-xs; color: rgba(255,255,255,0.6); }
+
+.revenue-section { margin-bottom: t.$space-6; }
+
+// Bottom grid (users + tickets)
+.bottom-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: t.$space-6;
+  @media (max-width: t.$bp-md) { grid-template-columns: 1fr; }
+}
+
+.glass-card {
+  padding: t.$space-4;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: t.$space-4;
+  h3 { color: #fff; font-size: t.$font-size-base; font-weight: 600; margin: 0; }
+}
+
 .list-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 0;
+  gap: t.$space-3;
+  padding: t.$space-3 0;
   border-bottom: 1px solid rgba(255,255,255,0.05);
   &:last-child { border-bottom: none; }
 }
+
+.list-content { flex: 1; min-width: 0; }
+.list-title { color: #fff; font-size: t.$font-size-sm; }
+.list-subtitle { color: rgba(255,255,255,0.5); font-size: t.$font-size-xs; }
+.date-text { color: rgba(255,255,255,0.4); font-size: t.$font-size-xs; }
+
+.role-badge {
+  display: inline-block;
+  padding: t.$space-1 t.$space-2;
+  border-radius: t.$radius-sm;
+  font-size: t.$font-size-xs;
+  font-weight: 500;
+  &.admin { background: rgba(t.$error,0.2); color: t.$danger; }
+  &.manager { background: rgba(168,85,247,0.2); color: #c084fc; }
+  &.support { background: rgba(t.$accent,0.2); color: #818cf8; }
+  &.employer { background: rgba(59,130,246,0.2); color: #3b82f6; }
+  &.freelancer { background: rgba(t.$success,0.2); color: #4ade80; }
+}
+
+.empty-state-dark { padding: t.$space-6; }

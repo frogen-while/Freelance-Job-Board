@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../../core/api.service';
 import { AuthService, PublicUser } from '../../../../core/auth.service';
+import { DateService } from '../../../../core/date.service';
 import { SupportTicket, TicketReply, AdminUser } from '../../../../core/models';
 
 @Component({
@@ -11,8 +12,6 @@ import { SupportTicket, TicketReply, AdminUser } from '../../../../core/models';
 export class AdminTicketsComponent implements OnInit {
   tickets: SupportTicket[] = [];
   filteredTickets: SupportTicket[] = [];
-  supportStaff: AdminUser[] = [];
-  selectedTickets: Set<number> = new Set();
   
   loading = true;
   errorMessage = '';
@@ -20,7 +19,6 @@ export class AdminTicketsComponent implements OnInit {
   
   // Filters
   statusFilter = '';
-  priorityFilter = '';
   
   // Detail modal
   showDetailModal = false;
@@ -29,17 +27,21 @@ export class AdminTicketsComponent implements OnInit {
   loadingNotes = false;
   newNote = '';
   
+  // Message modal
+  showMessageModal = false;
+  messageTicket: SupportTicket | null = null;
+  messageText = '';
+  
   statuses = ['Open', 'In Progress', 'Resolved', 'Closed'];
-  priorities = ['low', 'medium', 'high', 'urgent'];
 
   constructor(
     private api: ApiService,
-    public auth: AuthService
+    public auth: AuthService,
+    public dateService: DateService
   ) {}
 
   ngOnInit(): void {
     this.loadTickets();
-    this.loadSupportStaff();
   }
 
   loadTickets(): void {
@@ -48,12 +50,10 @@ export class AdminTicketsComponent implements OnInit {
     
     const filters: any = {};
     if (this.statusFilter) filters.status = this.statusFilter;
-    if (this.priorityFilter) filters.priority = this.priorityFilter;
     
     this.api.getFilteredTickets(filters).subscribe({
       next: (res) => {
         if (res.success && res.data) {
-          // Handle both direct array and paginated { data: [...] } formats
           const tickets = Array.isArray(res.data) ? res.data : (res.data as any).data || [];
           this.tickets = tickets;
           this.filteredTickets = this.tickets;
@@ -68,73 +68,8 @@ export class AdminTicketsComponent implements OnInit {
     });
   }
 
-  loadSupportStaff(): void {
-    this.api.getAdminUsers({ role: 'Support' }).subscribe({
-      next: (res) => {
-        if (res.success && res.data) {
-          // Handle both paginated { data: [...] } and direct array formats
-          const users = Array.isArray(res.data) ? res.data : (res.data as any).data || [];
-          // Include Support, Manager, Admin
-          this.supportStaff = users.filter((u: any) => 
-            ['Support', 'Manager', 'Admin'].includes(u.main_role)
-          );
-        }
-      }
-    });
-  }
-
   onFilterChange(): void {
     this.loadTickets();
-  }
-
-  toggleTicketSelection(ticketId: number): void {
-    if (this.selectedTickets.has(ticketId)) {
-      this.selectedTickets.delete(ticketId);
-    } else {
-      this.selectedTickets.add(ticketId);
-    }
-  }
-
-  selectAll(): void {
-    if (this.selectedTickets.size === this.filteredTickets.length) {
-      this.selectedTickets.clear();
-    } else {
-      this.filteredTickets.forEach(t => this.selectedTickets.add(t.ticket_id));
-    }
-  }
-
-  isSelected(ticketId: number): boolean {
-    return this.selectedTickets.has(ticketId);
-  }
-
-  assignTicket(ticket: SupportTicket, userId: number): void {
-    this.api.assignTicket(ticket.ticket_id, userId).subscribe({
-      next: (res) => {
-        if (res.success) {
-          ticket.assigned_to = userId;
-          const staff = this.supportStaff.find(s => s.user_id === userId);
-          ticket.assigned_name = staff ? `${staff.first_name} ${staff.last_name}` : undefined;
-          this.showSuccess('Ticket assigned');
-        }
-      },
-      error: () => {
-        this.showError('Failed to assign ticket');
-      }
-    });
-  }
-
-  updatePriority(ticket: SupportTicket, priority: string): void {
-    this.api.updateTicketPriority(ticket.ticket_id, priority).subscribe({
-      next: (res) => {
-        if (res.success) {
-          ticket.priority = priority as any;
-          this.showSuccess('Priority updated');
-        }
-      },
-      error: () => {
-        this.showError('Failed to update priority');
-      }
-    });
   }
 
   updateStatus(ticket: SupportTicket, status: string): void {
@@ -147,24 +82,6 @@ export class AdminTicketsComponent implements OnInit {
       },
       error: () => {
         this.showError('Failed to update status');
-      }
-    });
-  }
-
-  bulkUpdateStatus(status: string): void {
-    const ids = Array.from(this.selectedTickets);
-    if (ids.length === 0) return;
-    
-    this.api.bulkUpdateTicketStatus(ids, status).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.tickets.filter(t => ids.includes(t.ticket_id)).forEach(t => t.status = status as any);
-          this.selectedTickets.clear();
-          this.showSuccess(`${res.data?.affected || ids.length} tickets updated`);
-        }
-      },
-      error: () => {
-        this.showError('Failed to update tickets');
       }
     });
   }
@@ -211,14 +128,47 @@ export class AdminTicketsComponent implements OnInit {
             content: this.newNote,
             is_internal: true,
             created_at: new Date().toISOString(),
-            user_name: user ? `${user.first_name} ${user.last_name}` : undefined
+            user_name: 'Support'
           });
           this.newNote = '';
-          this.showSuccess('Note added');
+          this.showSuccess('Message sent');
         }
       },
       error: () => {
-        this.showError('Failed to add note');
+        this.showError('Failed to send message');
+      }
+    });
+  }
+
+  openMessageModal(ticket: SupportTicket): void {
+    this.messageTicket = ticket;
+    this.messageText = '';
+    this.showMessageModal = true;
+  }
+
+  closeMessageModal(): void {
+    this.showMessageModal = false;
+    this.messageTicket = null;
+    this.messageText = '';
+  }
+
+  sendMessage(): void {
+    if (!this.messageTicket || !this.messageText.trim()) return;
+    
+    const user = this.auth.getUser();
+    this.api.sendMessage({
+      sender_id: user?.user_id || 0,
+      receiver_id: this.messageTicket.user_id,
+      body: this.messageText
+    }).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.showSuccess('Message sent to user');
+          this.closeMessageModal();
+        }
+      },
+      error: () => {
+        this.showError('Failed to send message');
       }
     });
   }
@@ -231,24 +181,5 @@ export class AdminTicketsComponent implements OnInit {
   private showError(message: string): void {
     this.errorMessage = message;
     setTimeout(() => this.errorMessage = '', 3000);
-  }
-
-  formatDate(date: string | undefined): string {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
-
-  getPriorityColor(priority: string | undefined): string {
-    switch (priority) {
-      case 'urgent': return 'red';
-      case 'high': return 'orange';
-      case 'medium': return 'yellow';
-      default: return 'green';
-    }
   }
 }

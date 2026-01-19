@@ -1,6 +1,7 @@
 .admin-layout {
   display: flex;
   min-height: 100vh;
+  padding-top: 70px;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
 
@@ -11,7 +12,9 @@
   display: flex;
   flex-direction: column;
   position: fixed;
-  inset: 0 auto 0 0;
+  top: 70px;
+  left: 0;
+  bottom: 0;
   z-index: 100;
 }
 
@@ -60,6 +63,14 @@
   flex: 1;
   margin-left: 240px;
   padding: 1.5rem;
+  min-height: calc(100vh - 70px);
+}
+
+// Support-only mode - no sidebar
+.admin-layout.support-only {
+  .admin-main {
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 768px) {

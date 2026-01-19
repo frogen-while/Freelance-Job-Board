@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../../core/api.service';
 import { AuthService } from '../../../../core/auth.service';
+import { DateService } from '../../../../core/date.service';
 import { JobFlag, HiddenJob } from '../../../../core/models';
 
 @Component({
@@ -28,7 +29,8 @@ export class AdminModerationComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    public auth: AuthService
+    public auth: AuthService,
+    public dateService: DateService
   ) {}
 
   ngOnInit(): void {
@@ -139,13 +141,4 @@ export class AdminModerationComponent implements OnInit {
     setTimeout(() => this.errorMessage = '', 3000);
   }
 
-  formatDate(date: string | undefined): string {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
 }

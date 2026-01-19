@@ -8,7 +8,7 @@
     <!-- Overview Cards -->
     <section class="overview-section">
       <div class="stats-grid">
-        <div class="stat-card" data-color="blue">
+        <div class="stat-card-dark stat-card-dark--horizontal" data-color="blue">
           <div class="stat-icon">
             <mat-icon>people</mat-icon>
           </div>
@@ -21,7 +21,7 @@
           </div>
         </div>
 
-        <div class="stat-card" data-color="green">
+        <div class="stat-card-dark stat-card-dark--horizontal" data-color="green">
           <div class="stat-icon">
             <mat-icon>work</mat-icon>
           </div>
@@ -32,7 +32,7 @@
           </div>
         </div>
 
-        <div class="stat-card" data-color="purple">
+        <div class="stat-card-dark stat-card-dark--horizontal" data-color="purple">
           <div class="stat-icon">
             <mat-icon>attach_money</mat-icon>
           </div>
@@ -43,7 +43,7 @@
           </div>
         </div>
 
-        <div class="stat-card" data-color="orange">
+        <div class="stat-card-dark stat-card-dark--horizontal" data-color="orange">
           <div class="stat-icon">
             <mat-icon>description</mat-icon>
           </div>
@@ -66,12 +66,12 @@
           </div>
           <div class="chart-stats" *ngIf="userStats">
             <div class="chart-stat">
-              <span class="stat-num">{{ userStats.active_employers }}</span>
-              <span class="stat-text">Active Employers</span>
+              <span class="stat-num">{{ userStats.total_employers }}</span>
+              <span class="stat-text">Total Employers</span>
             </div>
             <div class="chart-stat">
-              <span class="stat-num">{{ userStats.active_freelancers }}</span>
-              <span class="stat-text">Active Freelancers</span>
+              <span class="stat-num">{{ userStats.total_freelancers }}</span>
+              <span class="stat-text">Total Freelancers</span>
             </div>
           </div>
         </div>
@@ -96,10 +96,10 @@
       </div>
     </section>
 
-    <!-- Revenue Chart -->
+    <!-- Budget by Category Chart -->
     <section class="revenue-section" *ngIf="revenueStats?.top_categories?.length">
       <div class="chart-card wide">
-        <h3 class="chart-title">Revenue by Category</h3>
+        <h3 class="chart-title">Budget by Category</h3>
         <div class="chart-container wide">
           <canvas #revenueChart></canvas>
         </div>
@@ -143,7 +143,7 @@
   </div>
 
   <!-- Loading -->
-  <div class="loading-state" *ngIf="loading">
+  <div class="loading-state-dark" *ngIf="loading">
     <div class="spinner"></div>
     <span>Loading statistics...</span>
   </div>

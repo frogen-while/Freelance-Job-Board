@@ -1,17 +1,67 @@
-﻿.page-header { margin-bottom: 1.5rem; }
-.page-title { font-size: 1.5rem; font-weight: 700; color: #fff; margin: 0; }
-.page-subtitle { color: rgba(255,255,255,0.6); margin: 0.25rem 0 0; }
-.filters-bar { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
-select, input[type=date] { padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; }
-.logs-list { display: flex; flex-direction: column; gap: 0.75rem; }
-.log-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 0.5rem; }
-.log-icon { width: 36px; height: 36px; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; background: rgba(99,102,241,0.2); color: #818cf8; flex-shrink: 0; }
+﻿@use 'app/shared' as t;
+
+.admin-audit-logs { color: #fff; }
+
+.page-header { margin-bottom: t.$space-6; }
+.page-title { color: #fff; }
+.page-subtitle { color: rgba(255,255,255,0.7); }
+
+.filters-bar { display: flex; gap: t.$space-4; flex-wrap: wrap; margin-bottom: t.$space-6; }
+
+select, input[type=date] {
+  padding: t.$space-2 t.$space-4;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: t.$radius-md;
+  color: #fff;
+  &::-webkit-calendar-picker-indicator { filter: invert(1); }
+  option { background: t.$bg-dark-card; }
+}
+
+.logs-list { display: flex; flex-direction: column; gap: t.$space-3; }
+
+.log-item {
+  display: flex; align-items: flex-start; gap: t.$space-4; padding: t.$space-4;
+  background: rgba(255,255,255,0.03); border-radius: t.$radius-md;
+  transition: background 0.2s;
+  &:hover { background: rgba(255,255,255,0.05); }
+}
+
+.log-icon {
+  width: 40px; height: 40px; border-radius: t.$radius-md;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  
+  &[data-color="red"] { background: rgba(t.$error,0.2); color: t.$danger; }
+  &[data-color="green"] { background: rgba(t.$success,0.2); color: #4ade80; }
+  &[data-color="orange"] { background: rgba(t.$warning,0.2); color: #fb923c; }
+  &[data-color="blue"] { background: rgba(59,130,246,0.2); color: #3b82f6; }
+  &[data-color="purple"] { background: rgba(168,85,247,0.2); color: #a855f7; }
+  
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+}
+
 .log-content { flex: 1; min-width: 0; }
-.log-header { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.25rem; }
-.log-action { font-weight: 600; color: #fff; font-size: 0.9rem; }
-.log-entity { color: rgba(255,255,255,0.5); font-size: 0.8rem; }
-.log-user { color: rgba(255,255,255,0.6); font-size: 0.85rem; display: flex; align-items: center; gap: 0.25rem; }
-.log-details { color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.25rem; }
-.log-meta { display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.75rem; color: rgba(255,255,255,0.4); }
-.btn-outline { padding: 0.5rem 1rem; background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: 0.5rem; color: rgba(255,255,255,0.7); cursor: pointer; &:hover { background: rgba(255,255,255,0.05); } }
-.load-more { text-align: center; padding: 1rem; }
+.log-header { display: flex; gap: t.$space-2; align-items: center; flex-wrap: wrap; margin-bottom: t.$space-1; }
+.log-action { font-weight: 600; color: #fff; font-size: t.$font-size-sm; }
+.log-entity { color: rgba(255,255,255,0.5); font-size: t.$font-size-sm; }
+
+.log-user {
+  color: rgba(255,255,255,0.6); font-size: t.$font-size-sm;
+  display: flex; align-items: center; gap: t.$space-1;
+  mat-icon { font-size: 16px; width: 16px; height: 16px; opacity: 0.5; }
+}
+
+.log-details {
+  color: rgba(255,255,255,0.5); font-size: t.$font-size-xs;
+  margin-top: t.$space-2; padding: t.$space-2;
+  background: rgba(0,0,0,0.2); border-radius: t.$radius-sm;
+}
+
+.log-meta {
+  display: flex; gap: t.$space-4; margin-top: t.$space-2;
+  font-size: t.$font-size-xs; color: rgba(255,255,255,0.4);
+  span { display: flex; align-items: center; gap: t.$space-1; }
+  mat-icon { font-size: 14px; width: 14px; height: 14px; }
+}
+
+.load-more { text-align: center; padding: t.$space-4; }

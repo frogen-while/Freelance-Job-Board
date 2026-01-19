@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../../core/api.service';
+import { DateService } from '../../../../core/date.service';
 import { AuditLog } from '../../../../core/models';
 
 @Component({
@@ -15,8 +16,6 @@ export class AdminAuditLogsComponent implements OnInit {
   // Filters
   actionFilter = '';
   entityFilter = '';
-  dateFrom = '';
-  dateTo = '';
   
   // Pagination
   currentPage = 1;
@@ -24,14 +23,14 @@ export class AdminAuditLogsComponent implements OnInit {
   hasMore = true;
   
   actions = [
-    'LOGIN', 'LOGOUT', 'ROLE_CHANGED', 'USER_BLOCKED', 'USER_UNBLOCKED',
+    'LOGIN', 'LOGOUT', 'ROLE_CHANGE', 'USER_BLOCKED', 'USER_UNBLOCKED',
     'JOB_CREATED', 'JOB_UPDATED', 'JOB_FLAGGED', 'JOB_HIDDEN', 'JOB_RESTORED',
     'TICKET_CREATED', 'TICKET_ASSIGNED', 'TICKET_NOTE_ADDED', 'TICKET_PRIORITY_CHANGED'
   ];
   
   entityTypes = ['USER', 'JOB', 'TICKET', 'APPLICATION', 'MESSAGE'];
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, public dateService: DateService) {}
 
   ngOnInit(): void {
     this.loadLogs();
@@ -50,18 +49,18 @@ export class AdminAuditLogsComponent implements OnInit {
     
     if (this.actionFilter) filters.action = this.actionFilter;
     if (this.entityFilter) filters.entity_type = this.entityFilter;
-    if (this.dateFrom) filters.from = this.dateFrom;
-    if (this.dateTo) filters.to = this.dateTo;
     
     this.api.getAuditLogs(filters).subscribe({
       next: (res) => {
         if (res.success && res.data) {
+          // Backend returns { data: [...], pagination: {...} }
+          const logsData = Array.isArray(res.data) ? res.data : (res.data as any).data || [];
           if (append) {
-            this.logs = [...this.logs, ...res.data];
+            this.logs = [...this.logs, ...logsData];
           } else {
-            this.logs = res.data;
+            this.logs = logsData;
           }
-          this.hasMore = res.data.length === this.pageSize;
+          this.hasMore = logsData.length === this.pageSize;
         }
         this.loading = false;
       },
@@ -84,20 +83,7 @@ export class AdminAuditLogsComponent implements OnInit {
   clearFilters(): void {
     this.actionFilter = '';
     this.entityFilter = '';
-    this.dateFrom = '';
-    this.dateTo = '';
     this.loadLogs();
-  }
-
-  formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
   }
 
   getActionColor(action: string): string {

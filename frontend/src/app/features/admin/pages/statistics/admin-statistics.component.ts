@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../../../../core/api.service';
 import { OverviewStats, RevenueStats, UserStats, JobStats } from '../../../../core/models';
 import { Chart, registerables } from 'chart.js';
@@ -27,7 +27,7 @@ export class AdminStatisticsComponent implements OnInit, AfterViewInit {
   private jobChart: Chart | null = null;
   private revenueChart: Chart | null = null;
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadAllStats();
@@ -35,8 +35,14 @@ export class AdminStatisticsComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.chartsReady = true;
-    if (!this.loading) {
-      this.initCharts();
+    this.tryInitCharts();
+  }
+
+  private tryInitCharts(): void {
+    if (!this.loading && this.chartsReady) {
+      // Force change detection then init charts after DOM update
+      this.cdr.detectChanges();
+      setTimeout(() => this.initCharts(), 50);
     }
   }
 
@@ -48,9 +54,7 @@ export class AdminStatisticsComponent implements OnInit, AfterViewInit {
       completed++;
       if (completed === total) {
         this.loading = false;
-        if (this.chartsReady) {
-          setTimeout(() => this.initCharts(), 100);
-        }
+        this.tryInitCharts();
       }
     };
 

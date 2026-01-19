@@ -22,27 +22,6 @@
         <option value="">All Status</option>
         <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
       </select>
-      
-      <select [(ngModel)]="priorityFilter" (change)="onFilterChange()">
-        <option value="">All Priority</option>
-        <option *ngFor="let priority of priorities" [value]="priority">{{ priority | titlecase }}</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Bulk Actions -->
-  <div class="bulk-actions" *ngIf="selectedTickets.size > 0">
-    <span class="selected-count">{{ selectedTickets.size }} selected</span>
-    <div class="bulk-buttons">
-      <button class="btn-secondary" (click)="bulkUpdateStatus('In Progress')">
-        Mark In Progress
-      </button>
-      <button class="btn-success" (click)="bulkUpdateStatus('Resolved')">
-        Mark Resolved
-      </button>
-      <button class="btn-outline" (click)="bulkUpdateStatus('Closed')">
-        Close
-      </button>
     </div>
   </div>
 
@@ -51,79 +30,51 @@
     <table class="data-table">
       <thead>
         <tr>
-          <th class="checkbox-col">
-            <input type="checkbox" 
-                   [checked]="selectedTickets.size === filteredTickets.length && filteredTickets.length > 0"
-                   (change)="selectAll()">
-          </th>
           <th>Subject</th>
-          <th>User</th>
-          <th>Priority</th>
+          <th>User ID</th>
           <th>Status</th>
-          <th>Assigned To</th>
           <th>Created</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let ticket of filteredTickets">
-          <td class="checkbox-col">
-            <input type="checkbox" 
-                   [checked]="isSelected(ticket.ticket_id)"
-                   (change)="toggleTicketSelection(ticket.ticket_id)">
-          </td>
           <td>
             <button class="subject-link" (click)="openDetailModal(ticket)">
               {{ ticket.subject }}
             </button>
           </td>
-          <td class="user-cell">
-            {{ ticket.user_name || 'User #' + ticket.user_id }}
-          </td>
+          <td class="user-cell">#{{ ticket.user_id }}</td>
           <td>
-            <select class="priority-select" 
-                    [value]="ticket.priority || 'medium'"
-                    [attr.data-priority]="ticket.priority || 'medium'"
-                    (change)="updatePriority(ticket, $any($event.target).value)">
-              <option *ngFor="let p of priorities" [value]="p">{{ p | titlecase }}</option>
-            </select>
+            <span class="status-badge" [attr.data-status]="ticket.status">{{ ticket.status }}</span>
           </td>
-          <td>
-            <select class="status-select" 
-                    [value]="ticket.status"
-                    [attr.data-status]="ticket.status"
-                    (change)="updateStatus(ticket, $any($event.target).value)">
-              <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
-            </select>
-          </td>
-          <td>
-            <select class="assign-select" 
-                    [value]="ticket.assigned_to || ''"
-                    (change)="assignTicket(ticket, +$any($event.target).value)">
-              <option value="">Unassigned</option>
-              <option *ngFor="let staff of supportStaff" [value]="staff.user_id">
-                {{ staff.first_name }} {{ staff.last_name }}
-              </option>
-            </select>
-          </td>
-          <td class="date-cell">{{ formatDate(ticket.created_at) }}</td>
+          <td class="date-cell">{{ dateService.format(ticket.created_at, 'short') }}</td>
           <td class="actions-cell">
             <button class="action-btn" (click)="openDetailModal(ticket)" title="View details">
               <mat-icon>visibility</mat-icon>
             </button>
+            <button class="action-btn" (click)="openMessageModal(ticket)" title="Send message">
+              <mat-icon>message</mat-icon>
+            </button>
+            <select class="action-select" 
+                    [value]="ticket.status"
+                    (change)="updateStatus(ticket, $any($event.target).value); $any($event.target).value = ticket.status">
+              <option value="" disabled>Change status...</option>
+              <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+            </select>
           </td>
         </tr>
       </tbody>
     </table>
     
-    <div class="empty-state" *ngIf="filteredTickets.length === 0">
+    <div class="empty-state-dark" *ngIf="filteredTickets.length === 0">
       <mat-icon>inbox</mat-icon>
       <p>No tickets found</p>
     </div>
   </div>
 
   <!-- Loading -->
-  <div class="loading-state" *ngIf="loading">
+  <div class="loading-state-dark" *ngIf="loading">
     <div class="spinner"></div>
     <span>Loading tickets...</span>
   </div>
@@ -144,16 +95,20 @@
       <div class="modal-body" *ngIf="selectedTicket">
         <div class="ticket-info">
           <div class="info-row">
-            <span class="info-label">From:</span>
-            <span>{{ selectedTicket.user_name || 'User #' + selectedTicket.user_id }}</span>
+            <span class="info-label">User ID:</span>
+            <span>#{{ selectedTicket.user_id }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">Email:</span>
             <span>{{ selectedTicket.user_email }}</span>
           </div>
           <div class="info-row">
+            <span class="info-label">Status:</span>
+            <span class="status-badge" [attr.data-status]="selectedTicket.status">{{ selectedTicket.status }}</span>
+          </div>
+          <div class="info-row">
             <span class="info-label">Created:</span>
-            <span>{{ formatDate(selectedTicket.created_at) }}</span>
+            <span>{{ dateService.format(selectedTicket.created_at, 'short') }}</span>
           </div>
         </div>
         
@@ -163,19 +118,22 @@
         </div>
         
         <div class="ticket-notes">
-          <h4>Internal Notes</h4>
+          <h4>Conversation</h4>
           
           <div class="notes-list" *ngIf="!loadingNotes">
             <div class="note-item" *ngFor="let note of ticketNotes">
               <div class="note-header">
-                <span class="note-author">{{ note.user_name || 'Staff' }}</span>
-                <span class="note-date">{{ formatDate(note.created_at) }}</span>
+                <span class="note-author support-author" *ngIf="note.is_internal">
+                  <mat-icon>support_agent</mat-icon> Support
+                </span>
+                <span class="note-author" *ngIf="!note.is_internal">User #{{ note.user_id }}</span>
+                <span class="note-date">{{ dateService.format(note.created_at, 'short') }}</span>
               </div>
               <p class="note-content">{{ note.content }}</p>
             </div>
             
             <div class="empty-notes" *ngIf="ticketNotes.length === 0">
-              No notes yet
+              No messages yet
             </div>
           </div>
           
@@ -186,13 +144,50 @@
           <div class="add-note">
             <textarea 
               [(ngModel)]="newNote" 
-              placeholder="Add internal note..."
+              placeholder="Reply to user..."
               rows="2"></textarea>
             <button class="btn-primary" (click)="addNote()" [disabled]="!newNote.trim()">
-              <mat-icon>add</mat-icon> Add Note
+              <mat-icon>send</mat-icon> Send
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Modal -->
+  <div class="modal-overlay" *ngIf="showMessageModal" (click)="closeMessageModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Send Message</h2>
+        <button class="close-btn" (click)="closeMessageModal()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="info-row">
+          <span class="info-label">To:</span>
+          <span>User #{{ messageTicket?.user_id }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Regarding:</span>
+          <span>{{ messageTicket?.subject }}</span>
+        </div>
+        
+        <div class="message-input">
+          <textarea 
+            [(ngModel)]="messageText" 
+            placeholder="Type your message..."
+            rows="4"></textarea>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn-outline" (click)="closeMessageModal()">Cancel</button>
+        <button class="btn-primary" (click)="sendMessage()" [disabled]="!messageText.trim()">
+          <mat-icon>send</mat-icon> Send Message
+        </button>
       </div>
     </div>
   </div>
