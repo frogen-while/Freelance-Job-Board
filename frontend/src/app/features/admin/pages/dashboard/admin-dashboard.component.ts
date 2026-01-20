@@ -200,7 +200,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
     this.jobChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Open', 'Assigned', 'Completed', 'Cancelled', 'Hidden'],
+        labels: ['Open', 'In Progress', 'Completed', 'Cancelled', 'Hidden'],
         datasets: [{
           label: 'Jobs',
           data: [

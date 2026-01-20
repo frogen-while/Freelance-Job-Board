@@ -18,6 +18,8 @@ import {
   ExperienceLevel,
   CompanySize,
   JobApplication,
+  Assignment,
+  AssignmentDeliverable,
   Message,
   Conversation,
   Review,
@@ -211,6 +213,34 @@ export class ApiService {
 
   updateApplicationStatus(applicationId: number, status: 'Pending' | 'Accepted' | 'Rejected'): Observable<ApiResponse<{ message: string }>> {
     return this.http.patch<ApiResponse<{ message: string }>>(`${this.base}/jobapplications/${applicationId}/status`, { status });
+  }
+
+  // ============ ASSIGNMENTS ============
+
+  getAssignmentsByFreelancerId(freelancerId: number): Observable<ApiResponse<Assignment[]>> {
+    return this.http.get<ApiResponse<Assignment[]>>(`${this.base}/assignments/freelancer/${freelancerId}`);
+  }
+
+  getAssignmentsByEmployerId(employerId: number): Observable<ApiResponse<Assignment[]>> {
+    return this.http.get<ApiResponse<Assignment[]>>(`${this.base}/assignments/employer/${employerId}`);
+  }
+
+  getAssignmentDeliverables(assignmentId: number): Observable<ApiResponse<AssignmentDeliverable[]>> {
+    return this.http.get<ApiResponse<AssignmentDeliverable[]>>(`${this.base}/assignments/${assignmentId}/deliverables`);
+  }
+
+  uploadAssignmentDeliverable(assignmentId: number, data: { file?: File | null; link?: string | null }): Observable<ApiResponse<AssignmentDeliverable>> {
+    const form = new FormData();
+    if (data.file) form.append('file', data.file);
+    if (data.link) form.append('link', data.link);
+    return this.http.post<ApiResponse<AssignmentDeliverable>>(`${this.base}/assignments/${assignmentId}/deliverables`, form);
+  }
+
+  reviewAssignmentDeliverable(deliverableId: number, status: 'accepted' | 'changes_requested', reviewer_message?: string | null): Observable<ApiResponse<{ deliverable_id: number; status: string; reviewer_message?: string | null }>> {
+    return this.http.patch<ApiResponse<{ deliverable_id: number; status: string; reviewer_message?: string | null }>>(
+      `${this.base}/assignments/deliverables/${deliverableId}`,
+      { status, reviewer_message }
+    );
   }
 
   // Process payment and accept application (combined endpoint)

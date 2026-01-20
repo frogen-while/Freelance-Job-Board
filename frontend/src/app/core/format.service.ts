@@ -41,7 +41,6 @@ export class FormatService {
       'in progress': '#2196f3',
       'resolved': '#4caf50',
       'closed': '#757575',
-      'assigned': '#2196f3',
       'completed': '#4caf50',
       'cancelled': '#f44336'
     };

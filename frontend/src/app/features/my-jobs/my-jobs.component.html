@@ -35,6 +35,91 @@
       </div>
     </section>
 
+    <!-- Submissions Window -->
+    <section class="submissions-window">
+      <div class="window-header">
+        <div>
+          <h2 class="section-title">Current Work Submissions</h2>
+          <p class="section-subtitle">Review freelancer uploads and request updates</p>
+        </div>
+      </div>
+
+      <div class="loading-state-dark" *ngIf="assignmentsLoading">
+        <div class="spinner"></div>
+        <span>Loading submissions...</span>
+      </div>
+
+      <div class="error-state-dark" *ngIf="assignmentsError && !assignmentsLoading">
+        <div class="error-icon">⚠️</div>
+        <p>{{ assignmentsError }}</p>
+        <button class="btn-dark-secondary" (click)="loadAssignments()">Try Again</button>
+      </div>
+
+      <div class="assignments-list" *ngIf="!assignmentsLoading && !assignmentsError && assignments.length > 0">
+        <div class="assignment-card" *ngFor="let assignment of assignments; trackBy: trackByAssignmentId">
+          <div class="assignment-main" (click)="viewJob(assignment.job_id)">
+            <h3 class="job-title">{{ assignment.job_title || ('Job #' + assignment.job_id) }}</h3>
+            <p class="job-desc">{{ getFreelancerName(assignment) }}</p>
+            <div class="job-meta">
+              <span class="meta-item">{{ assignment.status }}</span>
+              <span class="meta-item" *ngIf="assignment.job_budget">${{ assignment.job_budget }}</span>
+            </div>
+          </div>
+          <div class="assignment-side">
+            <button class="btn-dark-secondary" (click)="toggleDeliverables(assignment.assignment_id); $event.stopPropagation()">
+              {{ deliverablesOpen[assignment.assignment_id] ? 'Hide' : 'Submissions' }}
+            </button>
+          </div>
+
+          <div class="deliverables" *ngIf="deliverablesOpen[assignment.assignment_id]">
+            <div class="deliverables-list" *ngIf="(deliverables[assignment.assignment_id] || []).length > 0">
+              <div class="deliverable-item" *ngFor="let item of deliverables[assignment.assignment_id]; trackBy: trackByDeliverableId">
+                <span class="deliverable-status" [class]="item.status || 'submitted'">{{ item.status || 'submitted' }}</span>
+                <span class="deliverable-name" *ngIf="item.file_path">
+                  <mat-icon>attach_file</mat-icon>
+                  <a [href]="item.file_path" target="_blank" rel="noopener">{{ item.file_name || 'Download file' }}</a>
+                </span>
+                <span class="deliverable-link" *ngIf="item.link_url">
+                  <mat-icon>link</mat-icon>
+                  <a [href]="item.link_url" target="_blank" rel="noopener">{{ item.link_url }}</a>
+                </span>
+                <div class="deliverable-feedback" *ngIf="item.reviewer_message">
+                  <mat-icon>chat</mat-icon>
+                  {{ item.reviewer_message }}
+                </div>
+
+                <div class="review-actions">
+                  <input type="text" placeholder="Optional message" [(ngModel)]="reviewMessage[item.deliverable_id]" />
+                  <button class="btn-dark-secondary" [disabled]="reviewing[item.deliverable_id]" (click)="reviewDeliverable(item.deliverable_id, 'changes_requested')">
+                    Request Update
+                  </button>
+                  <button class="btn-gradient" [disabled]="reviewing[item.deliverable_id]" (click)="reviewDeliverable(item.deliverable_id, 'accepted')">
+                    Accept
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="empty-state" *ngIf="(deliverables[assignment.assignment_id] || []).length === 0">
+              <div class="empty-icon">
+                <mat-icon>upload</mat-icon>
+              </div>
+              <h3 class="empty-title">No submissions yet</h3>
+              <p class="empty-desc">This freelancer has not submitted any files or links yet.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="!assignmentsLoading && !assignmentsError && assignments.length === 0">
+        <div class="empty-icon">
+          <mat-icon>work_outline</mat-icon>
+        </div>
+        <h3 class="empty-title">No submissions yet</h3>
+        <p class="empty-desc">Once freelancers submit their work, it will appear here.</p>
+      </div>
+    </section>
+
     <!-- Filters -->
     <section class="filters-section">
       <div class="filter-tabs">

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
-import { Job } from '../../core/models';
+import { Assignment, AssignmentDeliverable, Job } from '../../core/models';
 
 @Component({
   selector: 'app-my-jobs',
@@ -15,6 +15,14 @@ export class MyJobsComponent implements OnInit {
   loading = true;
   errorMessage = '';
   statusFilter: string = 'all';
+
+  assignments: Assignment[] = [];
+  assignmentsLoading = true;
+  assignmentsError = '';
+  deliverables: Record<number, AssignmentDeliverable[]> = {};
+  deliverablesOpen: Record<number, boolean> = {};
+  reviewMessage: Record<number, string> = {};
+  reviewing: Record<number, boolean> = {};
 
   stats = {
     total: 0,
@@ -31,9 +39,10 @@ export class MyJobsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadJobs();
+    this.loadAssignments();
   }
 
-  private loadJobs(): void {
+  loadJobs(): void {
     const user = this.auth.getUser();
     if (!user) {
       this.loading = false;
@@ -57,10 +66,35 @@ export class MyJobsComponent implements OnInit {
     });
   }
 
+  loadAssignments(): void {
+    const user = this.auth.getUser();
+    if (!user) {
+      this.assignmentsLoading = false;
+      return;
+    }
+
+    this.assignmentsError = '';
+    this.assignmentsLoading = true;
+    this.api.getAssignmentsByEmployerId(user.user_id).subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.assignments = res.data.filter(a => a.status === 'Active');
+        } else {
+          this.assignments = [];
+        }
+        this.assignmentsLoading = false;
+      },
+      error: () => {
+        this.assignmentsLoading = false;
+        this.assignmentsError = 'Failed to load submissions.';
+      }
+    });
+  }
+
   private calculateStats(): void {
     this.stats.total = this.jobs.length;
     this.stats.open = this.jobs.filter(j => j.status === 'Open').length;
-    this.stats.inProgress = this.jobs.filter(j => j.status === 'In Progress' || j.status === 'Assigned').length;
+    this.stats.inProgress = this.jobs.filter(j => j.status === 'In Progress').length;
     this.stats.completed = this.jobs.filter(j => j.status === 'Completed').length;
   }
 
@@ -69,7 +103,7 @@ export class MyJobsComponent implements OnInit {
     if (status === 'all') {
       this.filteredJobs = this.jobs;
     } else if (status === 'active') {
-      this.filteredJobs = this.jobs.filter(j => j.status === 'Open' || j.status === 'In Progress' || j.status === 'Assigned');
+      this.filteredJobs = this.jobs.filter(j => j.status === 'Open' || j.status === 'In Progress');
     } else {
       this.filteredJobs = this.jobs.filter(j => j.status === status);
     }
@@ -77,6 +111,56 @@ export class MyJobsComponent implements OnInit {
 
   viewJob(jobId: number): void {
     this.router.navigate(['/jobs', jobId]);
+  }
+
+  toggleDeliverables(assignmentId: number): void {
+    this.deliverablesOpen[assignmentId] = !this.deliverablesOpen[assignmentId];
+    if (this.deliverablesOpen[assignmentId] && !this.deliverables[assignmentId]) {
+      this.api.getAssignmentDeliverables(assignmentId).subscribe({
+        next: (res) => {
+          this.deliverables[assignmentId] = res.success && res.data ? res.data : [];
+        },
+        error: () => {
+          this.deliverables[assignmentId] = [];
+        }
+      });
+    }
+  }
+
+  reviewDeliverable(deliverableId: number, status: 'accepted' | 'changes_requested'): void {
+    const message = this.reviewMessage[deliverableId]?.trim() || null;
+    this.reviewing[deliverableId] = true;
+    this.api.reviewAssignmentDeliverable(deliverableId, status, message).subscribe({
+      next: (res) => {
+        this.reviewing[deliverableId] = false;
+        const updatedStatus = res.data?.status || status;
+        for (const assignmentId of Object.keys(this.deliverables)) {
+          const list = this.deliverables[Number(assignmentId)];
+          const item = list?.find(d => d.deliverable_id === deliverableId);
+          if (item) {
+            item.status = updatedStatus as 'accepted' | 'changes_requested';
+            item.reviewer_message = res.data?.reviewer_message ?? message;
+          }
+        }
+      },
+      error: () => {
+        this.reviewing[deliverableId] = false;
+      }
+    });
+  }
+
+  getFreelancerName(assignment: Assignment): string {
+    const first = assignment.freelancer_first_name || '';
+    const last = assignment.freelancer_last_name || '';
+    return `${first} ${last}`.trim() || `Freelancer #${assignment.freelancer_id}`;
+  }
+
+  trackByAssignmentId(_index: number, assignment: Assignment): number {
+    return assignment.assignment_id;
+  }
+
+  trackByDeliverableId(_index: number, deliverable: AssignmentDeliverable): number {
+    return deliverable.deliverable_id;
   }
 
   getStatusClass(status: string): string {

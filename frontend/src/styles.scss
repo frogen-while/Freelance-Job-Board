@@ -916,7 +916,7 @@ a {
   color: #4ade80;
 }
 
-.status-assigned, .status-in-progress {
+.status-in-progress {
   @extend .status-badge;
   background: rgba(251, 191, 36, 0.15);
   color: #fbbf24;

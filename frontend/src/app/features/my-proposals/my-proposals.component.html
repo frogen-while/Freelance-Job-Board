@@ -13,92 +13,204 @@
       </a>
     </header>
 
-    <!-- Stats -->
-    <section class="stats-section">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <span class="stat-value">{{ stats.total }}</span>
-          <span class="stat-label">Total Proposals</span>
-        </div>
-        <div class="stat-card pending">
-          <span class="stat-value">{{ stats.pending }}</span>
-          <span class="stat-label">Pending</span>
-        </div>
-        <div class="stat-card accepted">
-          <span class="stat-value">{{ stats.accepted }}</span>
-          <span class="stat-label">Accepted</span>
-        </div>
-        <div class="stat-card rejected">
-          <span class="stat-value">{{ stats.rejected }}</span>
-          <span class="stat-label">Rejected</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Filters -->
-    <section class="filters-section">
+    <section class="view-tabs">
       <div class="filter-tabs">
-        <button class="filter-tab" 
-                [class.active]="statusFilter === 'all'" 
-                (click)="filterByStatus('all')">All</button>
-        <button class="filter-tab" 
-                [class.active]="statusFilter === 'Pending'" 
-                (click)="filterByStatus('Pending')">Pending</button>
-        <button class="filter-tab" 
-                [class.active]="statusFilter === 'Accepted'" 
-                (click)="filterByStatus('Accepted')">Accepted</button>
-        <button class="filter-tab" 
-                [class.active]="statusFilter === 'Rejected'" 
-                (click)="filterByStatus('Rejected')">Rejected</button>
+        <button class="filter-tab"
+                [class.active]="activeTab === 'proposals'"
+                (click)="switchTab('proposals')">Proposals</button>
+        <button class="filter-tab"
+                [class.active]="activeTab === 'current'"
+                (click)="switchTab('current')">Current Work</button>
       </div>
     </section>
 
-    <!-- Loading State -->
-    <div class="loading-state-dark" *ngIf="loading">
-      <div class="spinner"></div>
-      <span>Loading your proposals...</span>
-    </div>
+    <section *ngIf="activeTab === 'proposals'">
+      <!-- Stats -->
+      <section class="stats-section">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value">{{ stats.total }}</span>
+            <span class="stat-label">Total Proposals</span>
+          </div>
+          <div class="stat-card pending">
+            <span class="stat-value">{{ stats.pending }}</span>
+            <span class="stat-label">Pending</span>
+          </div>
+          <div class="stat-card accepted">
+            <span class="stat-value">{{ stats.accepted }}</span>
+            <span class="stat-label">Accepted</span>
+          </div>
+          <div class="stat-card rejected">
+            <span class="stat-value">{{ stats.rejected }}</span>
+            <span class="stat-label">Rejected</span>
+          </div>
+        </div>
+      </section>
 
-    <!-- Error State -->
-    <div class="error-state-dark" *ngIf="errorMessage && !loading">
-      <div class="error-icon">⚠️</div>
-      <p>{{ errorMessage }}</p>
-      <button class="btn-dark-secondary" (click)="loadProposals()">Try Again</button>
-    </div>
+      <!-- Filters -->
+      <section class="filters-section">
+        <div class="filter-tabs">
+          <button class="filter-tab" 
+                  [class.active]="statusFilter === 'all'" 
+                  (click)="filterByStatus('all')">All</button>
+          <button class="filter-tab" 
+                  [class.active]="statusFilter === 'Pending'" 
+                  (click)="filterByStatus('Pending')">Pending</button>
+          <button class="filter-tab" 
+                  [class.active]="statusFilter === 'Accepted'" 
+                  (click)="filterByStatus('Accepted')">Accepted</button>
+          <button class="filter-tab" 
+                  [class.active]="statusFilter === 'Rejected'" 
+                  (click)="filterByStatus('Rejected')">Rejected</button>
+        </div>
+      </section>
 
-    <!-- Proposals List -->
-    <section class="proposals-section" *ngIf="!loading && !errorMessage">
-      <div class="proposals-list" *ngIf="filteredProposals.length > 0">
-        <div class="proposal-card" *ngFor="let proposal of filteredProposals" (click)="viewJob(proposal.job_id)">
-          <div class="proposal-main">
-            <h3 class="proposal-title">{{ proposal.job_title }}</h3>
-            <p class="proposal-desc">{{ proposal.proposal_text | slice:0:120 }}...</p>
+      <!-- Loading State -->
+      <div class="loading-state-dark" *ngIf="loading">
+        <div class="spinner"></div>
+        <span>Loading your proposals...</span>
+      </div>
+
+      <!-- Error State -->
+      <div class="error-state-dark" *ngIf="errorMessage && !loading">
+        <div class="error-icon">⚠️</div>
+        <p>{{ errorMessage }}</p>
+        <button class="btn-dark-secondary" (click)="loadProposals()">Try Again</button>
+      </div>
+
+      <!-- Proposals List -->
+      <section class="proposals-section" *ngIf="!loading && !errorMessage">
+        <div class="proposals-list" *ngIf="filteredProposals.length > 0">
+          <div class="proposal-card" *ngFor="let proposal of filteredProposals" (click)="viewJob(proposal.job_id)">
+            <div class="proposal-main">
+              <h3 class="proposal-title">{{ proposal.job_title }}</h3>
+              <p class="proposal-desc">{{ proposal.proposal_text | slice:0:120 }}...</p>
+              <div class="proposal-meta">
+                <span class="meta-item">
+                  <mat-icon>attach_money</mat-icon>
+                  {{ fmt.formatBudget(proposal.job_budget) }}
+                </span>
+                <span class="meta-item">
+                  <mat-icon>event</mat-icon>
+                  {{ date.relative(proposal.created_at) }}
+                </span>
+              </div>
+            </div>
+            <div class="proposal-side">
+              <span class="bid-amount">{{ fmt.formatBudget(proposal.bid_amount) }}</span>
+              <span class="proposal-status" [class]="getStatusClass(proposal.status)">{{ proposal.status }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="filteredProposals.length === 0">
+          <div class="empty-icon">
+            <mat-icon>description</mat-icon>
+          </div>
+          <h3 class="empty-title">No proposals yet</h3>
+          <p class="empty-desc">Start applying to jobs to see your proposals here</p>
+          <a class="btn-gradient" routerLink="/find-work/browse">Browse Jobs</a>
+        </div>
+      </section>
+    </section>
+
+    <section class="current-work-window" *ngIf="activeTab === 'current'">
+      <div class="window-header">
+        <div>
+          <h2 class="section-title">Current Work</h2>
+          <p class="section-subtitle">Assignments you are working on right now</p>
+        </div>
+      </div>
+
+      <div class="loading-state-dark" *ngIf="assignmentsLoading">
+        <div class="spinner"></div>
+        <span>Loading your current work...</span>
+      </div>
+
+      <div class="error-state-dark" *ngIf="assignmentsError && !assignmentsLoading">
+        <div class="error-icon">⚠️</div>
+        <p>{{ assignmentsError }}</p>
+        <button class="btn-dark-secondary" (click)="loadAssignments()">Try Again</button>
+      </div>
+
+      <div class="assignments-list" *ngIf="!assignmentsLoading && !assignmentsError && activeAssignments.length > 0">
+        <div class="assignment-card" *ngFor="let assignment of activeAssignments; trackBy: trackByAssignmentId">
+          <div class="assignment-main" (click)="viewJob(assignment.job_id)">
+            <h3 class="proposal-title">{{ assignment.job_title || ('Job #' + assignment.job_id) }}</h3>
             <div class="proposal-meta">
               <span class="meta-item">
                 <mat-icon>attach_money</mat-icon>
-                {{ fmt.formatBudget(proposal.job_budget) }}
+                {{ fmt.formatBudget(assignment.job_budget || 0) }}
               </span>
               <span class="meta-item">
-                <mat-icon>event</mat-icon>
-                {{ date.relative(proposal.created_at) }}
+                <mat-icon>work</mat-icon>
+                {{ assignment.status }}
               </span>
             </div>
           </div>
-          <div class="proposal-side">
-            <span class="bid-amount">{{ fmt.formatBudget(proposal.bid_amount) }}</span>
-            <span class="proposal-status" [class]="getStatusClass(proposal.status)">{{ proposal.status }}</span>
+          <div class="assignment-side">
+            <button class="btn-dark-secondary" (click)="toggleDeliverables(assignment.assignment_id); $event.stopPropagation()">
+              {{ deliverablesOpen[assignment.assignment_id] ? 'Hide' : 'Uploads' }}
+            </button>
+          </div>
+
+          <div class="deliverables" *ngIf="deliverablesOpen[assignment.assignment_id]">
+            <div class="deliverables-form">
+              <div class="upload-field">
+                <label class="upload-label">File (up to 50MB)</label>
+                <input type="file" (change)="onFileSelected(assignment.assignment_id, $event)" />
+                <span class="upload-hint" *ngIf="uploadFiles[assignment.assignment_id]">
+                  {{ uploadFiles[assignment.assignment_id]?.name }}
+                </span>
+                <span class="upload-error" *ngIf="uploadErrors[assignment.assignment_id]">
+                  {{ uploadErrors[assignment.assignment_id] }}
+                </span>
+              </div>
+              <div class="upload-field">
+                <label class="upload-label">Link (optional)</label>
+                <input type="url" placeholder="https://..." [(ngModel)]="uploadLinks[assignment.assignment_id]" />
+              </div>
+              <button class="btn-gradient" [disabled]="uploading[assignment.assignment_id]" (click)="submitDeliverable(assignment.assignment_id)">
+                {{ uploading[assignment.assignment_id] ? 'Uploading...' : 'Submit Work' }}
+              </button>
+            </div>
+
+            <div class="deliverables-list" *ngIf="(deliverables[assignment.assignment_id] || []).length > 0">
+              <div class="deliverable-item" *ngFor="let item of deliverables[assignment.assignment_id]; trackBy: trackByDeliverableId">
+                <span class="deliverable-status" [class]="item.status || 'submitted'">{{ item.status || 'submitted' }}</span>
+                <span class="deliverable-name" *ngIf="item.file_path">
+                  <mat-icon>attach_file</mat-icon>
+                  <a [href]="item.file_path" target="_blank" rel="noopener">{{ item.file_name || 'Download file' }}</a>
+                </span>
+                <span class="deliverable-link" *ngIf="item.link_url">
+                  <mat-icon>link</mat-icon>
+                  <a [href]="item.link_url" target="_blank" rel="noopener">{{ item.link_url }}</a>
+                </span>
+                <div class="deliverable-feedback" *ngIf="item.reviewer_message">
+                  <mat-icon>chat</mat-icon>
+                  {{ item.reviewer_message }}
+                </div>
+              </div>
+            </div>
+
+            <div class="empty-state" *ngIf="(deliverables[assignment.assignment_id] || []).length === 0">
+              <div class="empty-icon">
+                <mat-icon>upload</mat-icon>
+              </div>
+              <h3 class="empty-title">No uploads yet</h3>
+              <p class="empty-desc">Upload a file or add a link to submit your work.</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Empty State -->
-      <div class="empty-state" *ngIf="filteredProposals.length === 0">
+      <div class="empty-state" *ngIf="!assignmentsLoading && !assignmentsError && activeAssignments.length === 0">
         <div class="empty-icon">
-          <mat-icon>description</mat-icon>
+          <mat-icon>work_outline</mat-icon>
         </div>
-        <h3 class="empty-title">No proposals yet</h3>
-        <p class="empty-desc">Start applying to jobs to see your proposals here</p>
-        <a class="btn-gradient" routerLink="/find-work/browse">Browse Jobs</a>
+        <h3 class="empty-title">No active assignments</h3>
+        <p class="empty-desc">Once a proposal is accepted, your current work will appear here.</p>
       </div>
     </section>
   </div>

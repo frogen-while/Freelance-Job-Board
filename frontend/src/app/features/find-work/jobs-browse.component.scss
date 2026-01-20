@@ -328,7 +328,7 @@
     color: #16a34a;
   }
 
-  &.assigned, &.in-progress {
+  &.in-progress {
     background: rgba(99, 102, 241, 0.1);
     color: $accent;
   }
