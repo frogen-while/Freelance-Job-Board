@@ -1,4 +1,4 @@
-# Freelance Job Board Project Architecture
+# SkillConnect Project Architecture
 
 A detailed guide to the project structure and technologies for beginner developers.
 
@@ -21,7 +21,7 @@ A detailed guide to the project structure and technologies for beginner develope
 
 ## 1. Project Overview
 
-**Freelance Job Board** is a web platform for job search and freelancer hiring.
+**SkillConnect** is a web platform for job search and freelancer hiring.
 
 ### What the application does:
 
@@ -587,7 +587,6 @@ SQLite is an embedded database. The entire database is a single file `freelance.
 | Table | Purpose | Key Fields |
 |-------|---------|------------|
 | **users** | Users | user_id, email, password_hash, main_role |
-| **usertypes** | User types | type_id, type_name (Employer/Freelancer) |
 | **profiles** | Freelancer profiles | profile_id, user_id, headline, hourly_rate |
 | **skills** | Skills | skill_id, name |
 | **profile_skills** | Profile-skills relationship | user_id, skill_id |

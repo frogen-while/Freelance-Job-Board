@@ -1,4 +1,4 @@
-# Freelance Job Board
+# SkillConnect
 
 A web application for posting projects and hiring freelancers. Companies can post job listings, and freelancers can apply and complete work. Includes payment tracking, reviews, and messaging system.
 

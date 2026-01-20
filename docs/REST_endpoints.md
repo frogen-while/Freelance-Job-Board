@@ -1,4 +1,4 @@
-# REST API Endpoints - Freelance Job Board
+# REST API Endpoints - SkillConnect
 
 ## Base URL
 ```
@@ -19,7 +19,7 @@ Register a new user.
   "last_name": "string",
   "email": "string",
   "password": "string",
-  "type_name": "Employer | Freelancer"
+  "main_role": "Employer | Freelancer"
 }
 ```
 
@@ -885,11 +885,9 @@ All endpoints return errors in this format:
 
 | Table | Description |
 |-------|-------------|
-| usertypes | User types (Employer, Freelancer, Reviewer, Support) |
-| users | User accounts |
-| user_usertypes | Many-to-many user-type relations |
+| users | User accounts with main_role (Admin, Manager, Support, Employer, Freelancer) |
 | skills | Available skills |
-| profiles | Freelancer profiles |
+| profiles | User profiles |
 | profile_skills | Profile skills (many-to-many) |
 | categories | Job categories |
 | jobs | Job listings |

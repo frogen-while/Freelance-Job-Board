@@ -4,7 +4,7 @@
 
 ### 1. Authentication Section Updated
 - **Register endpoint**: Updated to reflect actual implementation
-  - Changed `main_role` to `type_name` (Employer | Freelancer only)
+  - Uses `main_role` (Employer | Freelancer only)
   - Added detailed response with full user object
   - Added error responses (400, 409)
   
@@ -151,7 +151,7 @@ POST /api/auth/register
   "last_name": "Doe",
   "email": "john@example.com",
   "password": "SecurePass123!",
-  "type_name": "Freelancer"
+  "main_role": "Freelancer"
 }
 ```
 
