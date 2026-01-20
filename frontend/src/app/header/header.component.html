@@ -1,6 +1,6 @@
 <header class="header">
   <div class="header-inner">
-    <a class="brand" routerLink="/">FJB</a>
+    <a class="brand" routerLink="/">SkillConnect</a>
 
     <nav class="main-nav">
       <ng-container *ngIf="auth.isLoggedIn(); else guestNav">
@@ -42,7 +42,7 @@
             </span>
           </a>
         <button class="nav-link profile-logout" (click)="logout()">
-          <img src="/pictures/logout_icon.png" alt="Logout" width="25" height="25"/>
+          <img src="/assets/img/logout_icon.png" alt="Logout" width="25" height="25"/>
         </button>
       </ng-template>
     </nav>

@@ -4,7 +4,7 @@
 
 .page-header { margin-bottom: t.$space-6; }
 .page-title { color: #fff; }
-.page-subtitle { color: rgba(255,255,255,0.7); }
+.page-subtitle { color: t.$white-70; }
 
 // Overview stats grid
 .overview-section { margin-bottom: t.$space-6; }
@@ -20,7 +20,7 @@
 .stat-card-dark--horizontal {
   .stat-value { font-size: t.$font-size-xl; line-height: 1.2; }
   .stat-label { font-size: t.$font-size-sm; }
-  .stat-change { font-size: t.$font-size-xs; color: rgba(255,255,255,0.5); margin-top: t.$space-1; }
+  .stat-change { font-size: t.$font-size-xs; color: t.$white-50; margin-top: t.$space-1; }
 }
 
 // Charts section
@@ -30,8 +30,8 @@
 }
 
 .chart-card {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: t.$white-5;
+  border: 1px solid t.$white-10;
   border-radius: t.$radius-lg;
   padding: t.$space-5;
   &.wide { grid-column: 1 / -1; }
@@ -46,12 +46,12 @@
   gap: t.$space-8;
   margin-top: t.$space-4;
   padding-top: t.$space-4;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid t.$white-10;
 }
 
 .chart-stat { text-align: center; }
 .stat-num { font-size: t.$font-size-xl; font-weight: 700; color: #fff; display: block; }
-.stat-text { font-size: t.$font-size-xs; color: rgba(255,255,255,0.6); }
+.stat-text { font-size: t.$font-size-xs; color: t.$white-60; }
 
 .revenue-section { margin-bottom: t.$space-6; }
 
@@ -80,14 +80,14 @@
   align-items: center;
   gap: t.$space-3;
   padding: t.$space-3 0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid t.$white-5;
   &:last-child { border-bottom: none; }
 }
 
 .list-content { flex: 1; min-width: 0; }
 .list-title { color: #fff; font-size: t.$font-size-sm; }
-.list-subtitle { color: rgba(255,255,255,0.5); font-size: t.$font-size-xs; }
-.date-text { color: rgba(255,255,255,0.4); font-size: t.$font-size-xs; }
+.list-subtitle { color: t.$white-50; font-size: t.$font-size-xs; }
+.date-text { color: t.$white-40; font-size: t.$font-size-xs; }
 
 .role-badge {
   display: inline-block;

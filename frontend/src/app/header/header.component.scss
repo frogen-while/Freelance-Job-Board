@@ -14,7 +14,6 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(217, 119, 6, 0.1);
-  transition: all $transition-normal;
 }
 
 .header-inner {
@@ -37,12 +36,9 @@
   color: $text-primary;
   text-decoration: none;
   letter-spacing: $letter-spacing-tight;
-  transition: opacity $transition-fast;
   flex-shrink: 0;
 
-  &:hover {
-    opacity: 0.7;
-  }
+  &:hover { opacity: 0.8; }
 }
 
 .main-nav {
@@ -75,14 +71,11 @@
   color: $text-primary;
   text-decoration: none;
   cursor: pointer;
-  transition: all $transition-fast;
   padding: $space-xs $space-md;
   border-radius: $radius-md;
   position: relative;
 
-  &:hover {
-    opacity: 0.7;
-  }
+  &:hover { opacity: 0.7; }
 
   &.active {
     background: rgba($accent, 0.15);
@@ -104,11 +97,6 @@
     background: rgba(139, 92, 246, 0.15);
     color: #a78bfa;
     border: 1px solid rgba(139, 92, 246, 0.3);
-    
-    &:hover {
-      background: rgba(139, 92, 246, 0.25);
-      opacity: 1;
-    }
 
     &.active {
       background: rgba(139, 92, 246, 0.3);
@@ -151,7 +139,6 @@
   text-decoration: none;
   padding: $space-xs;
   border-radius: 50%;
-  transition: all $transition-fast;
 
   &.active {
     background: rgba($accent, 0.15);
@@ -183,12 +170,8 @@
   background: $primary;
   border-radius: $radius-full;
   text-decoration: none;
-  transition: all $transition-fast;
 
-  &:hover {
-    background: $primary-dark;
-    transform: translateY(-1px);
-  }
+  &:hover { background: $primary-dark; }
 
   &.active {
     background: $accent;

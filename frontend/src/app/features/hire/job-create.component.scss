@@ -1,9 +1,8 @@
 @use 'app/shared' as *;
 
 :host {
+  @include bg-dark-page;
   display: block;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
 
 .job-create-page {
@@ -30,14 +29,12 @@
 
 .page-subtitle {
   font-size: $font-size-lg;
-  color: rgba(255, 255, 255, 0.6);
+  color: $white-60;
 }
 
 // Progress Steps
 .progress-steps {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   margin-bottom: $space-2xl;
 }
 
@@ -48,22 +45,20 @@
   gap: $space-sm;
 
   .step-number {
+    @include flex-center;
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: $white-10;
+    border: 2px solid $white-20;
     font-weight: $font-weight-bold;
-    color: rgba(255, 255, 255, 0.5);
-    transition: all 0.3s ease;
+    color: $white-50;
+    transition: all $transition-slow;
   }
 
   .step-label {
     font-size: $font-size-sm;
-    color: rgba(255, 255, 255, 0.5);
+    color: $white-50;
   }
 
   &.active {
@@ -88,7 +83,7 @@
 .step-line {
   width: 60px;
   height: 2px;
-  background: rgba(255, 255, 255, 0.2);
+  background: $white-20;
   margin: 0 $space-sm;
   margin-bottom: 20px;
 
@@ -125,12 +120,7 @@
 }
 
 .form-step {
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  // No animation - instant display
 }
 
 .step-title {
@@ -163,7 +153,7 @@
     width: 100%;
     padding: 12px 14px;
     border: 2px solid #e2e8f0;
-    border-radius: 10px;
+    border-radius: $radius-10;
     font-size: 1rem;
     font-family: inherit;
     background: #f8fafc;
@@ -197,12 +187,12 @@
 
     &::-webkit-scrollbar-track {
       background: #f1f5f9;
-      border-radius: 10px;
+      border-radius: $radius-10;
     }
 
     &::-webkit-scrollbar-thumb {
       background: #cbd5e1;
-      border-radius: 10px;
+      border-radius: $radius-10;
 
       &:hover {
         background: #94a3b8;

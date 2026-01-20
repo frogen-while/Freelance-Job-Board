@@ -1,3 +1,5 @@
+@use 'app/shared' as *;
+
 .support-page {
   min-height: 100vh;
   background-color: #f5f7fa;
@@ -30,14 +32,14 @@
   margin-bottom: 40px;
 
   h1 {
-    font-size: 36px;
+    font-size: $font-size-4xl;
     color: #333;
     margin: 0 0 10px 0;
     font-weight: 700;
   }
 
   p {
-    font-size: 18px;
+    font-size: $font-size-xl;
     color: #666;
     margin: 0;
   }
@@ -46,20 +48,20 @@
 // Common section card styling
 .section-card {
   background: white;
-  border-radius: 12px;
+  border-radius: $radius-lg;
   padding: 30px;
   margin-bottom: 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
   h2 {
-    font-size: 24px;
+    font-size: $font-size-24;
     color: #333;
     margin: 0 0 20px 0;
     font-weight: 600;
   }
 
   h3 {
-    font-size: 18px;
+    font-size: $font-size-xl;
     color: #333;
     margin: 0;
     font-weight: 600;
@@ -79,7 +81,7 @@
     flex-direction: column;
 
     label {
-      font-size: 15px;
+      font-size: $font-size-md;
       font-weight: 600;
       color: #333;
       margin-bottom: 8px;
@@ -89,9 +91,9 @@
     textarea {
       padding: 12px 15px;
       border: 1px solid #ddd;
-      border-radius: 8px;
+      border-radius: $radius-md;
       font-family: inherit;
-      font-size: 15px;
+      font-size: $font-size-md;
       color: #333;
       transition: all 0.3s;
 
@@ -123,8 +125,8 @@
     color: white;
     border: none;
     padding: 14px 28px;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: $radius-md;
+    font-size: $font-size-lg;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
@@ -151,30 +153,19 @@
     padding: 12px 16px;
     background-color: #4caf50;
     color: white;
-    border-radius: 8px;
+    border-radius: $radius-md;
     text-align: center;
-    font-size: 15px;
-    animation: slideIn 0.3s ease;
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+    font-size: $font-size-md;
+    box-shadow: 0 0 12px rgba(76, 175, 80, 0.3);
   }
 
   .warning-message {
     padding: 12px 16px;
     background-color: #ff9800;
     color: white;
-    border-radius: 8px;
+    border-radius: $radius-md;
     text-align: center;
-    font-size: 15px;
+    font-size: $font-size-md;
   }
 }
 
@@ -184,14 +175,14 @@
     text-align: center;
     color: #999;
     padding: 30px;
-    font-size: 16px;
+    font-size: $font-size-lg;
   }
 
   .no-tickets {
     text-align: center;
     color: #999;
     padding: 30px;
-    font-size: 16px;
+    font-size: $font-size-lg;
   }
 
   .tickets-list {
@@ -201,7 +192,7 @@
 
     .ticket-item {
       border: 1px solid #e0e0e0;
-      border-radius: 8px;
+      border-radius: $radius-md;
       padding: 20px;
       background-color: #fafafa;
       transition: all 0.3s;
@@ -227,7 +218,7 @@
           padding: 6px 14px;
           border-radius: 20px;
           color: white;
-          font-size: 13px;
+          font-size: $font-size-sm;
           font-weight: 600;
           white-space: nowrap;
         }
@@ -236,14 +227,14 @@
       .ticket-message {
         margin: 10px 0;
         color: #666;
-        font-size: 15px;
+        font-size: $font-size-md;
         line-height: 1.6;
       }
 
       .ticket-footer {
         display: flex;
         justify-content: space-between;
-        font-size: 13px;
+        font-size: $font-size-sm;
         color: #999;
         margin-top: 12px;
         padding-top: 12px;
@@ -269,12 +260,12 @@
         color: #333;
         display: block;
         margin-bottom: 8px;
-        font-size: 16px;
+        font-size: $font-size-lg;
       }
 
       p {
         margin: 8px 0 0 0;
-        font-size: 15px;
+        font-size: $font-size-md;
         color: #666;
       }
     }
@@ -299,11 +290,11 @@
 
   .page-header {
     h1 {
-      font-size: 28px;
+      font-size: $font-size-3xl;
     }
 
     p {
-      font-size: 16px;
+      font-size: $font-size-lg;
     }
   }
 
@@ -311,7 +302,7 @@
     padding: 20px;
 
     h2 {
-      font-size: 20px;
+      font-size: $font-size-20;
     }
   }
 

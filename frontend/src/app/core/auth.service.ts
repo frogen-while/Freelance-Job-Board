@@ -12,15 +12,14 @@ type ApiEnvelope<T> = {
   error: { message: string; code?: string; details?: unknown };
 };
 
-export type UserType = 'Employer' | 'Freelancer';
+export type MainRole = 'Admin' | 'Manager' | 'Support' | 'Employer' | 'Freelancer';
 
 export type PublicUser = {
   user_id: number;
   first_name: string;
   last_name: string;
   email: string;
-  main_role: string;
-  user_types?: UserType[];
+  main_role: MainRole;
   onboarding_completed?: boolean;
 };
 
@@ -86,12 +85,12 @@ export class AuthService {
 
   isFreelancer(): boolean {
     const user = this.getUser();
-    return user?.user_types?.includes('Freelancer') ?? false;
+    return user?.main_role === 'Freelancer';
   }
 
   isEmployer(): boolean {
     const user = this.getUser();
-    return user?.user_types?.includes('Employer') ?? false;
+    return user?.main_role === 'Employer';
   }
 
   needsOnboarding(): boolean {
@@ -120,13 +119,11 @@ export class AuthService {
     return ['Admin', 'Manager', 'Support'].includes(user?.main_role || '');
   }
 
-  // Staff-only: Admin/Manager/Support role WITHOUT Employer/Freelancer user types
+  // Staff-only: Admin/Manager/Support roles
   isStaffOnly(): boolean {
     const user = this.getUser();
     if (!user) return false;
-    const isStaff = ['Admin', 'Manager', 'Support'].includes(user.main_role || '');
-    const hasUserType = (user.user_types?.length || 0) > 0;
-    return isStaff && !hasUserType;
+    return ['Admin', 'Manager', 'Support'].includes(user.main_role);
   }
 
   isAdmin$(): Observable<boolean> {
@@ -160,7 +157,7 @@ export class AuthService {
     last_name: string;
     email: string;
     password: string;
-    type_name?: 'Employer' | 'Freelancer';
+    main_role: 'Employer' | 'Freelancer';
   }): Observable<ApiEnvelope<AuthResponse>> {
     return this.http
       .post<ApiEnvelope<AuthResponse>>(`${this.base}/auth/register`, payload)

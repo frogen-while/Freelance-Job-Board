@@ -13,35 +13,15 @@
 
 .sidebar-header {
   padding: $space-lg;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
+  background: $primary-dark;
   display: flex;
   align-items: center;
   gap: $space-md;
 }
 
 .avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  overflow: hidden;
-  flex-shrink: 0;
-  background: $gradient-accent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .initials {
-    font-size: $font-size-lg;
-    font-weight: $font-weight-bold;
-    color: white;
-  }
+  @include avatar-md;
+  border: 2px solid $white-20;
 }
 
 .user-info {
@@ -61,7 +41,7 @@
 
 .headline {
   font-size: $font-size-sm;
-  color: rgba(255, 255, 255, 0.6);
+  color: $white-60;
   margin: $space-xs 0 0;
   white-space: nowrap;
   overflow: hidden;
@@ -70,7 +50,7 @@
 
 .sidebar-body {
   padding: $space-lg;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid $white-10;
 }
 
 .availability-badge {
@@ -133,7 +113,7 @@
 
   .stat-label {
     font-size: $font-size-xs;
-    color: rgba(255, 255, 255, 0.5);
+    color: $white-50;
   }
 }
 
@@ -143,7 +123,7 @@
   flex-direction: column;
   margin-bottom: $space-md;
   padding-bottom: $space-md;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid $white-10;
 
   .company-name {
     font-size: $font-size-md;
@@ -153,7 +133,7 @@
 
   .company-industry {
     font-size: $font-size-xs;
-    color: rgba(255, 255, 255, 0.5);
+    color: $white-50;
     margin-top: $space-xs;
   }
 }
@@ -163,13 +143,13 @@
   align-items: center;
   gap: $space-sm;
   font-size: $font-size-sm;
-  color: rgba(255, 255, 255, 0.7);
+  color: $white-70;
   margin-bottom: $space-md;
 
   mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+    font-size: $font-size-lg;
+    width: $space-4;
+    height: $space-4;
     flex-shrink: 0;
     opacity: 0.6;
   }
@@ -179,7 +159,7 @@
   h4 {
     font-size: $font-size-xs;
     font-weight: $font-weight-medium;
-    color: rgba(255, 255, 255, 0.5);
+    color: $white-50;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin: 0 0 $space-sm;
@@ -194,24 +174,22 @@
 
 .sidebar-footer {
   padding: $space-md $space-lg;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid $white-10;
 }
 
 .edit-profile-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   gap: $space-xs;
   padding: $space-sm $space-md;
-  background: rgba(255, 255, 255, 0.1);
+  background: $white-10;
   border-radius: $radius-md;
   font-size: $font-size-sm;
-  color: rgba(255, 255, 255, 0.8);
+  color: $white-80;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all $transition-base;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: $white-15;
     color: white;
   }
 }
@@ -224,27 +202,20 @@
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
+    background: $white-8;
     margin-bottom: $space-md;
-    animation: pulse 1.5s infinite;
   }
 
   .skeleton-line {
     height: 16px;
-    background: rgba(255, 255, 255, 0.1);
+    background: $white-8;
     border-radius: $radius-sm;
     margin-bottom: $space-sm;
-    animation: pulse 1.5s infinite;
 
     &.short {
       width: 60%;
     }
   }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.7; }
 }
 
 // Guest Sidebar Styles
@@ -261,13 +232,11 @@
 }
 
 .guest-icon {
+  @include flex-center;
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+  background: rgba(99, 102, 241, 0.15);
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   
   mat-icon {
     font-size: 32px;
@@ -286,7 +255,7 @@
 
 .guest-text {
   font-size: $font-size-sm;
-  color: rgba(255, 255, 255, 0.6);
+  color: $white-60;
   line-height: 1.5;
   margin: 0;
 }

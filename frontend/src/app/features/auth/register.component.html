@@ -1,7 +1,7 @@
 <div class="auth-page">
   <div class="auth-card">
     <div class="auth-logo">
-      <a routerLink="/">FJB</a>
+      <a routerLink="/">SkillConnect</a>
     </div>
 
     <h1 class="auth-title">Create an account</h1>
@@ -91,12 +91,12 @@
         <div class="type-grid">
           <label
             class="type-option"
-            [class.selected]="type_name === 'Employer'"
+            [class.selected]="main_role === 'Employer'"
           >
             <input
               type="radio"
-              name="type_name"
-              [(ngModel)]="type_name"
+              name="main_role"
+              [(ngModel)]="main_role"
               [value]="'Employer'"
               required
             />
@@ -106,12 +106,12 @@
 
           <label
             class="type-option"
-            [class.selected]="type_name === 'Freelancer'"
+            [class.selected]="main_role === 'Freelancer'"
           >
             <input
               type="radio"
-              name="type_name"
-              [(ngModel)]="type_name"
+              name="main_role"
+              [(ngModel)]="main_role"
               [value]="'Freelancer'"
               required
             />

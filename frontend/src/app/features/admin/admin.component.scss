@@ -1,14 +1,15 @@
+@use 'app/shared' as *;
+
 .admin-layout {
+  @include bg-dark-page;
   display: flex;
-  min-height: 100vh;
   padding-top: 70px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
 
 .sidebar {
   width: 240px;
   background: rgba(15, 23, 42, 0.95);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid $white-10;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -23,7 +24,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid $white-10;
   font-weight: 600;
   color: #fff;
   mat-icon { color: #6366f1; }
@@ -37,11 +38,11 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem 1.25rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: $white-70;
     text-decoration: none;
-    &:hover { background: rgba(99, 102, 241, 0.1); color: #fff; }
+    &:hover { background: rgba($accent, 0.1); color: #fff; }
     &.active {
-      background: rgba(99, 102, 241, 0.2);
+      background: rgba($accent, 0.2);
       color: #fff;
       border-left: 3px solid #6366f1;
     }
@@ -53,9 +54,9 @@
   align-items: center;
   gap: 0.5rem;
   padding: 1rem 1.25rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: $white-50;
   text-decoration: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid $white-10;
   &:hover { color: #fff; }
 }
 

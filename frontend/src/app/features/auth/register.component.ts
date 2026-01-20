@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { validatePassword, type PasswordValidation } from '../../core/password-validator';
 
-type UserType = 'Employer' | 'Freelancer';
+type RegisterRole = 'Employer' | 'Freelancer';
 
 @Component({
   selector: 'app-register',
@@ -15,7 +15,7 @@ export class RegisterComponent {
   last_name = '';
   email = '';
   password = '';
-  type_name: UserType | null = null;
+  main_role: RegisterRole | null = null;
 
   error: string | null = null;
   passwordValidation: PasswordValidation | null = null;
@@ -26,7 +26,7 @@ export class RegisterComponent {
   submit() {
     this.error = null;
 
-    if (!this.type_name) {
+    if (!this.main_role) {
       this.error = 'Please choose an account type.';
       return;
     }
@@ -39,7 +39,7 @@ export class RegisterComponent {
         last_name: this.last_name,
         email: this.email,
         password: this.password,
-        type_name: this.type_name
+        main_role: this.main_role
       })
       .subscribe({
         next: (res) => {

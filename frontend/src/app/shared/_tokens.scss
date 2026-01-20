@@ -1,5 +1,5 @@
 // ============================================
-// DESIGN TOKENS - Freelance Job Board
+// DESIGN TOKENS - SkillConnect
 // ============================================
 
 // --------------------------------------------
@@ -25,9 +25,9 @@ $danger: #f87171;
 $warning: #f59e0b;
 $info: #0ea5e9;
 
-// Gradients (defined after colors they reference)
-$gradient-accent: linear-gradient(135deg, $accent, $accent-light);
-$gradient-success: linear-gradient(135deg, $success, $success-dark);
+// Solid accent colors (no gradients for professional look)
+$gradient-accent: $accent;
+$gradient-success: $success;
 
 // Text colors
 $text-primary: #0f172a;
@@ -44,6 +44,24 @@ $bg-glass-strong: rgba(255, 255, 255, 0.92);
 $bg-card: rgba(255, 255, 255, 0.92);
 $bg-dark: #0f172a;
 $bg-dark-card: #1e293b;
+$bg-dark-subtle: rgba(255, 255, 255, 0.05);
+$bg-dark-hover: rgba(255, 255, 255, 0.03);
+$surface-2: #e2e8f0;
+$surface-3: #f1f5f9;;
+
+// White alpha scale (for dark backgrounds)
+$white-3: rgba(255, 255, 255, 0.03);
+$white-5: rgba(255, 255, 255, 0.05);
+$white-8: rgba(255, 255, 255, 0.08);
+$white-10: rgba(255, 255, 255, 0.1);
+$white-15: rgba(255, 255, 255, 0.15);
+$white-20: rgba(255, 255, 255, 0.2);
+$white-30: rgba(255, 255, 255, 0.3);
+$white-40: rgba(255, 255, 255, 0.4);
+$white-50: rgba(255, 255, 255, 0.5);
+$white-60: rgba(255, 255, 255, 0.6);
+$white-70: rgba(255, 255, 255, 0.7);
+$white-80: rgba(255, 255, 255, 0.8);
 
 // Border colors
 $border-light: rgba(15, 23, 42, 0.08);
@@ -78,6 +96,7 @@ $shadow-card-hover: 0 8px 30px rgba(15, 23, 42, 0.10);
 $radius-xs: 4px;
 $radius-sm: 6px;
 $radius-md: 8px;
+$radius-10: 10px;
 $radius-lg: 12px;
 $radius-xl: 14px;
 $radius-2xl: 18px;
@@ -123,7 +142,9 @@ $font-size-base: 14px; // 0.875rem
 $font-size-md: 15px;   // 0.9375rem
 $font-size-lg: 16px;   // 1rem
 $font-size-xl: 18px;   // 1.125rem
+$font-size-20: 20px;   // 1.25rem
 $font-size-2xl: 22px;  // 1.375rem
+$font-size-24: 24px;   // 1.5rem
 $font-size-3xl: 28px;  // 1.75rem
 $font-size-4xl: 36px;  // 2.25rem
 $font-size-5xl: 48px;  // 3rem

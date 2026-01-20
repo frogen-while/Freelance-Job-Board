@@ -11,7 +11,7 @@
 
 // Header
 .page-header {
-  background: linear-gradient(135deg, #1e293b, #334155);
+  background: $primary;
   padding: 120px $space-xl 60px;
 }
 
@@ -29,7 +29,7 @@
 
 .page-subtitle {
   font-size: $font-size-md;
-  color: rgba(255, 255, 255, 0.6);
+  color: $white-60;
 }
 
 // Page Body
@@ -78,7 +78,7 @@
   display: flex;
   align-items: center;
   gap: $space-md;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: $shadow-sm;
   margin-bottom: $space-2xl;
   flex-wrap: wrap;
 }
@@ -166,17 +166,15 @@
   transition: all $transition-fast;
 
   mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+    font-size: $font-size-lg;
+    width: $space-4;
+    height: $space-4;
   }
 
   .filter-count {
-    min-width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
+    min-width: $space-5;
+    height: $space-5;
     background: $accent;
     color: white;
     border-radius: $radius-full;
@@ -196,7 +194,7 @@
   border-radius: $radius-xl;
   padding: $space-lg;
   margin-bottom: $space-lg;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: $shadow-sm;
 }
 
 .filter-row {
@@ -250,19 +248,17 @@
 }
 
 .empty-icon {
+  @include flex-center;
   width: 80px;
   height: 80px;
   background: #f1f5f9;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   margin-bottom: $space-lg;
 
   mat-icon {
-    font-size: 36px;
-    width: 36px;
-    height: 36px;
+    font-size: $font-size-4xl;
+    width: $font-size-4xl;
+    height: $font-size-4xl;
     color: $text-muted;
   }
 }
@@ -298,18 +294,11 @@
   text-decoration: none;
   display: flex;
   flex-direction: column;
-  transition: all $transition-base;
-  border: 1px solid transparent;
+  border: 1px solid $border-light;
   cursor: pointer;
 
   &:hover {
-    border-color: rgba(99, 102, 241, 0.2);
-    box-shadow: 0 12px 32px rgba(99, 102, 241, 0.1);
-    transform: translateY(-4px);
-
-    .apply-link {
-      color: $accent;
-    }
+    border-color: rgba(99, 102, 241, 0.3);
   }
 }
 
@@ -444,9 +433,9 @@
   color: $text-muted;
 
   mat-icon {
-    font-size: 14px;
-    width: 14px;
-    height: 14px;
+    font-size: $font-size-base;
+    width: $font-size-base;
+    height: $font-size-base;
   }
 
   &.budget {

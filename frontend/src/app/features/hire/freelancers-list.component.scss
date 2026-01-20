@@ -6,12 +6,12 @@
 
 .browse-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #eef2ff 0%, lighten($bg-page, 3%) 45%, $bg-page 100%);
+  background: $bg-page;
   padding-top: 64px;
 }
 
 .page-header {
-  background: linear-gradient(135deg, #1e293b, #0f172a);
+  background: $primary;
   padding: $space-3xl $space-xl;
 }
 
@@ -30,7 +30,7 @@
 
 .page-subtitle {
   font-size: $font-size-lg;
-  color: rgba(255, 255, 255, 0.7);
+  color: $white-70;
 }
 
 .page-content {
@@ -103,26 +103,22 @@
 }
 
 .search-btn {
+  @include flex-center;
   width: 40px;
   height: 40px;
   background: $accent;
   border: none;
   border-radius: $radius-md;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
-  transition: all $transition-fast;
 
   mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
+    font-size: $font-size-xl;
+    width: $font-size-xl;
+    height: $font-size-xl;
     color: white;
   }
 
   &:hover {
-    transform: scale(1.05);
     background: $accent-hover;
   }
 }
@@ -208,13 +204,12 @@
   border-radius: $radius-xl;
   padding: $space-xl;
   box-shadow: $shadow-sm;
-  transition: all $transition-base;
   display: flex;
   flex-direction: column;
+  border: 1px solid $border-light;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: $shadow-lg;
+    border-color: $border-accent;
   }
 }
 
@@ -373,9 +368,9 @@
   color: $text-muted;
 
   mat-icon {
-    font-size: 14px;
-    width: 14px;
-    height: 14px;
+    font-size: $font-size-base;
+    width: $font-size-base;
+    height: $font-size-base;
   }
 
   &.rate {

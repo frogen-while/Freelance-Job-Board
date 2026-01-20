@@ -5,8 +5,7 @@
 }
 
 .profile-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  @include bg-dark-page;
   padding: 100px $space-xl $space-3xl;
 }
 
@@ -32,27 +31,7 @@
 }
 
 .avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: $gradient-accent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .initials {
-    font-size: $font-size-2xl;
-    font-weight: $font-weight-bold;
-    color: white;
-  }
+  @include avatar-lg;
 }
 
 .header-info {
@@ -128,12 +107,12 @@
   font-weight: $font-weight-medium;
   color: $text-secondary;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all $transition-base;
 
   mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+    font-size: $font-size-lg;
+    width: $space-4;
+    height: $space-4;
   }
 
   &:hover {
@@ -154,12 +133,12 @@
   font-weight: $font-weight-medium;
   color: white;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all $transition-base;
 
   mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+    font-size: $font-size-lg;
+    width: $space-4;
+    height: $space-4;
   }
 
   &:hover {
@@ -353,7 +332,7 @@
     width: 100%;
     padding: 12px 14px;
     border: 2px solid #e2e8f0;
-    border-radius: 10px;
+    border-radius: $radius-10;
     font-size: 1rem;
     font-family: inherit;
     background: #f8fafc;
@@ -387,12 +366,12 @@
 
     &::-webkit-scrollbar-track {
       background: #f1f5f9;
-      border-radius: 10px;
+      border-radius: $radius-10;
     }
 
     &::-webkit-scrollbar-thumb {
       background: #cbd5e1;
-      border-radius: 10px;
+      border-radius: $radius-10;
 
       &:hover {
         background: #94a3b8;
@@ -482,25 +461,9 @@
 }
 
 .btn-save {
+  @include btn-gradient;
   padding: $space-md $space-xl;
-  background: $gradient-accent;
-  border: none;
-  border-radius: $radius-lg;
   font-size: $font-size-md;
-  font-weight: $font-weight-semibold;
-  color: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
 }
 
 // Responsive

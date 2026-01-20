@@ -1,11 +1,9 @@
 @use 'app/shared' as *;
 
 .onboarding-page {
+  @include flex-center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: $primary;
   padding: $space-xl;
 }
 
@@ -166,23 +164,7 @@ textarea.form-input {
 }
 
 .btn-gradient-success {
+  @include btn-gradient-success;
   padding: $space-md $space-2xl;
   font-size: $font-size-md;
-  font-weight: $font-weight-semibold;
-  color: white;
-  background: $gradient-accent;
-  border: none;
-  border-radius: $radius-full;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba($accent, 0.4);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
 }

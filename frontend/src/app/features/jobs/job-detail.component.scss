@@ -1,9 +1,8 @@
 @use 'app/shared' as *;
 
 :host {
+  @include bg-dark-page-alt;
   display: block;
-  min-height: 100vh;
-  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
 }
 
 .job-detail-page {
@@ -12,38 +11,25 @@
 
 // Success Banner
 .success-banner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   gap: $space-sm;
   padding: $space-md $space-lg;
-  background: linear-gradient(135deg, rgba($success, 0.15), rgba($success, 0.08));
-  border: 1px solid rgba($success, 0.3);
+  background: rgba($success, 0.12);
+  border: 1px solid rgba($success, 0.25);
   border-radius: $radius-lg;
   margin-bottom: $space-lg;
-  animation: slideIn 0.3s ease;
+  box-shadow: 0 0 12px rgba($success, 0.15);
   
   mat-icon {
     color: $success;
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
+    font-size: $font-size-24;
+    width: $font-size-24;
+    height: $font-size-24;
   }
   
   span {
     color: #4ade80;
     font-weight: $font-weight-medium;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -58,13 +44,11 @@
   padding: $space-xl;
 
   .not-found-icon {
+    @include flex-center;
     width: 80px;
     height: 80px;
     background: rgba(239, 68, 68, 0.1);
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     margin-bottom: $space-lg;
 
     mat-icon {
@@ -83,7 +67,7 @@
   }
 
   p {
-    color: rgba(255, 255, 255, 0.6);
+    color: $white-60;
     margin-bottom: $space-xl;
   }
 }
@@ -97,27 +81,8 @@
 
 // Back Button
 .back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: $space-sm;
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: $font-size-sm;
-  cursor: pointer;
-  padding: $space-sm 0;
+  @include btn-back;
   margin-bottom: $space-xl;
-  transition: color 0.2s;
-
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-  }
-
-  &:hover {
-    color: #fff;
-  }
 }
 
 // Content Grid
@@ -140,9 +105,7 @@
 
 // Job Header
 .job-header {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: $radius-xl;
+  @include card-dark-padded;
   padding: $space-2xl;
 }
 
@@ -165,30 +128,10 @@
 }
 
 .job-status {
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-  padding: $space-xs $space-sm;
-  border-radius: $radius-full;
-
-  &.open {
-    background: rgba(34, 197, 94, 0.15);
-    color: #4ade80;
-  }
-
-  &.assigned, &.in-progress {
-    background: rgba(251, 191, 36, 0.15);
-    color: #fbbf24;
-  }
-
-  &.completed {
-    background: rgba(99, 102, 241, 0.15);
-    color: #818cf8;
-  }
-
-  &.cancelled {
-    background: rgba(239, 68, 68, 0.15);
-    color: $danger;
-  }
+  &.open { @include status-open; }
+  &.assigned, &.in-progress { @include status-assigned; }
+  &.completed { @include status-completed; }
+  &.cancelled { @include status-cancelled; }
 }
 
 .remote-badge {
@@ -202,13 +145,10 @@
 
 // Job Details Grid
 .job-details-grid {
+  @include card-dark-padded;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: $space-md;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: $radius-xl;
-  padding: $space-xl;
 }
 
 .detail-item {
@@ -216,7 +156,7 @@
     display: block;
     font-size: $font-size-xs;
     font-weight: $font-weight-medium;
-    color: rgba(255, 255, 255, 0.5);
+    color: $white-50;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: $space-xs;
@@ -231,9 +171,7 @@
 
 // Skills
 .job-skills {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: $radius-xl;
+  @include card-dark-padded;
   padding: $space-2xl;
 
   h2 {
@@ -273,21 +211,19 @@
   align-items: center;
   gap: $space-sm;
   font-size: $font-size-md;
-  color: rgba(255, 255, 255, 0.7);
+  color: $white-70;
 
   mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
+    font-size: $font-size-20;
+    width: $font-size-20;
+    height: $font-size-20;
     opacity: 0.6;
   }
 }
 
 // Job Description
 .job-description {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: $radius-xl;
+  @include card-dark-padded;
   padding: $space-2xl;
 
   h2 {
@@ -299,7 +235,7 @@
 
   p {
     font-size: $font-size-md;
-    color: rgba(255, 255, 255, 0.7);
+    color: $white-70;
     line-height: 1.8;
     white-space: pre-wrap;
   }
@@ -307,9 +243,7 @@
 
 // Category Info
 .category-info {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: $radius-xl;
+  @include card-dark-padded;
   padding: $space-2xl;
 
   h2 {
@@ -335,7 +269,7 @@
 
   p {
     font-size: $font-size-sm;
-    color: rgba(255, 255, 255, 0.6);
+    color: $white-60;
     line-height: 1.5;
   }
 }
@@ -353,15 +287,12 @@
 
 // Employer Card
 .employer-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: $radius-xl;
-  padding: $space-xl;
+  @include card-dark-padded;
 
   h3 {
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
-    color: rgba(255, 255, 255, 0.5);
+    color: $white-50;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: $space-lg;
@@ -375,19 +306,7 @@
 }
 
 .employer-avatar {
-  width: 56px;
-  height: 56px;
-  background: $gradient-accent;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .avatar-initials {
-    font-size: $font-size-lg;
-    font-weight: $font-weight-bold;
-    color: #fff;
-  }
+  @include avatar-md;
 }
 
 .employer-details {
@@ -403,15 +322,12 @@
 
 .employer-label {
   font-size: $font-size-sm;
-  color: rgba(255, 255, 255, 0.5);
+  color: $white-50;
 }
 
 // Apply Card
 .apply-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: $radius-xl;
-  padding: $space-xl;
+  @include card-dark-padded;
 }
 
 // Applied State
@@ -420,13 +336,11 @@
   padding: $space-lg 0;
 
   .success-icon {
+    @include flex-center;
     width: 64px;
     height: 64px;
     background: rgba(34, 197, 94, 0.15);
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     margin: 0 auto $space-lg;
 
     mat-icon {
@@ -446,7 +360,7 @@
 
   p {
     font-size: $font-size-sm;
-    color: rgba(255, 255, 255, 0.6);
+    color: $white-60;
     line-height: 1.5;
   }
 }
@@ -475,7 +389,7 @@
 
   p {
     font-size: $font-size-sm;
-    color: rgba(255, 255, 255, 0.6);
+    color: $white-60;
     line-height: 1.5;
     margin-bottom: $space-lg;
   }
@@ -487,7 +401,7 @@
     margin-top: $space-lg;
     margin-bottom: 0;
     font-size: $font-size-sm;
-    color: rgba(255, 255, 255, 0.5);
+    color: $white-50;
 
     a {
       color: #818cf8;
@@ -503,8 +417,8 @@
 // Proposals Section
 .proposals-card,
 .no-proposals-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: $white-3;
+  border: 1px solid $white-8;
   border-radius: $radius-lg;
   padding: $space-lg;
   margin-top: $space-lg;
@@ -521,13 +435,13 @@
   text-align: center;
   
   p {
-    color: rgba(255, 255, 255, 0.5);
+    color: $white-50;
     font-size: $font-size-sm;
   }
 }
 
 .proposals-count {
-  color: rgba(255, 255, 255, 0.6);
+  color: $white-60;
   font-size: $font-size-sm;
   margin-top: $space-xs;
 }
@@ -547,7 +461,7 @@
 
   &:hover {
     background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.1);
+    border-color: $white-10;
   }
 
   &.status-accepted {
@@ -575,27 +489,9 @@
 }
 
 .applicant-avatar {
+  @include avatar-sm;
   width: 48px;
   height: 48px;
-  border-radius: 50%;
-  background: $gradient-accent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .avatar-initials {
-    font-size: $font-size-sm;
-    font-weight: $font-weight-semibold;
-    color: #fff;
-  }
 }
 
 .applicant-details {
@@ -608,7 +504,7 @@
 
   .applicant-headline {
     font-size: $font-size-sm;
-    color: rgba(255, 255, 255, 0.6);
+    color: $white-60;
     margin-bottom: 2px;
   }
 
@@ -631,7 +527,7 @@
 
   .bid-label {
     font-size: $font-size-xs;
-    color: rgba(255, 255, 255, 0.5);
+    color: $white-50;
   }
 }
 
@@ -643,7 +539,7 @@
 
   p {
     font-size: $font-size-sm;
-    color: rgba(255, 255, 255, 0.8);
+    color: $white-80;
     line-height: 1.6;
     margin: 0;
     white-space: pre-line;
