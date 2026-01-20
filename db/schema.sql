@@ -18,7 +18,7 @@ CREATE TABLE users (
   email VARCHAR(255) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   main_role ENUM('Admin', 'Manager', 'Support', 'Employer', 'Freelancer') NOT NULL,
-  status ENUM('active', 'suspended', 'archived') DEFAULT 'active',
+  is_blocked TINYINT DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX idx_users_email (email)
@@ -54,8 +54,6 @@ CREATE TABLE freelancer_profiles (
   github_url VARCHAR(500),
   linkedin_url VARCHAR(500),
   jobs_completed INT DEFAULT 0,
-  rating DECIMAL(3,2) DEFAULT 0,
-  reviews_count INT DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
@@ -72,8 +70,6 @@ CREATE TABLE employer_profiles (
   industry VARCHAR(100),
   jobs_posted INT DEFAULT 0,
   total_spent DECIMAL(12,2) DEFAULT 0,
-  rating DECIMAL(3,2) DEFAULT 0,
-  reviews_count INT DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
@@ -199,13 +195,11 @@ CREATE TABLE messages (
   message_id INT AUTO_INCREMENT PRIMARY KEY,
   sender_id INT NOT NULL,
   receiver_id INT NOT NULL,
-  job_id INT,
   body TEXT NOT NULL,
   is_read BOOLEAN DEFAULT FALSE,
   sent_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE CASCADE,
   FOREIGN KEY (receiver_id) REFERENCES users(user_id) ON DELETE CASCADE,
-  FOREIGN KEY (job_id) REFERENCES jobs(job_id) ON DELETE SET NULL,
   INDEX idx_messages_receiver (receiver_id, is_read)
 ) ENGINE=InnoDB;
 

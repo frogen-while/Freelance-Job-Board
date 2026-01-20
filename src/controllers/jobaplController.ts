@@ -185,10 +185,16 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
         const success = await jobAplRepo.update(applicationId, { status });
 
         if (success) {
-            // When accepting an application, update job status to In Progress and reject other applications
+            // When accepting an application, update job status to In Progress, create assignment, and reject other applications
             if (status === 'Accepted') {
                 const { jobRepo } = await import('../repositories/jobRepo.js');
+                const { assignmentRepo } = await import('../repositories/assignmentRepo.js');
+                
+                // Update job status
                 await jobRepo.update(existingApplication.job_id, { status: 'In Progress' });
+                
+                // Create assignment for the accepted freelancer
+                await assignmentRepo.create(existingApplication.job_id, existingApplication.freelancer_id);
                 
                 // Reject all other pending applications for this job
                 const allApplications = await jobAplRepo.findByJobId(existingApplication.job_id);

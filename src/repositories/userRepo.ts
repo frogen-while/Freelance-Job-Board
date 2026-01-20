@@ -23,14 +23,22 @@ export const userRepo = {
 
     async get_all(): Promise<User[]> {
         const result = await db.connection?.all<User[]>(
-            'SELECT user_id, first_name, last_name, email, main_role, status, is_blocked, created_at, updated_at FROM users'
+            'SELECT user_id, first_name, last_name, email, main_role, is_blocked, created_at, updated_at FROM users'
+        );
+        return result || [];
+    },
+
+    async getByRole(role: string): Promise<User[]> {
+        const result = await db.connection?.all<User[]>(
+            'SELECT user_id, first_name, last_name, email, main_role, is_blocked, created_at, updated_at FROM users WHERE main_role = ?',
+            role
         );
         return result || [];
     },
 
     async findById(user_id: number): Promise<User | undefined> {
         const user = await db.connection?.get<User | undefined>(
-            `SELECT user_id, first_name, last_name, email, main_role, status, is_blocked, created_at, updated_at FROM users WHERE user_id = ?`,
+            `SELECT user_id, first_name, last_name, email, main_role, is_blocked, created_at, updated_at FROM users WHERE user_id = ?`,
             user_id
         );
         

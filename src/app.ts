@@ -19,20 +19,31 @@ import { fileURLToPath } from 'url';
 import { errorHandler, sendError, sendSuccess } from './utils/http.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+function resolveUnderRoot(rootDir: string, ...segments: string[]): string {
+  const root = path.resolve(rootDir);
+  const resolved = path.resolve(root, ...segments);
+
+  if (resolved !== root && !resolved.startsWith(root + path.sep)) {
+    throw new Error('Resolved path escapes configured root directory');
+  }
+
+  return resolved;
+}
+
 const app: Application = express();
 
 app.use(express.json());
 app.use(cors());
 
-const uploadsPath = path.join(__dirname, '..', 'uploads');
-fs.mkdirSync(uploadsPath, { recursive: true });
-app.use('/uploads', express.static(uploadsPath));
+const projectRoot = path.resolve(__dirname, '..');
+const uploadsRoot = resolveUnderRoot(projectRoot, 'uploads');
+fs.mkdirSync(uploadsRoot, { recursive: true });
+app.use('/uploads', express.static(uploadsRoot, { dotfiles: 'ignore', redirect: false }));
 
 app.get('/api/health', (req: Request, res: Response) => {
   return sendSuccess(res, { status: 'ok' }, 200);
 });
 
-// Favicon - return empty response to prevent 404 spam
 app.get('/favicon.ico', (req: Request, res: Response) => {
   res.status(204).end();
 });
@@ -56,18 +67,17 @@ app.use('/api', (req: Request, res: Response) => {
   return sendError(res, 404, 'Not Found');
 });
 
-const distPath = path.join(__dirname, '..', 'frontend', 'dist', 'frontend');
+const distRoot = resolveUnderRoot(projectRoot, 'frontend', 'dist', 'frontend');
 
-if (fs.existsSync(distPath)) {
-  const indexHtml = path.join(distPath, 'index.html');
-  app.use(express.static(distPath));
+if (fs.existsSync(distRoot)) {
+  app.use(express.static(distRoot));
 
   const spaRoute = /^\/(?!api(?:\/|$)).*/;
   app.get(spaRoute, (req: Request, res: Response) => {
-    res.sendFile(indexHtml);
+    res.sendFile('index.html', { root: distRoot });
   });
   app.head(spaRoute, (req: Request, res: Response) => {
-    res.sendFile(indexHtml);
+    res.sendFile('index.html', { root: distRoot });
   });
 }
 

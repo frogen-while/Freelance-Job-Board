@@ -32,7 +32,6 @@ export const usersTableDef = {
     email: { type: 'TEXT', notNull: true, unique: true },
     password_hash: { type: 'TEXT', notNull: true },
     main_role: { type: "TEXT CHECK(main_role IN ('Admin', 'Manager', 'Support', 'Employer', 'Freelancer'))", notNull: true },
-    status: { type: "TEXT DEFAULT 'active' CHECK(status IN ('active', 'suspended', 'archived'))" },
     is_blocked: { type: "INTEGER DEFAULT 0" },
     failed_attempts: { type: 'INTEGER DEFAULT 0' },
     lock_until: { type: 'DATETIME' },
@@ -77,8 +76,6 @@ export const freelancerProfilesTableDef = {
     github_url: { type: 'TEXT' },
     linkedin_url: { type: 'TEXT' },
     jobs_completed: { type: 'INTEGER DEFAULT 0' },
-    rating: { type: 'REAL DEFAULT 0' },
-    reviews_count: { type: 'INTEGER DEFAULT 0' },
     created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
     updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
@@ -97,8 +94,6 @@ export const employerProfilesTableDef = {
     industry: { type: 'TEXT' },
     jobs_posted: { type: 'INTEGER DEFAULT 0' },
     total_spent: { type: 'REAL DEFAULT 0' },
-    rating: { type: 'REAL DEFAULT 0' },
-    reviews_count: { type: 'INTEGER DEFAULT 0' },
     created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
     updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
@@ -147,17 +142,12 @@ export const jobsTableDef = {
     duration_estimate: { type: "TEXT CHECK(duration_estimate IN ('less_than_week', '1_2_weeks', '2_4_weeks', '1_3_months', '3_6_months', 'more_than_6_months'))" },
     is_remote: { type: 'BOOLEAN DEFAULT 1' },
     location: { type: 'TEXT' },
-    is_hidden: { type: 'INTEGER DEFAULT 0' },
-    hidden_reason: { type: 'TEXT' },
-    hidden_at: { type: 'DATETIME' },
-    hidden_by: { type: 'INTEGER' },
     created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
     updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
   foreignKeys: [
     { column: 'employer_id', references: 'users(user_id) ON DELETE CASCADE' },
-    { column: 'category_id', references: 'categories(category_id) ON DELETE RESTRICT' },
-    { column: 'hidden_by', references: 'users(user_id) ON DELETE SET NULL' }
+    { column: 'category_id', references: 'categories(category_id) ON DELETE RESTRICT' }
   ]
 };
 
@@ -321,24 +311,7 @@ export const auditLogsTableDef = {
   ]
 };
 
-export const jobFlagsTableDef = {
-  name: 'job_flags',
-  columns: {
-    flag_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
-    job_id: { type: 'INTEGER', notNull: true },
-    flagged_by: { type: 'INTEGER', notNull: true },
-    reason: { type: 'TEXT', notNull: true },
-    status: { type: "TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'reviewed', 'dismissed'))" },
-    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
-    reviewed_at: { type: 'DATETIME' },
-    reviewed_by: { type: 'INTEGER' }
-  },
-  foreignKeys: [
-    { column: 'job_id', references: 'jobs(job_id) ON DELETE CASCADE' },
-    { column: 'flagged_by', references: 'users(user_id) ON DELETE CASCADE' },
-    { column: 'reviewed_by', references: 'users(user_id) ON DELETE SET NULL' }
-  ]
-};
+
 
 function createTableStatement(def: { 
     name: string;
@@ -388,8 +361,7 @@ export async function createSchemaAndData(): Promise<void> {
     paymentsTableDef,
     messagesTableDef,
     supportTicketsTableDef,
-    auditLogsTableDef,
-    jobFlagsTableDef
+    auditLogsTableDef
   ];
 
   for(const def of definitions) {

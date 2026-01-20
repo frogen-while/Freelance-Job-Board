@@ -17,15 +17,6 @@ import {
   getUserStats,
   getJobStats
 } from '../controllers/adminStatsController.js';
-import {
-  flagJob,
-  getJobFlags,
-  getPendingFlags,
-  reviewFlag,
-  hideJob,
-  restoreJob,
-  getHiddenJobs
-} from '../controllers/adminModerationController.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
 import { requireAdmin, requireManager, requireSupport } from '../middleware/roleMiddleware.js';
 import { asyncHandler } from '../utils/http.js';
@@ -46,14 +37,6 @@ router.patch('/users/:id/unblock', requireAdmin, asyncHandler(unblockUser));
 router.post('/users/bulk/block', requireAdmin, asyncHandler(bulkBlockUsers));
 router.post('/users/bulk/unblock', requireAdmin, asyncHandler(bulkUnblockUsers));
 router.post('/users/bulk/role', requireManager, asyncHandler(bulkAssignRole));
-
-router.get('/jobs/flags/pending', requireSupport, asyncHandler(getPendingFlags));
-router.get('/jobs/hidden', requireManager, asyncHandler(getHiddenJobs));
-router.post('/jobs/:id/flag', requireSupport, asyncHandler(flagJob));
-router.get('/jobs/:id/flags', requireSupport, asyncHandler(getJobFlags));
-router.patch('/jobs/flags/:flagId', requireManager, asyncHandler(reviewFlag));
-router.post('/jobs/:id/hide', requireManager, asyncHandler(hideJob));
-router.post('/jobs/:id/restore', requireManager, asyncHandler(restoreJob));
 
 router.post('/tickets/bulk/status', requireSupport, asyncHandler(bulkUpdateTicketStatus));
 router.post('/tickets/bulk/delete', requireManager, asyncHandler(bulkDeleteTickets));

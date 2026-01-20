@@ -160,10 +160,25 @@ export const getUserRating = async (req: Request, res: Response) => {
 
         return sendSuccess(res, {
             average_rating: averageRating ? Math.round(averageRating * 10) / 10 : null,
-            review_count: reviewCount
+            total_reviews: reviewCount
         });
     } catch (error) {
         console.error(`Error fetching rating for user ${userId}:`, error);
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
+    }
+};
+
+export const checkHasReviewed = async (req: Request, res: Response) => {
+    const jobId = parseIdParam(res, req.params.jobId, 'job');
+    if (jobId === null) return;
+    const reviewerId = parseIdParam(res, req.params.reviewerId, 'reviewer');
+    if (reviewerId === null) return;
+
+    try {
+        const hasReviewed = await reviewRepo.hasReviewed(jobId, reviewerId);
+        return sendSuccess(res, { hasReviewed });
+    } catch (error) {
+        console.error(`Error checking review status:`, error);
         rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };

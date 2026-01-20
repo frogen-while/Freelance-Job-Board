@@ -10,8 +10,6 @@ interface FreelancerProfileRow {
   github_url: string | null;
   linkedin_url: string | null;
   jobs_completed: number;
-  rating: number;
-  reviews_count: number;
   // From joins
   first_name?: string;
   last_name?: string;
@@ -101,26 +99,6 @@ export const freelancerProfilesRepo = {
     );
   },
 
-  async updateRating(user_id: number): Promise<void> {
-    // Recalculate rating from reviews where the freelancer is the reviewee
-    await db.connection?.run(
-      `UPDATE freelancer_profiles 
-       SET rating = (
-         SELECT COALESCE(AVG(r.rating), 0) 
-         FROM reviews r 
-         WHERE r.reviewee_id = freelancer_profiles.user_id
-       ),
-       reviews_count = (
-         SELECT COUNT(*) 
-         FROM reviews r 
-         WHERE r.reviewee_id = freelancer_profiles.user_id
-       ),
-       updated_at = CURRENT_TIMESTAMP
-       WHERE user_id = ?`,
-      user_id
-    );
-  },
-
   async getAll(options?: { 
     skill?: string; 
     experience_level?: ExperienceLevel;
@@ -130,7 +108,7 @@ export const freelancerProfilesRepo = {
     const limit = options?.limit ?? 20;
     const offset = options?.offset ?? 0;
 
-    let whereConditions: string[] = ['u.status = \'active\''];
+    let whereConditions: string[] = ['u.is_blocked = 0'];
     const params: (string | number)[] = [];
 
     if (options?.skill) {
@@ -177,7 +155,7 @@ export const freelancerProfilesRepo = {
       LEFT JOIN skills s ON ps.skill_id = s.skill_id
       ${whereClause}
       GROUP BY fp.id
-      ORDER BY fp.rating DESC, fp.jobs_completed DESC
+      ORDER BY fp.jobs_completed DESC
       LIMIT ? OFFSET ?
     `;
 

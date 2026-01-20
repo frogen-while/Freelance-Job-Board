@@ -13,7 +13,6 @@ export interface OverviewStats {
     byStatus: Record<string, number>;
     newThisWeek: number;
     newThisMonth: number;
-    hidden: number;
   };
   applications: {
     total: number;
@@ -70,7 +69,6 @@ export const statsRepo = {
       jobsByStatus,
       jobsThisWeek,
       jobsThisMonth,
-      hiddenJobs,
       totalApplications,
       applicationsByStatus,
       totalTickets,
@@ -85,7 +83,6 @@ export const statsRepo = {
       db.connection?.all<{ status: string; count: number }[]>('SELECT status, COUNT(*) as count FROM jobs GROUP BY status'),
       db.connection?.get<{ count: number }>("SELECT COUNT(*) as count FROM jobs WHERE created_at >= datetime('now', '-7 days')"),
       db.connection?.get<{ count: number }>("SELECT COUNT(*) as count FROM jobs WHERE created_at >= datetime('now', '-30 days')"),
-      db.connection?.get<{ count: number }>('SELECT COUNT(*) as count FROM jobs WHERE is_hidden = 1'),
       db.connection?.get<{ count: number }>('SELECT COUNT(*) as count FROM jobapplications'),
       db.connection?.all<{ status: string; count: number }[]>('SELECT status, COUNT(*) as count FROM jobapplications GROUP BY status'),
       db.connection?.get<{ count: number }>('SELECT COUNT(*) as count FROM supporttickets'),
@@ -116,8 +113,7 @@ export const statsRepo = {
         total: totalJobs?.count || 0,
         byStatus: byJobStatus,
         newThisWeek: jobsThisWeek?.count || 0,
-        newThisMonth: jobsThisMonth?.count || 0,
-        hidden: hiddenJobs?.count || 0
+        newThisMonth: jobsThisMonth?.count || 0
       },
       applications: {
         total: totalApplications?.count || 0,

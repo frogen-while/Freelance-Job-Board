@@ -10,8 +10,6 @@ export interface EmployerProfile {
   industry?: string | null;
   jobs_posted: number;
   total_spent: number;
-  rating: number;
-  reviews_count: number;
   created_at?: string;
   updated_at?: string;
 }

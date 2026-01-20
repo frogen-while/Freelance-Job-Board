@@ -1,19 +1,19 @@
 import { db } from '../config/init_db.js';
-import { AssignmentStatus, Assignment } from '../interfaces/Assignment.js';
+import { Assignment } from '../interfaces/Assignment.js';
 
 export const assignmentRepo = {
 
     async get_all(): Promise<Assignment[]> {
         const result = await db.connection?.all<Assignment[]>(
-            'SELECT assignment_id, job_id, freelancer_id, status FROM assignments'
+            'SELECT assignment_id, job_id, freelancer_id, status, created_at, updated_at FROM assignments'
         );
         return result || [];
     },
     
-    async create(job_id: number, freelancer_id: number, status: AssignmentStatus): Promise<number | null> {
+    async create(job_id: number, freelancer_id: number): Promise<number | null> {
         const result = await db.connection?.run(
-            `INSERT INTO assignments (job_id, freelancer_id, status) VALUES (?, ?, ?)`,
-            job_id, freelancer_id, status
+            `INSERT INTO assignments (job_id, freelancer_id) VALUES (?, ?)`,
+            job_id, freelancer_id
         );
         
         return result?.lastID ?? null;
@@ -26,7 +26,7 @@ export const assignmentRepo = {
         );
     },
     
-    async update(assignment_id: number, updateData: { job_id?: number, freelancer_id?: number, status?: AssignmentStatus}): Promise<boolean> {
+    async update(assignment_id: number, updateData: { job_id?: number, freelancer_id?: number }): Promise<boolean> {
         const setClauses: string[] = [];
         const params: (string | number)[] = [];
 
@@ -37,10 +37,6 @@ export const assignmentRepo = {
         if (updateData.freelancer_id !== undefined) {
             setClauses.push('freelancer_id = ?');
             params.push(updateData.freelancer_id);
-        }
-        if (updateData.status !== undefined) {
-            setClauses.push('status = ?');
-            params.push(updateData.status);
         }
 
         if (setClauses.length === 0) {
@@ -84,6 +80,14 @@ export const assignmentRepo = {
             employer_id
         );
         return result || [];
+    },
+
+    async updateStatus(assignment_id: number, status: 'Active' | 'Completed' | 'Terminated'): Promise<boolean> {
+        const result = await db.connection?.run(
+            `UPDATE assignments SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE assignment_id = ?`,
+            status, assignment_id
+        );
+        return (result?.changes ?? 0) > 0;
     }
 
 }

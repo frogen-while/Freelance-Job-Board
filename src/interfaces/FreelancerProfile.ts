@@ -9,8 +9,6 @@ export interface FreelancerProfile {
   github_url?: string | null;
   linkedin_url?: string | null;
   jobs_completed: number;
-  rating: number;
-  reviews_count: number;
   created_at?: string;
   updated_at?: string;
 }

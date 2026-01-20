@@ -11,8 +11,6 @@ interface EmployerProfileRow {
   industry: string | null;
   jobs_posted: number;
   total_spent: number;
-  rating: number;
-  reviews_count: number;
   // From joins
   first_name?: string;
   last_name?: string;
@@ -104,26 +102,6 @@ export const employerProfilesRepo = {
     );
   },
 
-  async updateRating(user_id: number): Promise<void> {
-    // Recalculate rating from reviews where the employer is the reviewee
-    await db.connection?.run(
-      `UPDATE employer_profiles 
-       SET rating = (
-         SELECT COALESCE(AVG(r.rating), 0) 
-         FROM reviews r 
-         WHERE r.reviewee_id = employer_profiles.user_id
-       ),
-       reviews_count = (
-         SELECT COUNT(*) 
-         FROM reviews r 
-         WHERE r.reviewee_id = employer_profiles.user_id
-       ),
-       updated_at = CURRENT_TIMESTAMP
-       WHERE user_id = ?`,
-      user_id
-    );
-  },
-
   async getAll(options?: { 
     industry?: string;
     company_size?: CompanySize;
@@ -133,7 +111,7 @@ export const employerProfilesRepo = {
     const limit = options?.limit ?? 20;
     const offset = options?.offset ?? 0;
 
-    let whereConditions: string[] = ['u.status = \'active\''];
+    let whereConditions: string[] = ['u.is_blocked = 0'];
     const params: (string | number)[] = [];
 
     if (options?.industry) {
@@ -174,7 +152,7 @@ export const employerProfilesRepo = {
       INNER JOIN users u ON ep.user_id = u.user_id
       LEFT JOIN profiles p ON ep.user_id = p.user_id
       ${whereClause}
-      ORDER BY ep.jobs_posted DESC, ep.rating DESC
+      ORDER BY ep.jobs_posted DESC
       LIMIT ? OFFSET ?
     `;
 

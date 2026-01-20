@@ -29,29 +29,13 @@ export const messageRepo = {
         const result = await db.connection?.all<Message[]>(
             `SELECT m.*, 
                     s.first_name || ' ' || s.last_name as sender_name,
-                    r.first_name || ' ' || r.last_name as receiver_name,
-                    j.title as job_title
-             FROM messages m
-             LEFT JOIN users s ON m.sender_id = s.user_id
-             LEFT JOIN users r ON m.receiver_id = r.user_id
-             LEFT JOIN jobs j ON m.job_id = j.job_id
-             WHERE m.sender_id = ? OR m.receiver_id = ? 
-             ORDER BY m.sent_at DESC`,
-            user_id, user_id
-        );
-        return result || [];
-    },
-
-    async findByJob(job_id: number): Promise<Message[]> {
-        const result = await db.connection?.all<Message[]>(
-            `SELECT m.*,
-                    s.first_name || ' ' || s.last_name as sender_name,
                     r.first_name || ' ' || r.last_name as receiver_name
              FROM messages m
              LEFT JOIN users s ON m.sender_id = s.user_id
              LEFT JOIN users r ON m.receiver_id = r.user_id
-             WHERE m.job_id = ? ORDER BY m.sent_at ASC`,
-            job_id
+             WHERE m.sender_id = ? OR m.receiver_id = ? 
+             ORDER BY m.sent_at DESC`,
+            user_id, user_id
         );
         return result || [];
     },
@@ -74,14 +58,12 @@ export const messageRepo = {
     async create(data: {
         sender_id: number;
         receiver_id: number;
-        job_id?: number;
         body: string;
     }): Promise<number | null> {
         const result = await db.connection?.run(
-            `INSERT INTO messages (sender_id, receiver_id, job_id, body) VALUES (?, ?, ?, ?)`,
+            `INSERT INTO messages (sender_id, receiver_id, body) VALUES (?, ?, ?)`,
             data.sender_id,
             data.receiver_id,
-            data.job_id || null,
             data.body
         );
         return result?.lastID ?? null;
@@ -130,15 +112,12 @@ export const messageRepo = {
                 p.photo_url as other_user_photo,
                 m.body as last_message,
                 m.sent_at as last_message_time,
-                m.job_id,
-                j.title as job_title,
                 (SELECT COUNT(*) FROM messages m2 
                  WHERE m2.sender_id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END 
                  AND m2.receiver_id = ? AND m2.is_read = 0) as unread_count
             FROM messages m
             JOIN users u ON u.user_id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END
             LEFT JOIN profiles p ON p.user_id = u.user_id
-            LEFT JOIN jobs j ON j.job_id = m.job_id
             WHERE m.sender_id = ? OR m.receiver_id = ?
             AND m.sent_at = (
                 SELECT MAX(m3.sent_at) FROM messages m3 

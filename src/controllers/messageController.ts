@@ -41,21 +41,8 @@ export const getConversation = async (req: Request, res: Response) => {
     }
 };
 
-export const getMessagesByJob = async (req: Request, res: Response) => {
-    const jobId = parseIdParam(res, req.params.jobId, 'job');
-    if (jobId === null) return;
-
-    try {
-        const messages = await messageRepo.findByJob(jobId);
-        return sendSuccess(res, messages);
-    } catch (error) {
-        console.error(`Error fetching messages for job ${jobId}:`, error);
-        rethrowHttpError(error, 500, 'An internal server error occurred.');
-    }
-};
-
 export const sendMessage = async (req: Request, res: Response) => {
-    const { sender_id, receiver_id, job_id, body } = req.body;
+    const { sender_id, receiver_id, body } = req.body;
     const authUser = (req as any).user;
 
     if (receiver_id === undefined || !body) {
@@ -83,7 +70,6 @@ export const sendMessage = async (req: Request, res: Response) => {
         const messageId = await messageRepo.create({
             sender_id: actualSenderId,
             receiver_id,
-            job_id,
             body
         });
 

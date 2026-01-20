@@ -109,12 +109,6 @@ export const getJobStats = async (req: Request, res: Response) => {
     }
 
     const stats = await statsRepo.getJobStats(period as 'week' | 'month' | 'year');
-    
-    // Get hidden and flagged jobs count
-    const [hidden, flagged] = await Promise.all([
-      db.connection?.get<{ count: number }>('SELECT COUNT(*) as count FROM jobs WHERE is_hidden = 1'),
-      db.connection?.get<{ count: number }>("SELECT COUNT(*) as count FROM job_flags WHERE status = 'pending'")
-    ]);
 
     return sendSuccess(res, {
       total_jobs: stats.totalJobs,
@@ -123,9 +117,7 @@ export const getJobStats = async (req: Request, res: Response) => {
       completed_jobs: stats.jobsByStatus['Completed'] || 0,
       cancelled_jobs: stats.jobsByStatus['Cancelled'] || 0,
       jobs_this_month: stats.totalJobs,
-      average_budget: Math.round(stats.averageBudget),
-      hidden_jobs: hidden?.count || 0,
-      flagged_jobs: flagged?.count || 0
+      average_budget: Math.round(stats.averageBudget)
     });
   } catch (error) {
     console.error('Error getting job stats:', error);

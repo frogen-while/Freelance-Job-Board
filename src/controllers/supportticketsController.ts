@@ -10,6 +10,10 @@ import { User } from '../interfaces/User.js';
 const VALID_STATUSES: TicketStatus[] = ['Open', 'In Progress', 'Escalated', 'Resolved', 'Closed'];
 const VALID_PRIORITIES: TicketPriority[] = ['low', 'normal', 'high', 'urgent'];
 
+const isAdminUser = (user?: User) => user?.main_role === 'Admin';
+const isManagerUser = (user?: User) => user?.main_role === 'Manager';
+const isSupportUser = (user?: User) => user?.main_role === 'Support';
+
 export const createSupportTicket = async (req: Request, res: Response) => {
     const currentUser = (req as any).currentUser as User | undefined;
     const { subject, message } = req.body;
@@ -51,6 +55,7 @@ export const createSupportTicket = async (req: Request, res: Response) => {
 
 export const getAllSupportTickets = async (req: Request, res: Response) => {
     try {
+        const currentUser = (req as any).currentUser as User | undefined;
         // Check if user_id is provided as a query parameter
         const userId = req.query.user_id;
         
@@ -63,8 +68,13 @@ export const getAllSupportTickets = async (req: Request, res: Response) => {
             return sendSuccess(res, data);
         }
 
-        // If no user_id, return all tickets
-        const data = await supportTicketsRepo.get_all()
+        // If no user_id, return tickets based on role
+        if (isManagerUser(currentUser)) {
+            const data = await supportTicketsRepo.getWithFilters({ assigned_to: currentUser?.user_id });
+            return sendSuccess(res, data);
+        }
+
+        const data = await supportTicketsRepo.get_all();
 
         return sendSuccess(res, data);
     } catch (error){
@@ -76,12 +86,17 @@ export const getAllSupportTickets = async (req: Request, res: Response) => {
 export const getSupportTicketById = async (req: Request, res: Response) => {
     const ticketId = parseIdParam(res, req.params.id, 'ticket');
     if (ticketId === null) return;
+    const currentUser = (req as any).currentUser as User | undefined;
 
     try {
         const ticket = await supportTicketsRepo.findById(ticketId);
 
         if (!ticket) {
             return sendError(res, 404, 'Support ticket not found.');
+        }
+
+        if (isManagerUser(currentUser) && ticket.assigned_to !== currentUser?.user_id) {
+            return sendError(res, 403, 'You do not have access to this ticket.');
         }
 
         return sendSuccess(res, ticket);
@@ -128,9 +143,17 @@ export const updateSupportTicket = async (req: Request, res: Response) => {
     }
     
     try {
+        if (isSupportUser(currentUser)) {
+            return sendError(res, 403, 'Support users cannot update ticket status.');
+        }
+
         const existingTicket = await supportTicketsRepo.findById(ticketId);
         if (!existingTicket) {
             return sendError(res, 404, 'Support ticket not found.');
+        }
+
+        if (isManagerUser(currentUser) && existingTicket.assigned_to !== currentUser?.user_id) {
+            return sendError(res, 403, 'You can only update tickets assigned to you.');
         }
         
         const oldStatus = existingTicket.status;
@@ -224,7 +247,7 @@ export const getMySupportTickets = async (req: Request, res: Response) => {
 
 export const assignTicket = async (req: Request, res: Response) => {
     const ticketId = parseIdParam(res, req.params.id, 'ticket');
-    const { staff_id } = req.body;
+    const staff_id = req.body.staff_id ?? req.body.assigned_to;
     const currentUser = (req as any).currentUser as User;
     if (ticketId === null) return;
 
@@ -234,17 +257,32 @@ export const assignTicket = async (req: Request, res: Response) => {
             return sendError(res, 404, 'Support ticket not found.');
         }
 
-        let assignedTo: number | null = null;
-        if (staff_id !== null && staff_id !== undefined) {
-            const staffUser = await userRepo.findById(staff_id);
-            if (!staffUser) {
-                return sendError(res, 400, 'Staff user not found.');
-            }
-            if (!['Support', 'Manager', 'Admin'].includes(staffUser.main_role)) {
-                return sendError(res, 400, 'Can only assign to Support, Manager, or Admin users.');
-            }
-            assignedTo = staff_id;
+        if (staff_id === null || staff_id === undefined) {
+            return sendError(res, 400, 'staff_id is required.');
         }
+
+        const staffUser = await userRepo.findById(staff_id);
+        if (!staffUser) {
+            return sendError(res, 400, 'Staff user not found.');
+        }
+
+        if (isSupportUser(currentUser)) {
+            if (staffUser.main_role !== 'Manager') {
+                return sendError(res, 400, 'Support can only send tickets to managers.');
+            }
+        } else if (isManagerUser(currentUser)) {
+            if (staff_id !== currentUser.user_id) {
+                return sendError(res, 403, 'Managers can only assign tickets to themselves.');
+            }
+        } else if (!isAdminUser(currentUser)) {
+            return sendError(res, 403, 'Insufficient permissions to assign tickets.');
+        }
+
+        if (!['Support', 'Manager', 'Admin'].includes(staffUser.main_role)) {
+            return sendError(res, 400, 'Can only assign to Support, Manager, or Admin users.');
+        }
+
+        const assignedTo: number | null = staff_id;
 
         const oldAssignedTo = ticket.assigned_to;
         const success = await supportTicketsRepo.update(ticketId, { assigned_to: assignedTo });
@@ -281,9 +319,17 @@ export const updateTicketPriority = async (req: Request, res: Response) => {
     }
 
     try {
+        if (isSupportUser(currentUser)) {
+            return sendError(res, 403, 'Support users cannot update ticket priority.');
+        }
+
         const ticket = await supportTicketsRepo.findById(ticketId);
         if (!ticket) {
             return sendError(res, 404, 'Support ticket not found.');
+        }
+
+        if (isManagerUser(currentUser) && ticket.assigned_to !== currentUser.user_id) {
+            return sendError(res, 403, 'You can only update tickets assigned to you.');
         }
 
         const oldPriority = ticket.priority;
@@ -312,6 +358,7 @@ export const updateTicketPriority = async (req: Request, res: Response) => {
 
 export const getTicketsFiltered = async (req: Request, res: Response) => {
     try {
+        const currentUser = (req as any).currentUser as User | undefined;
         const { status, priority, assigned_to, page = '1', limit = '50' } = req.query;
         
         const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
@@ -328,6 +375,10 @@ export const getTicketsFiltered = async (req: Request, res: Response) => {
         }
         if (assigned_to !== undefined) {
             filters.assigned_to = assigned_to === 'null' ? null : parseInt(assigned_to as string, 10);
+        }
+
+        if (isManagerUser(currentUser)) {
+            filters.assigned_to = currentUser?.user_id;
         }
 
         const tickets = await supportTicketsRepo.getWithFilters(filters);
@@ -356,6 +407,12 @@ export const bulkUpdateTicketStatus = async (req: Request, res: Response) => {
         let affected = 0;
         for (const ticketId of ticket_ids) {
             const ticket = await supportTicketsRepo.findById(ticketId);
+            if (isSupportUser(currentUser)) {
+                return sendError(res, 403, 'Support users cannot update ticket status.');
+            }
+            if (isManagerUser(currentUser) && ticket?.assigned_to !== currentUser.user_id) {
+                return sendError(res, 403, 'You can only update tickets assigned to you.');
+            }
             if (ticket && ticket.status !== status) {
                 const oldStatus = ticket.status;
                 const success = await supportTicketsRepo.update(ticketId, { status: status as TicketStatus });
@@ -378,5 +435,15 @@ export const bulkUpdateTicketStatus = async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Error bulk updating ticket status:', error);
         rethrowHttpError(error, 500, 'An internal server error occurred while updating tickets.');
+    }
+};
+
+export const getManagersForTickets = async (req: Request, res: Response) => {
+    try {
+        const managers = await userRepo.getByRole('Manager');
+        return sendSuccess(res, managers);
+    } catch (error) {
+        console.error('Error fetching managers:', error);
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching managers.');
     }
 };

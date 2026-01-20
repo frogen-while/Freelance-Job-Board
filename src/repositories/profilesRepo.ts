@@ -12,7 +12,6 @@ interface FreelancerProfileRow {
   photo_url: string | null;
   location: string | null;
   hourly_rate: number | null;
-  rating: number | null;
   jobs_completed: number | null;
   first_name: string;
   last_name: string;
@@ -28,7 +27,6 @@ export interface FreelancerProfile {
   photo_url: string | null;
   location: string | null;
   hourly_rate: number | null;
-  rating: number | null;
   jobs_completed: number | null;
   first_name: string;
   last_name: string;
@@ -108,7 +106,6 @@ export const profilesRepo = {
         p.photo_url,
         p.location,
         fp.hourly_rate,
-        fp.rating,
         fp.jobs_completed,
         u.first_name,
         u.last_name,
@@ -118,7 +115,7 @@ export const profilesRepo = {
       LEFT JOIN freelancer_profiles fp ON p.user_id = fp.user_id
       LEFT JOIN profile_skills ps ON p.user_id = ps.user_id
       LEFT JOIN skills s ON ps.skill_id = s.skill_id
-      WHERE u.status = 'active'
+      WHERE u.is_blocked = 0
     `;
 
     const params: (string | number)[] = [];
@@ -144,7 +141,6 @@ export const profilesRepo = {
       photo_url: row.photo_url,
       location: row.location,
       hourly_rate: row.hourly_rate,
-      rating: row.rating,
       jobs_completed: row.jobs_completed,
       first_name: row.first_name,
       last_name: row.last_name,
@@ -163,7 +159,6 @@ export const profilesRepo = {
         p.photo_url,
         p.location,
         fp.hourly_rate,
-        fp.rating,
         fp.jobs_completed,
         u.first_name,
         u.last_name,
@@ -173,7 +168,7 @@ export const profilesRepo = {
       LEFT JOIN freelancer_profiles fp ON p.user_id = fp.user_id
       LEFT JOIN profile_skills ps ON p.user_id = ps.user_id
       LEFT JOIN skills s ON ps.skill_id = s.skill_id
-      WHERE u.status = 'active'
+      WHERE u.is_blocked = 0
       GROUP BY p.profile_id
       ORDER BY RANDOM()
       LIMIT ?
@@ -192,7 +187,6 @@ export const profilesRepo = {
       photo_url: row.photo_url,
       location: row.location,
       hourly_rate: row.hourly_rate,
-      rating: row.rating,
       jobs_completed: row.jobs_completed,
       first_name: row.first_name,
       last_name: row.last_name,
@@ -205,7 +199,7 @@ export const profilesRepo = {
       `SELECT COUNT(DISTINCT p.profile_id) as count
        FROM profiles p
        INNER JOIN users u ON p.user_id = u.user_id AND u.main_role = 'Freelancer'
-       WHERE u.status = 'active'`
+      WHERE u.is_blocked = 0`
     );
     return result?.count ?? 0;
   }

@@ -207,6 +207,10 @@ export const processCheckout = async (req: Request, res: Response) => {
         // 3. Update job status to "In Progress"
         await jobRepo.update(job_id, { status: 'In Progress' });
 
+        // 3.1 Create assignment for accepted freelancer
+        const { assignmentRepo } = await import('../repositories/assignmentRepo.js');
+        await assignmentRepo.create(job_id, payee_id);
+
         // 4. Reject all other pending applications for this job
         const allApplications = await jobAplRepo.findByJobId(job_id);
         for (const app of allApplications) {

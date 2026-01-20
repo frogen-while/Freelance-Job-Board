@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllAssignments, createAssignment, getAssignmentById, updateAssignment, deleteAssignment, getAssignmentsByFreelancerId, getAssignmentsByEmployerId, uploadAssignmentDeliverable, getAssignmentDeliverables, reviewAssignmentDeliverable } from '../controllers/assignmentController.js';
+import { getAllAssignments, createAssignment, getAssignmentById, updateAssignment, deleteAssignment, getAssignmentsByFreelancerId, getAssignmentsByEmployerId, uploadAssignmentDeliverable, getAssignmentDeliverables, reviewAssignmentDeliverable, updateAssignmentStatus } from '../controllers/assignmentController.js';
 import { asyncHandler } from '../utils/http.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
 
@@ -10,6 +10,7 @@ router.get('/employer/:employerId', requireAuth, asyncHandler(getAssignmentsByEm
 router.get('/:id/deliverables', requireAuth, asyncHandler(getAssignmentDeliverables));
 router.post('/:id/deliverables', requireAuth, asyncHandler(uploadAssignmentDeliverable));
 router.patch('/deliverables/:deliverableId', requireAuth, asyncHandler(reviewAssignmentDeliverable));
+router.patch('/:id/status', requireAuth, asyncHandler(updateAssignmentStatus));
 
 router.post('/', requireAuth, asyncHandler(createAssignment)); 
 router.get('/', requireAuth, asyncHandler(getAllAssignments));

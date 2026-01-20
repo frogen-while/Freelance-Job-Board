@@ -6,18 +6,15 @@ import { assignmentRepo } from '../repositories/assignmentRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
 import { assignmentDeliverablesRepo } from '../repositories/assignmentDeliverablesRepo.js';
-import { AssignmentStatus } from '../interfaces/Assignment.js';
+import { reviewRepo } from '../repositories/reviewRepo.js';
+import { messageRepo } from '../repositories/messageRepo.js';
 import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 
 export const createAssignment = async (req: Request, res: Response) => {
-    const {job_id, freelancer_id, status} = req.body;
+    const {job_id, freelancer_id} = req.body;
 
-    if (job_id === undefined || freelancer_id === undefined || !status) {
-        return sendError(res, 400, 'job_id, freelancer_id and status are required.');
-    }
-
-    if (!['Active', 'Completed', 'Terminated'].includes(status)) {
-        return sendError(res, 400, 'status must be Active, Completed, or Terminated.');
+    if (job_id === undefined || freelancer_id === undefined) {
+        return sendError(res, 400, 'job_id and freelancer_id are required.');
     }
 
     try {
@@ -31,7 +28,7 @@ export const createAssignment = async (req: Request, res: Response) => {
             return sendError(res, 400, 'freelancer_id does not reference an existing user.');
         }
 
-        const newAssignmentId = await assignmentRepo.create(job_id, freelancer_id, status);
+        const newAssignmentId = await assignmentRepo.create(job_id, freelancer_id);
 
         if (newAssignmentId) {
             return sendSuccess(res, { assignment_id: newAssignmentId }, 201);
@@ -95,12 +92,12 @@ export const deleteAssignment = async(req: Request, res: Response) =>{
 
 export const updateAssignment = async (req: Request, res: Response) => {
     const assignmentId = parseIdParam(res, req.params.id, 'assignment');
-    const { job_id, freelancer_id, status} = req.body; 
+    const { job_id, freelancer_id } = req.body; 
     if (assignmentId === null) {
         return;
     }
 
-    const updateData: {job_id?: number, freelancer_id?: number, status?: AssignmentStatus} = {};
+    const updateData: {job_id?: number, freelancer_id?: number} = {};
     
     if (job_id !== undefined) {
         const job = await jobRepo.findById(job_id);
@@ -116,15 +113,9 @@ export const updateAssignment = async (req: Request, res: Response) => {
         }
         updateData.freelancer_id = freelancer_id;
     }
-    if (status !== undefined) {
-        if (!['Active', 'Completed', 'Terminated'].includes(status)) {
-            return sendError(res, 400, 'status must be Active, Completed, or Terminated.');
-        }
-        updateData.status = status;
-    }
 
     if (Object.keys(updateData).length === 0) {
-        return sendError(res, 400, 'No valid fields provided for update (allowed: job_id, freelancer_id, status)')
+        return sendError(res, 400, 'No valid fields provided for update (allowed: job_id, freelancer_id)')
     }
     
     try {
@@ -159,7 +150,8 @@ export const getAssignmentsByFreelancerId = async (req: Request, res: Response) 
 
     try {
         const assignments = await assignmentRepo.findByFreelancerId(freelancerId);
-        return sendSuccess(res, assignments);
+        const visibleAssignments = await filterAssignmentsWithMutualReviews(assignments);
+        return sendSuccess(res, visibleAssignments);
     } catch (error) {
         console.error(`Error fetching assignments for freelancer ${freelancerId}:`, error);
         rethrowHttpError(error, 500, 'An internal server error occurred while fetching assignments.');
@@ -179,7 +171,8 @@ export const getAssignmentsByEmployerId = async (req: Request, res: Response) =>
 
     try {
         const assignments = await assignmentRepo.findByEmployerId(employerId);
-        return sendSuccess(res, assignments);
+        const visibleAssignments = await filterAssignmentsWithMutualReviews(assignments);
+        return sendSuccess(res, visibleAssignments);
     } catch (error) {
         console.error(`Error fetching assignments for employer ${employerId}:`, error);
         rethrowHttpError(error, 500, 'An internal server error occurred while fetching assignments.');
@@ -237,6 +230,16 @@ export const uploadAssignmentDeliverable = async (req: Request, res: Response) =
 
         if (assignment.freelancer_id !== authUser.sub) {
             return sendError(res, 403, 'You do not have access to this assignment.');
+        }
+
+        if (assignment.status !== 'Active') {
+            return sendError(res, 400, 'You can only submit work for active assignments.');
+        }
+
+        const existingDeliverables = await assignmentDeliverablesRepo.getByAssignmentId(assignmentId);
+        const hasPendingReview = existingDeliverables.some(d => d.status === 'submitted');
+        if (hasPendingReview) {
+            return sendError(res, 400, 'Previous submission is awaiting review.');
         }
 
         const form = formidable({
@@ -367,6 +370,25 @@ export const reviewAssignmentDeliverable = async (req: Request, res: Response) =
             return sendError(res, 500, 'Failed to update deliverable status.');
         }
 
+        // When accepted, complete assignment and job
+        if (status === 'accepted') {
+            await assignmentRepo.updateStatus(assignment.assignment_id, 'Completed');
+            await jobRepo.update(job.job_id, { status: 'Completed' });
+        }
+
+        // Send message to freelancer when changes are requested
+        if (status === 'changes_requested') {
+            const messageBody = reviewer_message 
+            ? `Changes requested for the job "${job.title}": ${reviewer_message}`
+            : `Changes requested for the job "${job.title}". Please review and make the updates.`;
+            
+            await messageRepo.create({
+                sender_id: authUser.sub,
+                receiver_id: assignment.freelancer_id,
+                body: messageBody
+            });
+        }
+
         return sendSuccess(res, {
             deliverable_id: deliverableId,
             status,
@@ -377,3 +399,78 @@ export const reviewAssignmentDeliverable = async (req: Request, res: Response) =
         rethrowHttpError(error, 500, 'An internal server error occurred while reviewing deliverable.');
     }
 };
+
+export const updateAssignmentStatus = async (req: Request, res: Response) => {
+    const assignmentId = parseIdParam(res, req.params.id, 'assignment');
+    if (assignmentId === null) return;
+
+    const { status } = req.body;
+    const validStatuses = ['Active', 'Completed', 'Terminated'];
+    
+    if (!status || !validStatuses.includes(status)) {
+        return sendError(res, 400, `Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+    }
+
+    const authUser = (req as any).user as { sub: number } | undefined;
+    if (!authUser?.sub) {
+        return sendError(res, 401, 'Authentication required.');
+    }
+
+    try {
+        const assignment = await assignmentRepo.findById(assignmentId);
+        if (!assignment) {
+            return sendError(res, 404, 'Assignment not found.');
+        }
+
+        const job = await jobRepo.findById(assignment.job_id ?? 0);
+        if (!job) {
+            return sendError(res, 404, 'Associated job not found.');
+        }
+
+        // Only employer of the job can update assignment status
+        if (job.employer_id !== authUser.sub) {
+            return sendError(res, 403, 'Only the employer can update assignment status.');
+        }
+
+        const updated = await assignmentRepo.updateStatus(assignmentId, status);
+        if (!updated) {
+            return sendError(res, 500, 'Failed to update assignment status.');
+        }
+
+        // If assignment is completed, update job status too
+        if (status === 'Completed') {
+            await jobRepo.update(job.job_id, { status: 'Completed' });
+        }
+
+        return sendSuccess(res, { assignment_id: assignmentId, status });
+    } catch (error) {
+        console.error(`Error updating assignment status ${assignmentId}:`, error);
+        rethrowHttpError(error, 500, 'An internal server error occurred while updating assignment status.');
+    }
+};
+
+async function filterAssignmentsWithMutualReviews(assignments: any[]): Promise<any[]> {
+    if (!assignments.length) return assignments;
+
+    const results = await Promise.all(assignments.map(async (assignment) => {
+        if (assignment.status !== 'Completed') {
+            return assignment;
+        }
+
+        const job = await jobRepo.findById(assignment.job_id ?? 0);
+        if (!job) {
+            return assignment;
+        }
+
+        const freelancerReviewed = await reviewRepo.hasReviewed(job.job_id, assignment.freelancer_id);
+        const employerReviewed = await reviewRepo.hasReviewed(job.job_id, job.employer_id);
+
+        if (freelancerReviewed && employerReviewed) {
+            return null;
+        }
+
+        return assignment;
+    }));
+
+    return results.filter(Boolean);
+}
