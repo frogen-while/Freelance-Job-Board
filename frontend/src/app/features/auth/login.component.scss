@@ -83,6 +83,40 @@
   }
 }
 
+/* Password visibility toggle */
+.input-with-toggle {
+  position: relative;
+}
+
+.input-with-toggle .form-input {
+  padding-right: 2.75rem; /* space for the eye icon */
+}
+
+.toggle-visibility {
+  position: absolute;
+  right: $space-md;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: $text-secondary;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-visibility:hover {
+  color: $text-primary;
+}
+
+.toggle-visibility .icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
 .form-error {
   font-size: $font-size-sm;
   color: $error;

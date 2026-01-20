@@ -23,16 +23,28 @@
 
       <div class="form-group">
         <label class="form-label" for="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          [(ngModel)]="password"
-          required
-          minlength="8"
-          class="form-input"
-          placeholder="••••••••"
-        />
+        <div class="input-with-toggle">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="password"
+            required
+            minlength="8"
+            class="form-input"
+            placeholder="••••••••"
+          />
+          <button
+            type="button"
+            class="toggle-visibility"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+            [attr.aria-pressed]="showPassword"
+          >
+            <img *ngIf="!showPassword" src="assets/img/close_password.png" alt="Show password" aria-hidden="true" class="icon" />
+            <img *ngIf="showPassword" src="assets/img/open_password.png" alt="Hide password" aria-hidden="true" class="icon" />
+          </button>
+        </div>
       </div>
 
       <div *ngIf="error" class="form-error">{{ error }}</div>
