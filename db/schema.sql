@@ -103,7 +103,7 @@ CREATE TABLE jobs (
   title VARCHAR(255) NOT NULL,
   description TEXT NOT NULL,
   budget DECIMAL(10,2),
-  status ENUM('Open', 'Assigned', 'In Progress', 'Completed', 'Cancelled') DEFAULT 'Open',
+  status ENUM('Open', 'In Progress', 'Completed', 'Cancelled') DEFAULT 'Open',
   deadline DATE,
   experience_level ENUM('entry', 'intermediate', 'expert'),
   job_type ENUM('fixed', 'hourly') DEFAULT 'fixed',
@@ -148,6 +148,23 @@ CREATE TABLE assignments (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (job_id) REFERENCES jobs(job_id) ON DELETE CASCADE,
+  FOREIGN KEY (freelancer_id) REFERENCES users(user_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE assignment_deliverables (
+  deliverable_id INT AUTO_INCREMENT PRIMARY KEY,
+  assignment_id INT NOT NULL,
+  freelancer_id INT NOT NULL,
+  file_path TEXT,
+  file_name TEXT,
+  file_size INT,
+  mime_type TEXT,
+  link_url TEXT,
+  status ENUM('submitted', 'accepted', 'changes_requested') DEFAULT 'submitted',
+  reviewer_message TEXT,
+  reviewed_at DATETIME,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (assignment_id) REFERENCES assignments(assignment_id) ON DELETE CASCADE,
   FOREIGN KEY (freelancer_id) REFERENCES users(user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

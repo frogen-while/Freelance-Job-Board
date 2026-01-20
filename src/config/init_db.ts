@@ -140,7 +140,7 @@ export const jobsTableDef = {
     title: { type: 'TEXT', notNull: true },
     description: { type: 'TEXT', notNull: true },
     budget: { type: 'REAL' },
-    status: { type: "TEXT DEFAULT 'Open' CHECK(status IN ('Open', 'Assigned', 'In Progress', 'Completed', 'Cancelled'))" },
+    status: { type: "TEXT DEFAULT 'Open' CHECK(status IN ('Open', 'In Progress', 'Completed', 'Cancelled'))" },
     deadline: { type: 'TEXT' },
     experience_level: { type: "TEXT CHECK(experience_level IN ('entry', 'intermediate', 'expert'))" },
     job_type: { type: "TEXT DEFAULT 'fixed' CHECK(job_type IN ('fixed', 'hourly'))" },
@@ -203,6 +203,28 @@ export const assignmentsTableDef = {
   },
   foreignKeys: [
     { column: 'job_id', references: 'jobs(job_id) ON DELETE CASCADE' },
+    { column: 'freelancer_id', references: 'users(user_id) ON DELETE CASCADE' }
+  ]
+};
+
+export const assignmentDeliverablesTableDef = {
+  name: 'assignment_deliverables',
+  columns: {
+    deliverable_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
+    assignment_id: { type: 'INTEGER', notNull: true },
+    freelancer_id: { type: 'INTEGER', notNull: true },
+    file_path: { type: 'TEXT' },
+    file_name: { type: 'TEXT' },
+    file_size: { type: 'INTEGER' },
+    mime_type: { type: 'TEXT' },
+    link_url: { type: 'TEXT' },
+    status: { type: "TEXT DEFAULT 'submitted' CHECK(status IN ('submitted', 'accepted', 'changes_requested'))" },
+    reviewer_message: { type: 'TEXT' },
+    reviewed_at: { type: 'DATETIME' },
+    created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
+  },
+  foreignKeys: [
+    { column: 'assignment_id', references: 'assignments(assignment_id) ON DELETE CASCADE' },
     { column: 'freelancer_id', references: 'users(user_id) ON DELETE CASCADE' }
   ]
 };
@@ -361,6 +383,7 @@ export async function createSchemaAndData(): Promise<void> {
     jobSkillsTableDef,
     jobApplicationsTableDef,
     assignmentsTableDef,
+    assignmentDeliverablesTableDef,
     reviewsTableDef,
     paymentsTableDef,
     messagesTableDef,
@@ -397,6 +420,29 @@ async function runMigrations(): Promise<void> {
   if (!hasLockUntil) {
     await db.connection!.run('ALTER TABLE users ADD COLUMN lock_until DATETIME');
     console.log('Migration: Added lock_until column to users table');
+  }
+
+  await db.connection!.run("UPDATE jobs SET status = 'In Progress' WHERE status = 'Assigned'");
+
+  const deliverablesInfo = await db.connection!.all("PRAGMA table_info(assignment_deliverables)");
+  if (deliverablesInfo && deliverablesInfo.length > 0) {
+    const hasStatus = deliverablesInfo.some((col: any) => col.name === 'status');
+    if (!hasStatus) {
+      await db.connection!.run("ALTER TABLE assignment_deliverables ADD COLUMN status TEXT DEFAULT 'submitted' CHECK(status IN ('submitted', 'accepted', 'changes_requested'))");
+      console.log('Migration: Added status column to assignment_deliverables table');
+    }
+
+    const hasReviewerMessage = deliverablesInfo.some((col: any) => col.name === 'reviewer_message');
+    if (!hasReviewerMessage) {
+      await db.connection!.run('ALTER TABLE assignment_deliverables ADD COLUMN reviewer_message TEXT');
+      console.log('Migration: Added reviewer_message column to assignment_deliverables table');
+    }
+
+    const hasReviewedAt = deliverablesInfo.some((col: any) => col.name === 'reviewed_at');
+    if (!hasReviewedAt) {
+      await db.connection!.run('ALTER TABLE assignment_deliverables ADD COLUMN reviewed_at DATETIME');
+      console.log('Migration: Added reviewed_at column to assignment_deliverables table');
+    }
   }
 }
 

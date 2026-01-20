@@ -1,9 +1,13 @@
 import { Request, Response } from 'express';
+import formidable, { File } from 'formidable';
+import path from 'node:path';
+import { promises as fs } from 'node:fs';
 import { assignmentRepo } from '../repositories/assignmentRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
+import { assignmentDeliverablesRepo } from '../repositories/assignmentDeliverablesRepo.js';
 import { AssignmentStatus } from '../interfaces/Assignment.js';
-import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 
 export const createAssignment = async (req: Request, res: Response) => {
     const {job_id, freelancer_id, status} = req.body;
@@ -37,7 +41,7 @@ export const createAssignment = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error('creation error:', error);
-        return sendError(res, 500, 'An internal server error occurred during assignment creation.');
+        rethrowHttpError(error, 500, 'An internal server error occurred during assignment creation.');
     }
 };
 
@@ -48,7 +52,7 @@ export const getAllAssignments = async (req: Request, res: Response) => {
         return sendSuccess(res, data);
     } catch (error){
         console.error('Error fetching assignments', error)
-        return sendError(res, 500, 'An internal server error occurred while fetching assignments.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching assignments.');
     }
 };
 
@@ -69,7 +73,7 @@ export const getAssignmentById = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error(`Error fetching assignment ${assignmentId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while fetching the assignment.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching the assignment.');
     }
 };
 
@@ -84,7 +88,7 @@ export const deleteAssignment = async(req: Request, res: Response) =>{
         return res.sendStatus(204);
     } catch (error) {
         console.error(`Error deleting assignment ${assignmentId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while deleting the assignment.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while deleting the assignment.');
     }
 
 };
@@ -138,6 +142,238 @@ export const updateAssignment = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(`Error updating assignment ${assignmentId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while updating the assignment.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while updating the assignment.');
+    }
+};
+
+export const getAssignmentsByFreelancerId = async (req: Request, res: Response) => {
+    const freelancerId = parseIdParam(res, req.params.freelancerId, 'freelancer');
+    if (freelancerId === null) {
+        return;
+    }
+
+    const authUser = (req as any).user as { sub: number } | undefined;
+    if (!authUser?.sub || authUser.sub !== freelancerId) {
+        return sendError(res, 403, 'You do not have access to these assignments.');
+    }
+
+    try {
+        const assignments = await assignmentRepo.findByFreelancerId(freelancerId);
+        return sendSuccess(res, assignments);
+    } catch (error) {
+        console.error(`Error fetching assignments for freelancer ${freelancerId}:`, error);
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching assignments.');
+    }
+};
+
+export const getAssignmentsByEmployerId = async (req: Request, res: Response) => {
+    const employerId = parseIdParam(res, req.params.employerId, 'employer');
+    if (employerId === null) {
+        return;
+    }
+
+    const authUser = (req as any).user as { sub: number } | undefined;
+    if (!authUser?.sub || authUser.sub !== employerId) {
+        return sendError(res, 403, 'You do not have access to these assignments.');
+    }
+
+    try {
+        const assignments = await assignmentRepo.findByEmployerId(employerId);
+        return sendSuccess(res, assignments);
+    } catch (error) {
+        console.error(`Error fetching assignments for employer ${employerId}:`, error);
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching assignments.');
+    }
+};
+
+export const getAssignmentDeliverables = async (req: Request, res: Response) => {
+    const assignmentId = parseIdParam(res, req.params.id, 'assignment');
+    if (assignmentId === null) return;
+
+    const authUser = (req as any).user as { sub: number } | undefined;
+    if (!authUser?.sub) {
+        return sendError(res, 401, 'Authentication required.');
+    }
+
+    try {
+        const assignment = await assignmentRepo.findById(assignmentId);
+        if (!assignment) {
+            return sendError(res, 404, 'Assignment not found.');
+        }
+
+        const job = await jobRepo.findById(assignment.job_id ?? 0);
+        const isFreelancer = assignment.freelancer_id === authUser.sub;
+        const isEmployer = job?.employer_id === authUser.sub;
+        if (!isFreelancer && !isEmployer) {
+            return sendError(res, 403, 'You do not have access to these deliverables.');
+        }
+
+        const deliverables = await assignmentDeliverablesRepo.getByAssignmentId(assignmentId);
+        return sendSuccess(res, deliverables);
+    } catch (error) {
+        console.error(`Error fetching deliverables for assignment ${assignmentId}:`, error);
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching deliverables.');
+    }
+};
+
+function sanitizeFilename(name: string): string {
+    return name.replace(/[^a-zA-Z0-9._-]/g, '_');
+}
+
+export const uploadAssignmentDeliverable = async (req: Request, res: Response) => {
+    const assignmentId = parseIdParam(res, req.params.id, 'assignment');
+    if (assignmentId === null) return;
+
+    const authUser = (req as any).user as { sub: number } | undefined;
+    if (!authUser?.sub) {
+        return sendError(res, 401, 'Authentication required.');
+    }
+
+    try {
+        const assignment = await assignmentRepo.findById(assignmentId);
+        if (!assignment) {
+            return sendError(res, 404, 'Assignment not found.');
+        }
+
+        if (assignment.freelancer_id !== authUser.sub) {
+            return sendError(res, 403, 'You do not have access to this assignment.');
+        }
+
+        const form = formidable({
+            maxFileSize: 50 * 1024 * 1024,
+            keepExtensions: true,
+            multiples: false
+        });
+
+        const { fields, files } = await new Promise<{ fields: formidable.Fields; files: formidable.Files }>((resolve, reject) => {
+            form.parse(req, (err, parsedFields, parsedFiles) => {
+                if (err) return reject(err);
+                resolve({ fields: parsedFields, files: parsedFiles });
+            });
+        });
+
+        const linkRaw = fields.link?.[0] || fields.link?.toString();
+        const linkUrl = typeof linkRaw === 'string' && linkRaw.trim().length > 0 ? linkRaw.trim() : null;
+
+        if (linkUrl) {
+            try {
+                new URL(linkUrl);
+            } catch {
+                return sendError(res, 400, 'Link must be a valid URL.');
+            }
+        }
+
+        const uploadFile = (files.file as File | File[] | undefined) ?? undefined;
+        const file = Array.isArray(uploadFile) ? uploadFile[0] : uploadFile;
+
+        if (!file && !linkUrl) {
+            return sendError(res, 400, 'Provide a file, a link, or both.');
+        }
+
+        let filePath: string | null = null;
+        let fileName: string | null = null;
+        let fileSize: number | null = null;
+        let mimeType: string | null = null;
+
+        if (file) {
+            const safeBase = sanitizeFilename(path.basename(file.originalFilename || 'file'));
+            const ext = path.extname(safeBase);
+            const baseName = safeBase.replace(ext, '') || 'file';
+            const finalName = `${Date.now()}_${baseName}${ext}`;
+
+            const assignmentFolder = path.join(process.cwd(), 'uploads', 'assignments', String(assignmentId));
+            await fs.mkdir(assignmentFolder, { recursive: true });
+            const destination = path.join(assignmentFolder, finalName);
+            await fs.rename(file.filepath, destination);
+
+            filePath = `/uploads/assignments/${assignmentId}/${finalName}`;
+            fileName = file.originalFilename || finalName;
+            fileSize = file.size ?? null;
+            mimeType = file.mimetype || null;
+        }
+
+        const deliverableId = await assignmentDeliverablesRepo.create({
+            assignment_id: assignmentId,
+            freelancer_id: authUser.sub,
+            file_path: filePath,
+            file_name: fileName,
+            file_size: fileSize,
+            mime_type: mimeType,
+            link_url: linkUrl,
+            status: 'submitted'
+        });
+
+        if (!deliverableId) {
+            return sendError(res, 500, 'Failed to save deliverable.');
+        }
+
+        return sendSuccess(res, {
+            deliverable_id: deliverableId,
+            assignment_id: assignmentId,
+            freelancer_id: authUser.sub,
+            file_path: filePath,
+            file_name: fileName,
+            file_size: fileSize,
+            mime_type: mimeType,
+            link_url: linkUrl,
+            status: 'submitted'
+        }, 201);
+    } catch (error) {
+        console.error('Error uploading deliverable:', error);
+        if ((error as any)?.code === 'LIMIT_FILE_SIZE' || `${(error as any)?.message || ''}`.includes('maxFileSize')) {
+            return sendError(res, 413, 'File is too large. Maximum size is 50MB.');
+        }
+        rethrowHttpError(error, 500, 'An internal server error occurred while uploading the deliverable.');
+    }
+};
+
+export const reviewAssignmentDeliverable = async (req: Request, res: Response) => {
+    const deliverableId = parseIdParam(res, req.params.deliverableId, 'deliverable');
+    if (deliverableId === null) return;
+
+    const { status, reviewer_message } = req.body as { status?: string; reviewer_message?: string };
+    if (!status || !['accepted', 'changes_requested'].includes(status)) {
+        return sendError(res, 400, 'status must be accepted or changes_requested.');
+    }
+
+    const authUser = (req as any).user as { sub: number } | undefined;
+    if (!authUser?.sub) {
+        return sendError(res, 401, 'Authentication required.');
+    }
+
+    try {
+        const deliverable = await assignmentDeliverablesRepo.findById(deliverableId);
+        if (!deliverable) {
+            return sendError(res, 404, 'Deliverable not found.');
+        }
+
+        const assignment = await assignmentRepo.findById(deliverable.assignment_id);
+        if (!assignment) {
+            return sendError(res, 404, 'Assignment not found.');
+        }
+
+        const job = await jobRepo.findById(assignment.job_id ?? 0);
+        if (!job || job.employer_id !== authUser.sub) {
+            return sendError(res, 403, 'You do not have access to review this deliverable.');
+        }
+
+        const updated = await assignmentDeliverablesRepo.updateStatus(
+            deliverableId,
+            status as 'accepted' | 'changes_requested',
+            reviewer_message ?? null
+        );
+
+        if (!updated) {
+            return sendError(res, 500, 'Failed to update deliverable status.');
+        }
+
+        return sendSuccess(res, {
+            deliverable_id: deliverableId,
+            status,
+            reviewer_message: reviewer_message ?? null
+        });
+    } catch (error) {
+        console.error(`Error reviewing deliverable ${deliverableId}:`, error);
+        rethrowHttpError(error, 500, 'An internal server error occurred while reviewing deliverable.');
     }
 };

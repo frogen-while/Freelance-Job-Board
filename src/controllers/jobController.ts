@@ -4,7 +4,7 @@ import { userRepo } from '../repositories/userRepo.js';
 import { categoryRepo } from '../repositories/categoryRepo.js';
 import { employerProfilesRepo } from '../repositories/employerProfilesRepo.js';
 import { JobStatus, ExperienceLevel, JobType, DurationEstimate } from '../interfaces/Job.js';
-import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 
 export const createJob = async (req: Request, res: Response) => {
     const {
@@ -53,7 +53,7 @@ export const createJob = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error('Error creating job:', error);
-        return sendError(res, 500, 'An internal server error occurred during job creation.');
+        rethrowHttpError(error, 500, 'An internal server error occurred during job creation.');
     }
 };
 
@@ -85,7 +85,7 @@ export const getAllJobs = async (req: Request, res: Response) => {
         return sendSuccess(res, data);
     } catch (error){
         console.error('Error fetching jobs:', error);
-        return sendError(res, 500, 'An internal server error occurred while fetching jobs.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching jobs.');
     }
 };
 
@@ -104,7 +104,7 @@ export const getJobById = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error(`Error fetching job ${jobId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while fetching the job.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching the job.');
     }
 };
 
@@ -117,7 +117,7 @@ export const getJobsByEmployerId = async (req: Request, res: Response) => {
         return sendSuccess(res, jobs);
     } catch (error) {
         console.error(`Error fetching jobs for employer ${employerId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while fetching jobs.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching jobs.');
     }
 };
 
@@ -130,7 +130,7 @@ export const deleteJob = async(req: Request, res: Response) =>{
         return res.sendStatus(204);
     } catch (error) {
         console.error(`Error deleting job ${jobId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while deleting the job.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while deleting the job.');
     }
 
 };
@@ -203,6 +203,6 @@ export const updateJob = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(`Error updating job ${jobId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while updating the job.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while updating the job.');
     }
 };

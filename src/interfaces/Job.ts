@@ -1,4 +1,4 @@
-export type JobStatus = 'Open' | 'Assigned' | 'In Progress' | 'Completed' | 'Cancelled';
+export type JobStatus = 'Open' | 'In Progress' | 'Completed' | 'Cancelled';
 export type JobType = 'fixed' | 'hourly';
 export type ExperienceLevel = 'entry' | 'intermediate' | 'expert';
 export type DurationEstimate = 'less_than_week' | '1_2_weeks' | '2_4_weeks' | '1_3_months' | '3_6_months' | 'more_than_6_months';

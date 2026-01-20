@@ -1,4 +1,4 @@
-import type { Response } from 'express';
+import type { NextFunction, Request, Response, RequestHandler } from 'express';
 
 export type ApiErrorPayload = {
   message: string;
@@ -17,10 +17,62 @@ export function sendError(
   code?: string,
   details?: unknown
 ) {
-  const error: ApiErrorPayload = { message };
-  if (code) error.code = code;
-  if (details !== undefined) error.details = details;
-  return res.status(status).json({ success: false, error });
+  throw new HttpError(status, message, code, details);
+}
+
+export class HttpError extends Error {
+  status: number;
+  code?: string;
+  details?: unknown;
+
+  constructor(status: number, message: string, code?: string, details?: unknown) {
+    super(message);
+    this.status = status;
+    this.code = code;
+    this.details = details;
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+export function errorHandler(
+  err: unknown,
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (res.headersSent) {
+    return next(err);
+  }
+  const httpError = err instanceof HttpError
+    ? err
+    : new HttpError(500, 'Internal Server Error');
+
+  if (!(err instanceof HttpError)) {
+    console.error('Unhandled error:', err);
+  }
+
+  const error: ApiErrorPayload = { message: httpError.message };
+  if (httpError.code) error.code = httpError.code;
+  if (httpError.details !== undefined) error.details = httpError.details;
+  return res.status(httpError.status).json({ success: false, error });
+}
+
+export function rethrowHttpError(
+  err: unknown,
+  status: number,
+  message: string,
+  code?: string,
+  details?: unknown
+): never {
+  if (err instanceof HttpError) {
+    throw err;
+  }
+  throw new HttpError(status, message, code, details);
+}
+
+export function asyncHandler(handler: RequestHandler) {
+  return (req: Request, res: Response, next: NextFunction) =>
+    Promise.resolve(handler(req, res, next)).catch(next);
 }
 
 export function parseIdParam(

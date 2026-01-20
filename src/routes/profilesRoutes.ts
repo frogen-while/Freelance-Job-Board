@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/authMiddleware.js';
+import { asyncHandler } from '../utils/http.js';
 import { 
   getProfileByUserId, 
   getProfileSkills, 
@@ -17,24 +18,24 @@ import {
 const router = Router();
 
 // General freelancer listings
-router.get('/freelancers', getFreelancers);
-router.get('/freelancers/featured', getFeaturedFreelancers);
+router.get('/freelancers', asyncHandler(getFreelancers));
+router.get('/freelancers/featured', asyncHandler(getFeaturedFreelancers));
 
 // Employer listings
-router.get('/employers', getEmployers);
+router.get('/employers', asyncHandler(getEmployers));
 
 // Base profile routes
-router.get('/:userId', getProfileByUserId);
-router.put('/:userId', requireAuth, upsertProfile);
-router.get('/:userId/skills', getProfileSkills);
-router.put('/:userId/skills', requireAuth, setProfileSkills);
+router.get('/:userId', asyncHandler(getProfileByUserId));
+router.put('/:userId', requireAuth, asyncHandler(upsertProfile));
+router.get('/:userId/skills', asyncHandler(getProfileSkills));
+router.put('/:userId/skills', requireAuth, asyncHandler(setProfileSkills));
 
 // Freelancer-specific profile
-router.get('/:userId/freelancer', getFreelancerProfile);
-router.put('/:userId/freelancer', requireAuth, upsertFreelancerProfile);
+router.get('/:userId/freelancer', asyncHandler(getFreelancerProfile));
+router.put('/:userId/freelancer', requireAuth, asyncHandler(upsertFreelancerProfile));
 
 // Employer-specific profile
-router.get('/:userId/employer', getEmployerProfile);
-router.put('/:userId/employer', requireAuth, upsertEmployerProfile);
+router.get('/:userId/employer', asyncHandler(getEmployerProfile));
+router.put('/:userId/employer', requireAuth, asyncHandler(upsertEmployerProfile));
 
 export default router;

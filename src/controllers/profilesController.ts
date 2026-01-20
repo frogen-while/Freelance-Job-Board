@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 import { profilesRepo } from '../repositories/profilesRepo.js';
 import { profileSkillsRepo } from '../repositories/profileSkillsRepo.js';
 import { freelancerProfilesRepo } from '../repositories/freelancerProfilesRepo.js';
@@ -18,7 +18,7 @@ export const getProfileByUserId = async (req: Request, res: Response) => {
     return sendSuccess(res, profile);
   } catch (error) {
     console.error('Error fetching profile', error);
-    return sendError(res, 500, 'An internal server error occurred while fetching profile.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while fetching profile.');
   }
 };
 
@@ -69,7 +69,7 @@ export const upsertProfile = async (req: Request, res: Response) => {
     return sendSuccess(res, profile ?? { user_id: userId, ...payload }, 200);
   } catch (error) {
     console.error('Error upserting profile', error);
-    return sendError(res, 500, 'An internal server error occurred while updating profile.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while updating profile.');
   }
 };
 
@@ -82,7 +82,7 @@ export const getProfileSkills = async (req: Request, res: Response) => {
     return sendSuccess(res, skills);
   } catch (error) {
     console.error('Error fetching profile skills', error);
-    return sendError(res, 500, 'An internal server error occurred while fetching profile skills.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while fetching profile skills.');
   }
 };
 
@@ -105,7 +105,7 @@ export const setProfileSkills = async (req: Request, res: Response) => {
     return sendSuccess(res, profile?.skills ?? (skill_ids as number[]), 200);
   } catch (error) {
     console.error('Error setting profile skills', error);
-    return sendError(res, 500, 'An internal server error occurred while setting profile skills.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while setting profile skills.');
   }
 };
 
@@ -123,7 +123,7 @@ export const getFreelancers = async (req: Request, res: Response) => {
     return sendSuccess(res, { freelancers, total });
   } catch (error) {
     console.error('Error fetching freelancers', error);
-    return sendError(res, 500, 'An internal server error occurred while fetching freelancers.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while fetching freelancers.');
   }
 };
 
@@ -138,7 +138,7 @@ export const getFeaturedFreelancers = async (req: Request, res: Response) => {
     return sendSuccess(res, freelancers);
   } catch (error) {
     console.error('Error fetching featured freelancers', error);
-    return sendError(res, 500, 'An internal server error occurred while fetching featured freelancers.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while fetching featured freelancers.');
   }
 };
 
@@ -156,7 +156,7 @@ export const getFreelancerProfile = async (req: Request, res: Response) => {
     return sendSuccess(res, profile);
   } catch (error) {
     console.error('Error fetching freelancer profile', error);
-    return sendError(res, 500, 'An internal server error occurred while fetching freelancer profile.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while fetching freelancer profile.');
   }
 };
 
@@ -194,7 +194,7 @@ export const upsertFreelancerProfile = async (req: Request, res: Response) => {
     return sendSuccess(res, profile, 200);
   } catch (error) {
     console.error('Error upserting freelancer profile', error);
-    return sendError(res, 500, 'An internal server error occurred while updating freelancer profile.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while updating freelancer profile.');
   }
 };
 
@@ -212,7 +212,7 @@ export const getEmployerProfile = async (req: Request, res: Response) => {
     return sendSuccess(res, profile);
   } catch (error) {
     console.error('Error fetching employer profile', error);
-    return sendError(res, 500, 'An internal server error occurred while fetching employer profile.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while fetching employer profile.');
   }
 };
 
@@ -247,7 +247,7 @@ export const upsertEmployerProfile = async (req: Request, res: Response) => {
     return sendSuccess(res, profile, 200);
   } catch (error) {
     console.error('Error upserting employer profile', error);
-    return sendError(res, 500, 'An internal server error occurred while updating employer profile.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while updating employer profile.');
   }
 };
 
@@ -263,6 +263,6 @@ export const getEmployers = async (req: Request, res: Response) => {
     return sendSuccess(res, employers);
   } catch (error) {
     console.error('Error fetching employers', error);
-    return sendError(res, 500, 'An internal server error occurred while fetching employers.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while fetching employers.');
   }
 };

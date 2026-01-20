@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { userRepo } from '../repositories/userRepo.js';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 import { validatePassword } from '../utils/passwordValidator.js';
 import { MainRole } from '../interfaces/User.js';
 
@@ -86,7 +86,7 @@ export const register = async (req: Request, res: Response) => {
     return sendSuccess(res, { token, user: createdUser }, 201);
   } catch (error) {
     console.error('Auth register error:', error);
-    return sendError(res, 500, 'An internal server error occurred during registration.');
+    rethrowHttpError(error, 500, 'An internal server error occurred during registration.');
   }
 };
 
@@ -165,6 +165,6 @@ export const login = async (req: Request, res: Response) => {
     return sendSuccess(res, { token, user: publicUser }, 200);
   } catch (error) {
     console.error('Auth login error:', error);
-    return sendError(res, 500, 'An internal server error occurred during login.');
+    rethrowHttpError(error, 500, 'An internal server error occurred during login.');
   }
 };

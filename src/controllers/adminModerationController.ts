@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { jobFlagsRepo } from '../repositories/jobFlagsRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
 import { auditLogRepo, AuditActions, EntityTypes } from '../repositories/auditLogRepo.js';
-import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 import { User } from '../interfaces/User.js';
 
 export const flagJob = async (req: Request, res: Response) => {
@@ -39,7 +39,7 @@ export const flagJob = async (req: Request, res: Response) => {
     return sendSuccess(res, { message: 'Job flagged successfully.', flag_id: flagId }, 201);
   } catch (error) {
     console.error('Error flagging job:', error);
-    return sendError(res, 500, 'Failed to flag job.');
+    rethrowHttpError(error, 500, 'Failed to flag job.');
   }
 };
 
@@ -52,7 +52,7 @@ export const getJobFlags = async (req: Request, res: Response) => {
     return sendSuccess(res, flags);
   } catch (error) {
     console.error('Error getting job flags:', error);
-    return sendError(res, 500, 'Failed to get job flags.');
+    rethrowHttpError(error, 500, 'Failed to get job flags.');
   }
 };
 
@@ -79,7 +79,7 @@ export const getPendingFlags = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error getting pending flags:', error);
-    return sendError(res, 500, 'Failed to get pending flags.');
+    rethrowHttpError(error, 500, 'Failed to get pending flags.');
   }
 };
 
@@ -108,7 +108,7 @@ export const reviewFlag = async (req: Request, res: Response) => {
     return sendSuccess(res, { message: `Flag ${status} successfully.` });
   } catch (error) {
     console.error('Error reviewing flag:', error);
-    return sendError(res, 500, 'Failed to review flag.');
+    rethrowHttpError(error, 500, 'Failed to review flag.');
   }
 };
 
@@ -151,7 +151,7 @@ export const hideJob = async (req: Request, res: Response) => {
     return sendSuccess(res, { message: 'Job hidden successfully.' });
   } catch (error) {
     console.error('Error hiding job:', error);
-    return sendError(res, 500, 'Failed to hide job.');
+    rethrowHttpError(error, 500, 'Failed to hide job.');
   }
 };
 
@@ -189,7 +189,7 @@ export const restoreJob = async (req: Request, res: Response) => {
     return sendSuccess(res, { message: 'Job restored successfully.' });
   } catch (error) {
     console.error('Error restoring job:', error);
-    return sendError(res, 500, 'Failed to restore job.');
+    rethrowHttpError(error, 500, 'Failed to restore job.');
   }
 };
 
@@ -216,6 +216,6 @@ export const getHiddenJobs = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error getting hidden jobs:', error);
-    return sendError(res, 500, 'Failed to get hidden jobs.');
+    rethrowHttpError(error, 500, 'Failed to get hidden jobs.');
   }
 };

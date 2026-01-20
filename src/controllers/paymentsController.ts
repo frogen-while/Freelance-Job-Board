@@ -3,7 +3,7 @@ import { paymentsRepo } from '../repositories/paymentsRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
 import { jobAplRepo } from '../repositories/jobaplRepo.js';
-import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 
 export const createPayment = async (req: Request, res: Response) => {
     const { job_id, payer_id, payee_id, amount } = req.body;
@@ -42,7 +42,7 @@ export const createPayment = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error('creation error:', error);
-        return sendError(res, 500, 'An internal server error occurred during payment creation.');
+        rethrowHttpError(error, 500, 'An internal server error occurred during payment creation.');
     }
 };
 
@@ -53,7 +53,7 @@ export const getAllPayments = async (req: Request, res: Response) => {
         return sendSuccess(res, data);
     } catch (error){
         console.error('Error fetching payments', error)
-        return sendError(res, 500, 'An internal server error occurred while fetching payments.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching payments.');
     }
 };
 
@@ -72,7 +72,7 @@ export const getPaymentById = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error(`Error fetching payment ${paymentId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while fetching the payment.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching the payment.');
     }
 };
 
@@ -85,7 +85,7 @@ export const deletePayment = async(req: Request, res: Response) =>{
         return res.sendStatus(204);
     } catch (error) {
         console.error(`Error deleting payment ${paymentId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while deleting the payment.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while deleting the payment.');
     }
 
 };
@@ -144,7 +144,7 @@ export const updatePayment = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(`Error updating payment ${paymentId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while updating the payment.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while updating the payment.');
     }
 };
 
@@ -222,6 +222,6 @@ export const processCheckout = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error('Checkout error:', error);
-        return sendError(res, 500, 'An internal server error occurred during checkout.');
+        rethrowHttpError(error, 500, 'An internal server error occurred during checkout.');
     }
 };

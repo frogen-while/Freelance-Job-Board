@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { categoryRepo } from '../repositories/categoryRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
-import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 
 
 export const createCategory = async (req: Request, res: Response) => {
@@ -43,7 +43,7 @@ export const createCategory = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error('Error creating category:', error);
-        return sendError(res, 500, 'An internal server error occurred while creating the category.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while creating the category.');
     }
 };
 
@@ -54,7 +54,7 @@ export const getAllCategories = async (req: Request, res: Response) => {
         return sendSuccess(res, data);
     } catch (error){
         console.error('Error fetching Categories', error)
-        return sendError(res, 500, 'An internal server error occurred while fetching categories.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching categories.');
     }
     
 
@@ -76,7 +76,7 @@ export const getCategoryById = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error(`Error fetching category ${CategoryId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while fetching the category.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching the category.');
     }
 };
 export const deleteCategory = async(req: Request, res: Response) =>{
@@ -90,7 +90,7 @@ export const deleteCategory = async(req: Request, res: Response) =>{
         return res.sendStatus(204);
     } catch (error) {
         console.error(`Error fetching category ${CategoryId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while deleting the category.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while deleting the category.');
     }
 
 };
@@ -142,6 +142,6 @@ export const updateCategory = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(`Error updating category ${CategoryId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while updating the category.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while updating the category.');
     }
 };

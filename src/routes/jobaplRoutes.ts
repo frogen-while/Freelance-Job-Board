@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/authMiddleware.js';
+import { asyncHandler } from '../utils/http.js';
 import { 
     createJobApplication, 
     getAllJobApplications, 
@@ -14,15 +15,15 @@ import {
 const router = Router();
 
 // Specific routes first
-router.get('/job/:jobId', requireAuth, getApplicationsByJobId);
-router.get('/freelancer/:freelancerId', requireAuth, getApplicationsByFreelancerId);
-router.patch('/:id/status', requireAuth, updateApplicationStatus);
+router.get('/job/:jobId', requireAuth, asyncHandler(getApplicationsByJobId));
+router.get('/freelancer/:freelancerId', requireAuth, asyncHandler(getApplicationsByFreelancerId));
+router.patch('/:id/status', requireAuth, asyncHandler(updateApplicationStatus));
 
 // Generic routes
-router.post('/', requireAuth, createJobApplication); 
-router.get('/', getAllJobApplications);
-router.get('/:id', getJobApplicationById);
-router.delete('/:id', requireAuth, deleteJobApplication);
-router.put('/:id', requireAuth, updateJobApplication);
+router.post('/', requireAuth, asyncHandler(createJobApplication)); 
+router.get('/', asyncHandler(getAllJobApplications));
+router.get('/:id', asyncHandler(getJobApplicationById));
+router.delete('/:id', requireAuth, asyncHandler(deleteJobApplication));
+router.put('/:id', requireAuth, asyncHandler(updateJobApplication));
 
 export default router;

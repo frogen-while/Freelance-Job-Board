@@ -58,6 +58,32 @@ export const assignmentRepo = {
             'DELETE FROM assignments WHERE assignment_id = ?',
             assignment_id
         );
+    },
+
+    async findByFreelancerId(freelancer_id: number): Promise<Assignment[]> {
+        const result = await db.connection?.all<Assignment[]>(
+            `SELECT a.*, j.title as job_title, j.budget as job_budget, j.status as job_status
+             FROM assignments a
+             LEFT JOIN jobs j ON a.job_id = j.job_id
+             WHERE a.freelancer_id = ?
+             ORDER BY a.created_at DESC`,
+            freelancer_id
+        );
+        return result || [];
+    },
+
+    async findByEmployerId(employer_id: number): Promise<Assignment[]> {
+        const result = await db.connection?.all<Assignment[]>(
+            `SELECT a.*, j.title as job_title, j.budget as job_budget, j.status as job_status,
+                    u.first_name as freelancer_first_name, u.last_name as freelancer_last_name
+             FROM assignments a
+             LEFT JOIN jobs j ON a.job_id = j.job_id
+             LEFT JOIN users u ON a.freelancer_id = u.user_id
+             WHERE j.employer_id = ?
+             ORDER BY a.created_at DESC`,
+            employer_id
+        );
+        return result || [];
     }
 
 }

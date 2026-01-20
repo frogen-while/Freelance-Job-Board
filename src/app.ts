@@ -16,13 +16,17 @@ import adminRoutes from './routes/adminRoutes.js'
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { sendError, sendSuccess } from './utils/http.js';
+import { errorHandler, sendError, sendSuccess } from './utils/http.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app: Application = express();
 
 app.use(express.json());
 app.use(cors());
+
+const uploadsPath = path.join(__dirname, '..', 'uploads');
+fs.mkdirSync(uploadsPath, { recursive: true });
+app.use('/uploads', express.static(uploadsPath));
 
 app.get('/api/health', (req: Request, res: Response) => {
   return sendSuccess(res, { status: 'ok' }, 200);
@@ -66,5 +70,7 @@ if (fs.existsSync(distPath)) {
     res.sendFile(indexHtml);
   });
 }
+
+app.use(errorHandler);
 
 export default app;

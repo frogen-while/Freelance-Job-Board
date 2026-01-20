@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { statsRepo } from '../repositories/statsRepo.js';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 import { db } from '../config/init_db.js';
 
 export const getOverviewStats = async (req: Request, res: Response) => {
@@ -19,7 +19,7 @@ export const getOverviewStats = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error getting overview stats:', error);
-    return sendError(res, 500, 'Failed to get overview statistics.');
+    rethrowHttpError(error, 500, 'Failed to get overview statistics.');
   }
 };
 
@@ -61,7 +61,7 @@ export const getRevenueStats = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error getting revenue stats:', error);
-    return sendError(res, 500, 'Failed to get revenue statistics.');
+    rethrowHttpError(error, 500, 'Failed to get revenue statistics.');
   }
 };
 
@@ -95,7 +95,7 @@ export const getUserStats = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error getting user stats:', error);
-    return sendError(res, 500, 'Failed to get user statistics.');
+    rethrowHttpError(error, 500, 'Failed to get user statistics.');
   }
 };
 
@@ -119,7 +119,7 @@ export const getJobStats = async (req: Request, res: Response) => {
     return sendSuccess(res, {
       total_jobs: stats.totalJobs,
       open_jobs: stats.jobsByStatus['Open'] || 0,
-      assigned_jobs: stats.jobsByStatus['Assigned'] || stats.jobsByStatus['In Progress'] || 0,
+      assigned_jobs: stats.jobsByStatus['In Progress'] || 0,
       completed_jobs: stats.jobsByStatus['Completed'] || 0,
       cancelled_jobs: stats.jobsByStatus['Cancelled'] || 0,
       jobs_this_month: stats.totalJobs,
@@ -129,6 +129,6 @@ export const getJobStats = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error getting job stats:', error);
-    return sendError(res, 500, 'Failed to get job statistics.');
+    rethrowHttpError(error, 500, 'Failed to get job statistics.');
   }
 };

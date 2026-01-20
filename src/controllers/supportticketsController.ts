@@ -4,7 +4,7 @@ import { supportTicketsRepo } from '../repositories/supportticketsRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { auditLogRepo, AuditActions, EntityTypes } from '../repositories/auditLogRepo.js';
 import { TicketStatus, TicketPriority } from '../interfaces/Supportticket.js';
-import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 import { User } from '../interfaces/User.js';
 
 const VALID_STATUSES: TicketStatus[] = ['Open', 'In Progress', 'Escalated', 'Resolved', 'Closed'];
@@ -45,7 +45,7 @@ export const createSupportTicket = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error('creation error:', error);
-        return sendError(res, 500, 'An internal server error occurred during support ticket creation.');
+        rethrowHttpError(error, 500, 'An internal server error occurred during support ticket creation.');
     }
 };
 
@@ -69,7 +69,7 @@ export const getAllSupportTickets = async (req: Request, res: Response) => {
         return sendSuccess(res, data);
     } catch (error){
         console.error('Error fetching support tickets', error)
-        return sendError(res, 500, 'An internal server error occurred while fetching support tickets.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching support tickets.');
     }
 };
 
@@ -88,7 +88,7 @@ export const getSupportTicketById = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error(`Error fetching support ticket ${ticketId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while fetching the support ticket.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching the support ticket.');
     }
 };
 
@@ -101,7 +101,7 @@ export const deleteSupportTicket = async(req: Request, res: Response) =>{
         return res.sendStatus(204);
     } catch (error) {
         console.error(`Error deleting support ticket ${ticketId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while deleting the support ticket.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while deleting the support ticket.');
     }
 
 };
@@ -155,7 +155,7 @@ export const updateSupportTicket = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(`Error updating support ticket ${ticketId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while updating the support ticket.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while updating the support ticket.');
     }
 };
 
@@ -198,7 +198,7 @@ export const escalateSupportTicket = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(`Error escalating support ticket ${ticketId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while escalating the support ticket.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while escalating the support ticket.');
     }
 };
 
@@ -218,7 +218,7 @@ export const getMySupportTickets = async (req: Request, res: Response) => {
         return sendSuccess(res, tickets);
     } catch (error) {
         console.error('Error fetching user tickets:', error);
-        return sendError(res, 500, 'An internal server error occurred while fetching your support tickets.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching your support tickets.');
     }
 };
 
@@ -266,7 +266,7 @@ export const assignTicket = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(`Error assigning ticket ${ticketId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while assigning the ticket.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while assigning the ticket.');
     }
 };
 
@@ -306,7 +306,7 @@ export const updateTicketPriority = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(`Error updating ticket priority ${ticketId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while updating the ticket priority.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while updating the ticket priority.');
     }
 };
 
@@ -336,7 +336,7 @@ export const getTicketsFiltered = async (req: Request, res: Response) => {
         return sendSuccess(res, tickets);
     } catch (error) {
         console.error('Error fetching filtered tickets:', error);
-        return sendError(res, 500, 'An internal server error occurred while fetching tickets.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching tickets.');
     }
 };
 
@@ -377,6 +377,6 @@ export const bulkUpdateTicketStatus = async (req: Request, res: Response) => {
         return sendSuccess(res, { message: `Updated ${affected} ticket(s).`, affected });
     } catch (error) {
         console.error('Error bulk updating ticket status:', error);
-        return sendError(res, 500, 'An internal server error occurred while updating tickets.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while updating tickets.');
     }
 };

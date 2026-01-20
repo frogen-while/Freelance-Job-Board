@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { messageRepo } from '../repositories/messageRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
-import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 
 export const getAllMessages = async (req: Request, res: Response) => {
     try {
@@ -9,7 +9,7 @@ export const getAllMessages = async (req: Request, res: Response) => {
         return sendSuccess(res, messages);
     } catch (error) {
         console.error('Error fetching messages:', error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -22,7 +22,7 @@ export const getMessagesByUser = async (req: Request, res: Response) => {
         return sendSuccess(res, messages);
     } catch (error) {
         console.error(`Error fetching messages for user ${userId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -37,7 +37,7 @@ export const getConversation = async (req: Request, res: Response) => {
         return sendSuccess(res, messages);
     } catch (error) {
         console.error(`Error fetching conversation between ${userId1} and ${userId2}:`, error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -50,7 +50,7 @@ export const getMessagesByJob = async (req: Request, res: Response) => {
         return sendSuccess(res, messages);
     } catch (error) {
         console.error(`Error fetching messages for job ${jobId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -95,7 +95,7 @@ export const sendMessage = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error('Error sending message:', error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -111,7 +111,7 @@ export const getMessageById = async (req: Request, res: Response) => {
         return sendSuccess(res, message);
     } catch (error) {
         console.error(`Error fetching message ${messageId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -124,7 +124,7 @@ export const markMessageAsRead = async (req: Request, res: Response) => {
         return sendSuccess(res, { message: 'Message marked as read.' });
     } catch (error) {
         console.error(`Error marking message ${messageId} as read:`, error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -140,7 +140,7 @@ export const markAllAsRead = async (req: Request, res: Response) => {
         return sendSuccess(res, { message: 'All messages marked as read.' });
     } catch (error) {
         console.error('Error marking messages as read:', error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -153,7 +153,7 @@ export const deleteMessage = async (req: Request, res: Response) => {
         return sendSuccess(res, { message: 'Message deleted.' });
     } catch (error) {
         console.error(`Error deleting message ${messageId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -166,7 +166,7 @@ export const getUnreadCount = async (req: Request, res: Response) => {
         return sendSuccess(res, { unread_count: count });
     } catch (error) {
         console.error(`Error getting unread count for user ${userId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -179,6 +179,6 @@ export const getConversations = async (req: Request, res: Response) => {
         return sendSuccess(res, conversations);
     } catch (error) {
         console.error(`Error getting conversations for user ${userId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };

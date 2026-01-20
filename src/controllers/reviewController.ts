@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { reviewRepo } from '../repositories/reviewRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
-import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 
 export const createReview = async (req: Request, res: Response) => {
     const { job_id, reviewer_id, reviewee_id, rating, feedback } = req.body;
@@ -48,7 +48,7 @@ export const createReview = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error('Error creating review:', error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -70,7 +70,7 @@ export const getAllReviews = async (req: Request, res: Response) => {
         return sendSuccess(res, reviews);
     } catch (error) {
         console.error('Error fetching reviews:', error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -86,7 +86,7 @@ export const getReviewById = async (req: Request, res: Response) => {
         return sendSuccess(res, review);
     } catch (error) {
         console.error(`Error fetching review ${reviewId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -108,7 +108,7 @@ export const getReviewsByUser = async (req: Request, res: Response) => {
         });
     } catch (error) {
         console.error(`Error fetching reviews for user ${userId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -133,7 +133,7 @@ export const updateReview = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(`Error updating review ${reviewId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -146,7 +146,7 @@ export const deleteReview = async (req: Request, res: Response) => {
         return sendSuccess(res, { message: 'Review deleted.' });
     } catch (error) {
         console.error(`Error deleting review ${reviewId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };
 
@@ -164,6 +164,6 @@ export const getUserRating = async (req: Request, res: Response) => {
         });
     } catch (error) {
         console.error(`Error fetching rating for user ${userId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred.');
+        rethrowHttpError(error, 500, 'An internal server error occurred.');
     }
 };

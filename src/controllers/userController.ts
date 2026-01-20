@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { userRepo } from '../repositories/userRepo.js';
-import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 import bcrypt from 'bcrypt';
 
 
@@ -39,7 +39,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error('Registration error:', error);
-        return sendError(res, 500, 'An internal server error occurred during registration.');
+        rethrowHttpError(error, 500, 'An internal server error occurred during registration.');
     }
 };
 
@@ -50,7 +50,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
         return sendSuccess(res, data);
     } catch (error){
         console.error('Error fetching Users', error)
-        return sendError(res, 500, 'An internal server error occurred while fetching users.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching users.');
     }
     
 
@@ -70,7 +70,7 @@ export const getUserById = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error(`Error fetching user ${userId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while fetching the user.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching the user.');
     }
 };
 export const deleteUser = async(req: Request, res: Response) =>{
@@ -82,7 +82,7 @@ export const deleteUser = async(req: Request, res: Response) =>{
         return res.sendStatus(204);
     } catch (error) {
         console.error(`Error deleting user ${userId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while deleting the user.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while deleting the user.');
     }
 
 };
@@ -120,6 +120,6 @@ export const updateUser = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(`Error updating user ${userId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while updating the user.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while updating the user.');
     }
 };

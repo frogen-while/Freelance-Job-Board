@@ -3,7 +3,7 @@ import { jobAplRepo } from '../repositories/jobaplRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { JobApplicationStatus } from '../interfaces/jobapl.js';
-import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 
 export const createJobApplication = async (req: Request, res: Response) => {
     const {job_id, freelancer_id, bid_amount, proposal_text, status} = req.body;
@@ -45,7 +45,7 @@ export const createJobApplication = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error('creation error:', error);
-        return sendError(res, 500, 'An internal server error occurred during creation.');
+        rethrowHttpError(error, 500, 'An internal server error occurred during creation.');
     }
 };
 
@@ -56,7 +56,7 @@ export const getAllJobApplications = async (req: Request, res: Response) => {
         return sendSuccess(res, data);
     } catch (error){
         console.error('Error fetching job applications', error);
-        return sendError(res, 500, 'An internal server error occurred while fetching job applications.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching job applications.');
     }
 };
 
@@ -76,7 +76,7 @@ export const getJobApplicationById = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error(`Error fetching job application ${applicationId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while fetching the job application.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching the job application.');
     }
 };
 
@@ -89,7 +89,7 @@ export const deleteJobApplication = async(req: Request, res: Response) => {
         return res.sendStatus(204);
     } catch (error) {
         console.error(`Error deleting job application ${applicationId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while deleting the job application.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while deleting the job application.');
     }
 };
 
@@ -137,7 +137,7 @@ export const updateJobApplication = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(`Error updating job application ${applicationId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while updating the job application.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while updating the job application.');
     }
 };
 
@@ -150,7 +150,7 @@ export const getApplicationsByJobId = async (req: Request, res: Response) => {
         return sendSuccess(res, applications);
     } catch (error) {
         console.error(`Error fetching applications for job ${jobId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while fetching applications.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching applications.');
     }
 };
 
@@ -163,7 +163,7 @@ export const getApplicationsByFreelancerId = async (req: Request, res: Response)
         return sendSuccess(res, applications);
     } catch (error) {
         console.error(`Error fetching applications for freelancer ${freelancerId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while fetching applications.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while fetching applications.');
     }
 };
 
@@ -185,10 +185,10 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
         const success = await jobAplRepo.update(applicationId, { status });
 
         if (success) {
-            // When accepting an application, update job status to Assigned and reject other applications
+            // When accepting an application, update job status to In Progress and reject other applications
             if (status === 'Accepted') {
                 const { jobRepo } = await import('../repositories/jobRepo.js');
-                await jobRepo.update(existingApplication.job_id, { status: 'Assigned' });
+                await jobRepo.update(existingApplication.job_id, { status: 'In Progress' });
                 
                 // Reject all other pending applications for this job
                 const allApplications = await jobAplRepo.findByJobId(existingApplication.job_id);
@@ -204,6 +204,6 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(`Error updating application status ${applicationId}:`, error);
-        return sendError(res, 500, 'An internal server error occurred while updating application status.');
+        rethrowHttpError(error, 500, 'An internal server error occurred while updating application status.');
     }
 };

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { userRepo } from '../repositories/userRepo.js';
 import { supportTicketsRepo } from '../repositories/supportticketsRepo.js';
 import { auditLogRepo, AuditActions, EntityTypes } from '../repositories/auditLogRepo.js';
-import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 import { User, MainRole } from '../interfaces/User.js';
 import { TicketStatus } from '../interfaces/Supportticket.js';
 
@@ -40,7 +40,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
     return sendSuccess(res, safeUsers);
   } catch (error) {
     console.error('Error getting all users:', error);
-    return sendError(res, 500, 'Failed to get users.');
+    rethrowHttpError(error, 500, 'Failed to get users.');
   }
 };
 
@@ -99,7 +99,7 @@ export const assignRole = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error assigning role:', error);
-    return sendError(res, 500, 'Failed to assign role.');
+    rethrowHttpError(error, 500, 'Failed to assign role.');
   }
 };
 
@@ -148,7 +148,7 @@ export const blockUser = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error blocking user:', error);
-    return sendError(res, 500, 'Failed to block user.');
+    rethrowHttpError(error, 500, 'Failed to block user.');
   }
 };
 
@@ -189,7 +189,7 @@ export const unblockUser = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error unblocking user:', error);
-    return sendError(res, 500, 'Failed to unblock user.');
+    rethrowHttpError(error, 500, 'Failed to unblock user.');
   }
 };
 
@@ -235,7 +235,7 @@ export const getAuditLogs = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error getting audit logs:', error);
-    return sendError(res, 500, 'Failed to get audit logs.');
+    rethrowHttpError(error, 500, 'Failed to get audit logs.');
   }
 };
 export const bulkBlockUsers = async (req: Request, res: Response) => {
@@ -274,7 +274,7 @@ export const bulkBlockUsers = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error bulk blocking users:', error);
-    return sendError(res, 500, 'Failed to block users.');
+    rethrowHttpError(error, 500, 'Failed to block users.');
   }
 };
 
@@ -314,7 +314,7 @@ export const bulkUnblockUsers = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error bulk unblocking users:', error);
-    return sendError(res, 500, 'Failed to unblock users.');
+    rethrowHttpError(error, 500, 'Failed to unblock users.');
   }
 };
 
@@ -367,7 +367,7 @@ export const bulkAssignRole = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error bulk assigning role:', error);
-    return sendError(res, 500, 'Failed to assign roles.');
+    rethrowHttpError(error, 500, 'Failed to assign roles.');
   }
 };
 
@@ -412,7 +412,7 @@ export const bulkUpdateTicketStatus = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error bulk updating ticket status:', error);
-    return sendError(res, 500, 'Failed to update tickets.');
+    rethrowHttpError(error, 500, 'Failed to update tickets.');
   }
 };
 
@@ -452,6 +452,6 @@ export const bulkDeleteTickets = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error bulk deleting tickets:', error);
-    return sendError(res, 500, 'Failed to delete tickets.');
+    rethrowHttpError(error, 500, 'Failed to delete tickets.');
   }
 };

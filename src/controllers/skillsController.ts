@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 import { skillsRepo } from '../repositories/skillsRepo.js';
 
 export const getAllSkills = async (req: Request, res: Response) => {
@@ -8,7 +8,7 @@ export const getAllSkills = async (req: Request, res: Response) => {
     return sendSuccess(res, data);
   } catch (error) {
     console.error('Error fetching skills', error);
-    return sendError(res, 500, 'An internal server error occurred while fetching skills.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while fetching skills.');
   }
 };
 
@@ -38,7 +38,7 @@ export const createSkill = async (req: Request, res: Response) => {
     return sendSuccess(res, created, 201);
   } catch (error) {
     console.error('Error creating skill', error);
-    return sendError(res, 500, 'An internal server error occurred while creating a skill.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while creating a skill.');
   }
 };
 
@@ -51,6 +51,6 @@ export const deleteSkill = async (req: Request, res: Response) => {
     return res.sendStatus(204);
   } catch (error) {
     console.error('Error deleting skill', error);
-    return sendError(res, 500, 'An internal server error occurred while deleting a skill.');
+    rethrowHttpError(error, 500, 'An internal server error occurred while deleting a skill.');
   }
 };

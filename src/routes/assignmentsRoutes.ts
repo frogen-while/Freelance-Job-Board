@@ -1,12 +1,20 @@
 import { Router } from 'express';
-import { getAllAssignments, createAssignment, getAssignmentById, updateAssignment, deleteAssignment} from '../controllers/assignmentController.js';
+import { getAllAssignments, createAssignment, getAssignmentById, updateAssignment, deleteAssignment, getAssignmentsByFreelancerId, getAssignmentsByEmployerId, uploadAssignmentDeliverable, getAssignmentDeliverables, reviewAssignmentDeliverable } from '../controllers/assignmentController.js';
+import { asyncHandler } from '../utils/http.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
-router.post('/', createAssignment); 
-router.get('/', getAllAssignments);
-router.get('/:id', getAssignmentById);
-router.delete('/:id', deleteAssignment);
-router.put('/:id', updateAssignment);
+router.get('/freelancer/:freelancerId', requireAuth, asyncHandler(getAssignmentsByFreelancerId));
+router.get('/employer/:employerId', requireAuth, asyncHandler(getAssignmentsByEmployerId));
+router.get('/:id/deliverables', requireAuth, asyncHandler(getAssignmentDeliverables));
+router.post('/:id/deliverables', requireAuth, asyncHandler(uploadAssignmentDeliverable));
+router.patch('/deliverables/:deliverableId', requireAuth, asyncHandler(reviewAssignmentDeliverable));
+
+router.post('/', requireAuth, asyncHandler(createAssignment)); 
+router.get('/', requireAuth, asyncHandler(getAllAssignments));
+router.get('/:id', requireAuth, asyncHandler(getAssignmentById));
+router.delete('/:id', requireAuth, asyncHandler(deleteAssignment));
+router.put('/:id', requireAuth, asyncHandler(updateAssignment));
 
 export default router;

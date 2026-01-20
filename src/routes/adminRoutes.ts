@@ -28,35 +28,36 @@ import {
 } from '../controllers/adminModerationController.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
 import { requireAdmin, requireManager, requireSupport } from '../middleware/roleMiddleware.js';
+import { asyncHandler } from '../utils/http.js';
 
 const router = Router();
 
 router.use(requireAuth);
 
-router.get('/stats/overview', requireManager, getOverviewStats);
-router.get('/stats/revenue', requireManager, getRevenueStats);
-router.get('/stats/users', requireManager, getUserStats);
-router.get('/stats/jobs', requireManager, getJobStats);
+router.get('/stats/overview', requireManager, asyncHandler(getOverviewStats));
+router.get('/stats/revenue', requireManager, asyncHandler(getRevenueStats));
+router.get('/stats/users', requireManager, asyncHandler(getUserStats));
+router.get('/stats/jobs', requireManager, asyncHandler(getJobStats));
 
-router.get('/users', requireManager, getAllUsers);
-router.patch('/users/:id/role', requireManager, assignRole);
-router.patch('/users/:id/block', requireAdmin, blockUser);
-router.patch('/users/:id/unblock', requireAdmin, unblockUser);
-router.post('/users/bulk/block', requireAdmin, bulkBlockUsers);
-router.post('/users/bulk/unblock', requireAdmin, bulkUnblockUsers);
-router.post('/users/bulk/role', requireManager, bulkAssignRole);
+router.get('/users', requireManager, asyncHandler(getAllUsers));
+router.patch('/users/:id/role', requireManager, asyncHandler(assignRole));
+router.patch('/users/:id/block', requireAdmin, asyncHandler(blockUser));
+router.patch('/users/:id/unblock', requireAdmin, asyncHandler(unblockUser));
+router.post('/users/bulk/block', requireAdmin, asyncHandler(bulkBlockUsers));
+router.post('/users/bulk/unblock', requireAdmin, asyncHandler(bulkUnblockUsers));
+router.post('/users/bulk/role', requireManager, asyncHandler(bulkAssignRole));
 
-router.get('/jobs/flags/pending', requireSupport, getPendingFlags);
-router.get('/jobs/hidden', requireManager, getHiddenJobs);
-router.post('/jobs/:id/flag', requireSupport, flagJob);
-router.get('/jobs/:id/flags', requireSupport, getJobFlags);
-router.patch('/jobs/flags/:flagId', requireManager, reviewFlag);
-router.post('/jobs/:id/hide', requireManager, hideJob);
-router.post('/jobs/:id/restore', requireManager, restoreJob);
+router.get('/jobs/flags/pending', requireSupport, asyncHandler(getPendingFlags));
+router.get('/jobs/hidden', requireManager, asyncHandler(getHiddenJobs));
+router.post('/jobs/:id/flag', requireSupport, asyncHandler(flagJob));
+router.get('/jobs/:id/flags', requireSupport, asyncHandler(getJobFlags));
+router.patch('/jobs/flags/:flagId', requireManager, asyncHandler(reviewFlag));
+router.post('/jobs/:id/hide', requireManager, asyncHandler(hideJob));
+router.post('/jobs/:id/restore', requireManager, asyncHandler(restoreJob));
 
-router.post('/tickets/bulk/status', requireSupport, bulkUpdateTicketStatus);
-router.post('/tickets/bulk/delete', requireManager, bulkDeleteTickets);
+router.post('/tickets/bulk/status', requireSupport, asyncHandler(bulkUpdateTicketStatus));
+router.post('/tickets/bulk/delete', requireManager, asyncHandler(bulkDeleteTickets));
 
-router.get('/audit-logs', requireAdmin, getAuditLogs);
+router.get('/audit-logs', requireAdmin, asyncHandler(getAuditLogs));
 
 export default router;

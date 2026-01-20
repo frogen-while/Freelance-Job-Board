@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { asyncHandler } from '../utils/http.js';
 import {
     createReview,
     getAllReviews,
@@ -11,13 +12,13 @@ import {
 
 const router = Router();
 
-router.post('/', createReview);
-router.get('/', getAllReviews);
-router.get('/:id', getReviewById);
-router.put('/:id', updateReview);
-router.delete('/:id', deleteReview);
+router.post('/', asyncHandler(createReview));
+router.get('/', asyncHandler(getAllReviews));
+router.get('/:id', asyncHandler(getReviewById));
+router.put('/:id', asyncHandler(updateReview));
+router.delete('/:id', asyncHandler(deleteReview));
 
-router.get('/user/:userId', getReviewsByUser);
-router.get('/user/:userId/rating', getUserRating);
+router.get('/user/:userId', asyncHandler(getReviewsByUser));
+router.get('/user/:userId/rating', asyncHandler(getUserRating));
 
 export default router;
