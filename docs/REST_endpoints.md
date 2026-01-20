@@ -462,7 +462,7 @@ Update job.
   "title": "string",
   "description": "string",
   "budget": 1000.00,
-  "status": "Open | Assigned | In Progress | Completed | Cancelled",
+  "status": "Open | In Progress | Completed | Cancelled",
   "deadline": "2024-12-31"
 }
 ```

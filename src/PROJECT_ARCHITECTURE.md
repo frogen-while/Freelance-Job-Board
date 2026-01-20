@@ -302,7 +302,7 @@ export interface Job {
   title: string;
   description: string;
   budget: number;
-  status: 'Open' | 'Assigned' | 'Completed';
+  status: 'Open' | 'In Progress' | 'Completed';
   created_at?: string;
 }
 ```
