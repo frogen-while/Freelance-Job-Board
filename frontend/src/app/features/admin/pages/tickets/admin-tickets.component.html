@@ -48,12 +48,25 @@
             <button class="action-btn" (click)="openDetailModal(ticket)" title="View details">
               <mat-icon>visibility</mat-icon>
             </button>
-            <select class="action-select" 
+            <select class="action-select"
+                    *ngIf="canChangeStatus && canChangeStatusFor(ticket)"
                     [value]="ticket.status"
                     (change)="updateStatus(ticket, $any($event.target).value); $any($event.target).value = ticket.status">
               <option value="" disabled>Change status...</option>
               <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
             </select>
+            <div class="assign-controls" *ngIf="canAssignToManager">
+              <select class="action-select" [(ngModel)]="selectedManagerIds[ticket.ticket_id]" [disabled]="managers.length === 0">
+                <option [ngValue]="null">Select manager...</option>
+                <option *ngFor="let manager of managers" [ngValue]="manager.user_id">
+                  {{ manager.first_name }} {{ manager.last_name }} (#{{ manager.user_id }})
+                </option>
+              </select>
+              <button class="action-btn" (click)="sendToManager(ticket)" [disabled]="managers.length === 0" title="Send to manager">
+                <mat-icon>forward_to_inbox</mat-icon>
+              </button>
+              <span class="muted" *ngIf="managers.length === 0">No managers available</span>
+            </div>
           </td>
         </tr>
       </tbody>

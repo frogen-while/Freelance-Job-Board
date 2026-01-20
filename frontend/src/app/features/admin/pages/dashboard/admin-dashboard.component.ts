@@ -200,29 +200,26 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
     this.jobChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Open', 'In Progress', 'Completed', 'Cancelled', 'Hidden'],
+        labels: ['Open', 'In Progress', 'Completed', 'Cancelled'],
         datasets: [{
           label: 'Jobs',
           data: [
             this.jobStats.open_jobs,
             this.jobStats.assigned_jobs,
             this.jobStats.completed_jobs,
-            this.jobStats.cancelled_jobs,
-            this.jobStats.hidden_jobs
+            this.jobStats.cancelled_jobs
           ],
           backgroundColor: [
             'rgba(59, 130, 246, 0.7)',
             'rgba(251, 146, 60, 0.7)',
             'rgba(34, 197, 94, 0.7)',
-            'rgba(239, 68, 68, 0.7)',
-            'rgba(148, 163, 184, 0.7)'
+            'rgba(239, 68, 68, 0.7)'
           ],
           borderColor: [
             'rgba(59, 130, 246, 1)',
             'rgba(251, 146, 60, 1)',
             'rgba(34, 197, 94, 1)',
-            'rgba(239, 68, 68, 1)',
-            'rgba(148, 163, 184, 1)'
+            'rgba(239, 68, 68, 1)'
           ],
           borderWidth: 2,
           borderRadius: 6

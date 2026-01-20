@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService, PublicUser } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
-import { ExperienceLevel, CompanySize } from '../../core/models';
+import { ExperienceLevel, CompanySize, Review } from '../../core/models';
 
 interface ProfileData {
   headline: string;
@@ -25,8 +25,6 @@ interface FreelancerData {
   github_url: string;
   linkedin_url: string;
   jobs_completed: number;
-  rating: number | null;
-  reviews_count: number;
 }
 
 interface EmployerData {
@@ -37,13 +35,16 @@ interface EmployerData {
   industry: string;
   jobs_posted: number;
   total_spent: number;
-  rating: number | null;
-  reviews_count: number;
 }
 
 interface Skill {
   skill_id: number;
   name: string;
+}
+
+interface ReviewStats {
+  average_rating: number | null;
+  review_count: number;
 }
 
 @Component({
@@ -63,6 +64,8 @@ export class ProfileComponent implements OnInit {
   isOwnProfile = true;
   profileUserId: number | null = null;
   profileUserInfo: ProfileUserInfo | null = null;
+  reviews: Review[] = [];
+  reviewStats: ReviewStats = { average_rating: null, review_count: 0 };
 
   profileData: ProfileData = {
     headline: '',
@@ -76,9 +79,7 @@ export class ProfileComponent implements OnInit {
     experience_level: null,
     github_url: '',
     linkedin_url: '',
-    jobs_completed: 0,
-    rating: null,
-    reviews_count: 0
+    jobs_completed: 0
   };
 
   employerData: EmployerData = {
@@ -88,9 +89,7 @@ export class ProfileComponent implements OnInit {
     company_size: null,
     industry: '',
     jobs_posted: 0,
-    total_spent: 0,
-    rating: null,
-    reviews_count: 0
+    total_spent: 0
   };
 
   industries = [
@@ -113,15 +112,16 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     const currentUser = this.auth.getUser();
     const userIdParam = this.route.snapshot.paramMap.get('userId');
+
+    if (!currentUser) {
+      this.router.navigateByUrl('/login');
+      return;
+    }
     
     if (userIdParam) {
       this.profileUserId = Number(userIdParam);
       this.isOwnProfile = currentUser?.user_id === this.profileUserId;
     } else {
-      if (!currentUser) {
-        this.router.navigateByUrl('/login');
-        return;
-      }
       this.profileUserId = currentUser.user_id;
       this.isOwnProfile = true;
     }
@@ -135,6 +135,7 @@ export class ProfileComponent implements OnInit {
     this.loadUserInfo();
     this.loadProfile();
     this.loadSkills();
+    this.loadReviews();
   }
 
   loadUserInfo(): void {
@@ -203,9 +204,7 @@ export class ProfileComponent implements OnInit {
             experience_level: fp.experience_level || null,
             github_url: fp.github_url || '',
             linkedin_url: fp.linkedin_url || '',
-            jobs_completed: fp.jobs_completed || 0,
-            rating: fp.rating || null,
-            reviews_count: fp.reviews_count || 0
+            jobs_completed: fp.jobs_completed || 0
           };
         }
       }
@@ -226,9 +225,7 @@ export class ProfileComponent implements OnInit {
             company_size: ep.company_size || null,
             industry: ep.industry || '',
             jobs_posted: ep.jobs_posted || 0,
-            total_spent: ep.total_spent || 0,
-            rating: ep.rating || null,
-            reviews_count: ep.reviews_count || 0
+            total_spent: ep.total_spent || 0
           };
         }
       }
@@ -253,6 +250,28 @@ export class ProfileComponent implements OnInit {
       next: (res: any) => {
         if (res.success && res.data) {
           this.selectedSkills = res.data.map((s: any) => s.skill_id);
+        }
+      }
+    });
+  }
+
+  loadReviews(): void {
+    if (!this.profileUserId) return;
+
+    this.api.getReviewsByUser(this.profileUserId).subscribe({
+      next: (res: any) => {
+        if (res.success && res.data) {
+          const reviews = Array.isArray(res.data)
+            ? res.data
+            : (res.data.reviews || []);
+          this.reviews = reviews.slice(0, 4);
+
+          if (!Array.isArray(res.data) && res.data.stats) {
+            this.reviewStats = {
+              average_rating: res.data.stats.average_rating ?? null,
+              review_count: res.data.stats.review_count ?? 0
+            };
+          }
         }
       }
     });

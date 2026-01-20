@@ -29,9 +29,7 @@ import {
   UserStats,
   JobStats,
   AuditLog,
-  JobFlag,
   SupportTicket,
-  HiddenJob,
   UserRole
 } from './models';
 
@@ -294,12 +292,20 @@ export class ApiService {
 
 // ============ REVIEWS ============
 
-  getReviewsByUser(userId: number): Observable<ApiResponse<Review[]>> {
-    return this.http.get<ApiResponse<Review[]>>(`${this.base}/reviews/user/${userId}`);
+  getReviewsByUser(userId: number): Observable<ApiResponse<{ reviews: Review[]; stats: { average_rating: number | null; review_count: number } }>> {
+    return this.http.get<ApiResponse<{ reviews: Review[]; stats: { average_rating: number | null; review_count: number } }>>(`${this.base}/reviews/user/${userId}`);
   }
 
   getUserRating(userId: number): Observable<ApiResponse<{ average_rating: number; total_reviews: number }>> {
     return this.http.get<ApiResponse<{ average_rating: number; total_reviews: number }>>(`${this.base}/reviews/user/${userId}/rating`);
+  }
+
+  createReview(data: { job_id: number; reviewer_id: number; reviewee_id: number; rating: number; feedback?: string }): Observable<ApiResponse<{ review_id: number }>> {
+    return this.http.post<ApiResponse<{ review_id: number }>>(`${this.base}/reviews`, data);
+  }
+
+  hasReviewedJob(jobId: number, reviewerId: number): Observable<ApiResponse<{ hasReviewed: boolean }>> {
+    return this.http.get<ApiResponse<{ hasReviewed: boolean }>>(`${this.base}/reviews/job/${jobId}/reviewer/${reviewerId}`);
   }
 
   // ============ SUPPORT TICKETS ============
@@ -395,36 +401,6 @@ export class ApiService {
     return this.http.post<ApiResponse<{ message: string; affected: number }>>(`${this.base}/admin/users/bulk/unblock`, { user_ids: userIds });
   }
 
-  // ============ ADMIN: JOB MODERATION ============
-
-  flagJob(jobId: number, reason: string): Observable<ApiResponse<{ id: number }>> {
-    return this.http.post<ApiResponse<{ id: number }>>(`${this.base}/admin/jobs/${jobId}/flag`, { reason });
-  }
-
-  getJobFlags(jobId: number): Observable<ApiResponse<JobFlag[]>> {
-    return this.http.get<ApiResponse<JobFlag[]>>(`${this.base}/admin/jobs/${jobId}/flags`);
-  }
-
-  getPendingFlags(): Observable<ApiResponse<JobFlag[]>> {
-    return this.http.get<ApiResponse<JobFlag[]>>(`${this.base}/admin/jobs/flags/pending`);
-  }
-
-  reviewFlag(flagId: number, status: 'reviewed' | 'dismissed'): Observable<ApiResponse<{ message: string }>> {
-    return this.http.patch<ApiResponse<{ message: string }>>(`${this.base}/admin/jobs/flags/${flagId}/review`, { status });
-  }
-
-  hideJob(jobId: number, reason: string): Observable<ApiResponse<{ message: string }>> {
-    return this.http.post<ApiResponse<{ message: string }>>(`${this.base}/admin/jobs/${jobId}/hide`, { reason });
-  }
-
-  restoreJob(jobId: number): Observable<ApiResponse<{ message: string }>> {
-    return this.http.post<ApiResponse<{ message: string }>>(`${this.base}/admin/jobs/${jobId}/restore`, {});
-  }
-
-  getHiddenJobs(): Observable<ApiResponse<HiddenJob[]>> {
-    return this.http.get<ApiResponse<HiddenJob[]>>(`${this.base}/admin/jobs/hidden`);
-  }
-
   // ============ ADMIN: TICKET MANAGEMENT ============
 
   getFilteredTickets(filters?: { status?: string; priority?: string; assigned_to?: number }): Observable<ApiResponse<SupportTicket[]>> {
@@ -440,8 +416,12 @@ export class ApiService {
     return this.http.get<ApiResponse<SupportTicket[]>>(url);
   }
 
+  getManagersForTickets(): Observable<ApiResponse<AdminUser[]>> {
+    return this.http.get<ApiResponse<AdminUser[]>>(`${this.base}/supporttickets/managers`);
+  }
+
   assignTicket(ticketId: number, assignedTo: number): Observable<ApiResponse<{ message: string }>> {
-    return this.http.post<ApiResponse<{ message: string }>>(`${this.base}/supporttickets/${ticketId}/assign`, { assigned_to: assignedTo });
+    return this.http.post<ApiResponse<{ message: string }>>(`${this.base}/supporttickets/${ticketId}/assign`, { staff_id: assignedTo });
   }
 
   updateTicketPriority(ticketId: number, priority: string): Observable<ApiResponse<{ message: string }>> {

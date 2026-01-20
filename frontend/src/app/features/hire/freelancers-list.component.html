@@ -83,11 +83,6 @@
             <div class="freelancer-basic">
               <h3 class="freelancer-name">{{ getDisplayName(freelancer) }}</h3>
               <p class="freelancer-headline">{{ freelancer.headline || 'Freelancer' }}</p>
-              <div class="freelancer-rating" *ngIf="freelancer.rating">
-                <span class="star">⭐</span>
-                <span class="rating-value">{{ formatRating(freelancer.rating) }}</span>
-                <span class="reviews-count" *ngIf="freelancer.reviews_count">({{ freelancer.reviews_count }})</span>
-              </div>
             </div>
           </div>
 

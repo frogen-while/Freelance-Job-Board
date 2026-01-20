@@ -24,7 +24,7 @@ export class AdminAuditLogsComponent implements OnInit {
   
   actions = [
     'LOGIN', 'LOGOUT', 'ROLE_CHANGE', 'USER_BLOCKED', 'USER_UNBLOCKED',
-    'JOB_CREATED', 'JOB_UPDATED', 'JOB_FLAGGED', 'JOB_HIDDEN', 'JOB_RESTORED',
+    'JOB_CREATED', 'JOB_UPDATED', 'JOB_HIDDEN', 'JOB_RESTORED',
     'TICKET_CREATED', 'TICKET_ASSIGNED', 'TICKET_PRIORITY_CHANGED'
   ];
   

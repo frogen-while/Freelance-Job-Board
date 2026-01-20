@@ -154,12 +154,12 @@
     <!-- Jobs List -->
     <section class="jobs-section" *ngIf="!loading && !errorMessage">
       <div class="jobs-list" *ngIf="filteredJobs.length > 0">
-        <div class="job-card" *ngFor="let job of filteredJobs" (click)="viewJob(job.job_id)">
-          <div class="job-header">
+        <div class="job-card" *ngFor="let job of filteredJobs">
+          <div class="job-header" (click)="viewJob(job.job_id)">
             <h3 class="job-title">{{ job.title }}</h3>
             <span class="job-status" [class]="getStatusClass(job.status)">{{ job.status }}</span>
           </div>
-          <p class="job-desc">{{ job.description | slice:0:150 }}{{ job.description.length > 150 ? '...' : '' }}</p>
+          <p class="job-desc" (click)="viewJob(job.job_id)">{{ job.description | slice:0:150 }}{{ job.description.length > 150 ? '...' : '' }}</p>
           <div class="job-footer">
             <div class="job-meta">
               <span class="meta-item">
@@ -170,7 +170,20 @@
                 {{ job.deadline }}
               </span>
             </div>
-            <button class="view-btn">View Details →</button>
+            <div class="job-actions">
+              <button 
+                *ngIf="canReviewJob(job) && getCompletedAssignmentForJob(job.job_id) as assignment"
+                class="btn-review"
+                (click)="openReviewModal(job, assignment.freelancer_id, (assignment.freelancer_first_name || '') + ' ' + (assignment.freelancer_last_name || '')); $event.stopPropagation()">
+                <mat-icon>star</mat-icon>
+                Leave Review
+              </button>
+              <span *ngIf="reviewedJobs.has(job.job_id)" class="reviewed-badge">
+                <mat-icon>check_circle</mat-icon>
+                Reviewed
+              </span>
+              <button class="view-btn" (click)="viewJob(job.job_id)">View Details →</button>
+            </div>
           </div>
         </div>
       </div>
@@ -187,5 +200,16 @@
     </section>
   </div>
 
-
+  <!-- Review Modal -->
+  <app-review-modal
+    *ngIf="reviewModalOpen"
+    [isOpen]="reviewModalOpen"
+    [jobId]="reviewJobId"
+    [jobTitle]="reviewJobTitle"
+    [reviewerId]="getReviewerId()"
+    [revieweeId]="revieweeId"
+    [revieweeName]="revieweeName"
+    (closed)="closeReviewModal()"
+    (reviewSubmitted)="onReviewSubmitted()">
+  </app-review-modal>
 </div>

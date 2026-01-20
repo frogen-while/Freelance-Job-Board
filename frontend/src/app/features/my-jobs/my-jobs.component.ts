@@ -17,12 +17,21 @@ export class MyJobsComponent implements OnInit {
   statusFilter: string = 'all';
 
   assignments: Assignment[] = [];
+  completedAssignments: Assignment[] = [];
   assignmentsLoading = true;
   assignmentsError = '';
   deliverables: Record<number, AssignmentDeliverable[]> = {};
   deliverablesOpen: Record<number, boolean> = {};
   reviewMessage: Record<number, string> = {};
   reviewing: Record<number, boolean> = {};
+
+  // Review modal state
+  reviewModalOpen = false;
+  reviewJobId: number | null = null;
+  reviewJobTitle = '';
+  revieweeId: number | null = null;
+  revieweeName = '';
+  reviewedJobs: Set<number> = new Set();
 
   stats = {
     total: 0,
@@ -56,6 +65,10 @@ export class MyJobsComponent implements OnInit {
           this.jobs = res.data.filter(job => job.employer_id === user.user_id);
           this.filteredJobs = this.jobs;
           this.calculateStats();
+          // Check review status for completed jobs
+          this.jobs.filter(j => j.status === 'Completed').forEach(job => {
+            this.checkIfReviewed(job.job_id);
+          });
         }
         this.loading = false;
       },
@@ -79,8 +92,10 @@ export class MyJobsComponent implements OnInit {
       next: (res) => {
         if (res.success && res.data) {
           this.assignments = res.data.filter(a => a.status === 'Active');
+          this.completedAssignments = res.data.filter(a => a.status === 'Completed');
         } else {
           this.assignments = [];
+          this.completedAssignments = [];
         }
         this.assignmentsLoading = false;
       },
@@ -165,5 +180,54 @@ export class MyJobsComponent implements OnInit {
 
   getStatusClass(status: string): string {
     return status.toLowerCase().replace(' ', '-');
+  }
+
+  // Review functionality
+  openReviewModal(job: Job, freelancerId: number, freelancerName: string): void {
+    this.reviewJobId = job.job_id;
+    this.reviewJobTitle = job.title;
+    this.revieweeId = freelancerId;
+    this.revieweeName = freelancerName;
+    this.reviewModalOpen = true;
+  }
+
+  closeReviewModal(): void {
+    this.reviewModalOpen = false;
+    this.reviewJobId = null;
+    this.reviewJobTitle = '';
+    this.revieweeId = null;
+    this.revieweeName = '';
+  }
+
+  onReviewSubmitted(): void {
+    if (this.reviewJobId) {
+      this.reviewedJobs.add(this.reviewJobId);
+    }
+    this.closeReviewModal();
+  }
+
+  canReviewJob(job: Job): boolean {
+    return job.status === 'Completed' && !this.reviewedJobs.has(job.job_id);
+  }
+
+  getCompletedAssignmentForJob(jobId: number): Assignment | undefined {
+    return this.completedAssignments.find(a => a.job_id === jobId);
+  }
+
+  checkIfReviewed(jobId: number): void {
+    const user = this.auth.getUser();
+    if (!user) return;
+    
+    this.api.hasReviewedJob(jobId, user.user_id).subscribe({
+      next: (res) => {
+        if (res.success && res.data?.hasReviewed) {
+          this.reviewedJobs.add(jobId);
+        }
+      }
+    });
+  }
+
+  getReviewerId(): number | null {
+    return this.auth.getUser()?.user_id || null;
   }
 }

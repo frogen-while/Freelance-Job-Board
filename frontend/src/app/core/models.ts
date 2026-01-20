@@ -68,8 +68,6 @@ export interface FreelancerProfileData {
   github_url?: string | null;
   linkedin_url?: string | null;
   jobs_completed?: number;
-  rating?: number | null;
-  reviews_count?: number;
 }
 
 // Freelancer profile (combined data from backend JOIN)
@@ -90,8 +88,6 @@ export interface FreelancerProfile {
   github_url?: string | null;
   linkedin_url?: string | null;
   jobs_completed?: number;
-  rating?: number | null;
-  reviews_count?: number;
   // From users
   first_name: string;
   last_name: string;
@@ -110,8 +106,6 @@ export interface EmployerProfileData {
   industry?: string | null;
   jobs_posted?: number;
   total_spent?: number;
-  rating?: number | null;
-  reviews_count?: number;
 }
 
 // Employer profile (combined data from backend JOIN)
@@ -132,8 +126,6 @@ export interface EmployerProfile {
   industry?: string | null;
   jobs_posted?: number;
   total_spent?: number;
-  rating?: number | null;
-  reviews_count?: number;
   // From users
   first_name: string;
   last_name: string;
@@ -345,8 +337,6 @@ export interface JobStats {
   cancelled_jobs: number;
   jobs_this_month: number;
   average_budget: number;
-  hidden_jobs: number;
-  flagged_jobs: number;
 }
 
 export interface AuditLog {
@@ -363,21 +353,6 @@ export interface AuditLog {
   user_name?: string;
 }
 
-export interface JobFlag {
-  id: number;
-  job_id: number;
-  reporter_id: number;
-  reason: string;
-  status: 'pending' | 'reviewed' | 'dismissed';
-  reviewed_by: number | null;
-  reviewed_at: string | null;
-  created_at: string;
-  // Joined
-  job_title?: string;
-  reporter_name?: string;
-  reviewer_name?: string;
-}
-
 export interface SupportTicket {
   ticket_id: number;
   user_id: number;
@@ -392,20 +367,4 @@ export interface SupportTicket {
   user_email?: string;
   user_name?: string;
   assigned_name?: string;
-}
-
-export interface HiddenJob {
-  job_id: number;
-  employer_id: number;
-  title: string;
-  description: string;
-  budget: number;
-  status: string;
-  is_hidden: boolean;
-  hidden_reason?: string;
-  hidden_at?: string;
-  hidden_by?: number;
-  // Joined
-  employer_name?: string;
-  hidden_by_name?: string;
 }

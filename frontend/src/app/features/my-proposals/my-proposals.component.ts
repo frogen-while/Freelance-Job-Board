@@ -16,8 +16,10 @@ export class MyProposalsComponent implements OnInit {
   filteredProposals: JobApplication[] = [];
   assignments: Assignment[] = [];
   activeAssignments: Assignment[] = [];
+  completedAssignments: Assignment[] = [];
   deliverables: Record<number, AssignmentDeliverable[]> = {};
   deliverablesOpen: Record<number, boolean> = {};
+  pendingSubmissions: Record<number, boolean> = {};
   uploadFiles: Record<number, File | null> = {};
   uploadLinks: Record<number, string> = {};
   uploading: Record<number, boolean> = {};
@@ -28,6 +30,14 @@ export class MyProposalsComponent implements OnInit {
   assignmentsError = '';
   statusFilter: string = 'all';
   activeTab: 'proposals' | 'current' = 'proposals';
+
+  // Review modal state
+  reviewModalOpen = false;
+  reviewJobId: number | null = null;
+  reviewJobTitle = '';
+  revieweeId: number | null = null;
+  revieweeName = '';
+  reviewedJobs: Set<number> = new Set();
 
   stats = {
     total: 0,
@@ -88,8 +98,12 @@ export class MyProposalsComponent implements OnInit {
         if (res.success && res.data) {
           this.assignments = res.data;
           this.activeAssignments = this.assignments.filter(a => a.status === 'Active');
+          this.completedAssignments = this.assignments.filter(a => a.status === 'Completed');
+          // Check review status for completed assignments
+          this.completedAssignments.forEach(a => this.checkIfReviewed(a.job_id));
         } else {
           this.activeAssignments = [];
+          this.completedAssignments = [];
         }
         this.assignmentsLoading = false;
       },
@@ -134,9 +148,11 @@ export class MyProposalsComponent implements OnInit {
       this.api.getAssignmentDeliverables(assignmentId).subscribe({
         next: (res) => {
           this.deliverables[assignmentId] = res.success && res.data ? res.data : [];
+          this.pendingSubmissions[assignmentId] = this.hasPendingSubmission(assignmentId);
         },
         error: () => {
           this.deliverables[assignmentId] = [];
+          this.pendingSubmissions[assignmentId] = false;
         }
       });
     }
@@ -156,6 +172,9 @@ export class MyProposalsComponent implements OnInit {
   }
 
   submitDeliverable(assignmentId: number): void {
+    if (this.pendingSubmissions[assignmentId]) {
+      return;
+    }
     const file = this.uploadFiles[assignmentId] ?? null;
     const link = this.uploadLinks[assignmentId]?.trim() || null;
     if (this.uploadErrors[assignmentId]) {
@@ -172,6 +191,7 @@ export class MyProposalsComponent implements OnInit {
         if (res.success && res.data) {
           const current = this.deliverables[assignmentId] || [];
           this.deliverables[assignmentId] = [res.data, ...current];
+          this.pendingSubmissions[assignmentId] = true;
           this.uploadFiles[assignmentId] = null;
           this.uploadLinks[assignmentId] = '';
           this.uploadErrors[assignmentId] = '';
@@ -191,4 +211,62 @@ export class MyProposalsComponent implements OnInit {
     return deliverable.deliverable_id;
   }
 
+  hasPendingSubmission(assignmentId: number): boolean {
+    const list = this.deliverables[assignmentId] || [];
+    return list.some(d => (d.status || 'submitted') === 'submitted');
+  }
+
+  // Review functionality
+  openReviewModal(assignment: Assignment): void {
+    this.reviewJobId = assignment.job_id;
+    this.reviewJobTitle = assignment.job_title || `Job #${assignment.job_id}`;
+    // For freelancer reviewing employer, we need employer_id from job
+    // For now we'll use a different approach - fetch job details
+    this.api.getJobById(assignment.job_id).subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.revieweeId = res.data.employer_id;
+          // We'd need employer name, but we'll use a placeholder
+          this.revieweeName = 'Employer';
+          this.reviewModalOpen = true;
+        }
+      }
+    });
+  }
+
+  closeReviewModal(): void {
+    this.reviewModalOpen = false;
+    this.reviewJobId = null;
+    this.reviewJobTitle = '';
+    this.revieweeId = null;
+    this.revieweeName = '';
+  }
+
+  onReviewSubmitted(): void {
+    if (this.reviewJobId) {
+      this.reviewedJobs.add(this.reviewJobId);
+    }
+    this.closeReviewModal();
+  }
+
+  canReviewAssignment(assignment: Assignment): boolean {
+    return assignment.status === 'Completed' && !this.reviewedJobs.has(assignment.job_id);
+  }
+
+  checkIfReviewed(jobId: number): void {
+    const user = this.auth.getUser();
+    if (!user) return;
+    
+    this.api.hasReviewedJob(jobId, user.user_id).subscribe({
+      next: (res) => {
+        if (res.success && res.data?.hasReviewed) {
+          this.reviewedJobs.add(jobId);
+        }
+      }
+    });
+  }
+
+  getReviewerId(): number | null {
+    return this.auth.getUser()?.user_id || null;
+  }
 }

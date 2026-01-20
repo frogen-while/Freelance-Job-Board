@@ -16,7 +16,7 @@ const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'support', component: SupportComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard, OnboardingGuard] },
-  { path: 'profile/:userId', component: ProfileComponent },
+  { path: 'profile/:userId', component: ProfileComponent, canActivate: [AuthGuard, OnboardingGuard] },
   { path: 'jobs', loadChildren: () => import('./features/jobs/jobs.module').then(m => m.JobsModule) },
   { path: 'hire', loadChildren: () => import('./features/hire/hire.module').then(m => m.HireModule) },
   { path: 'find-work', loadChildren: () => import('./features/find-work/find-work.module').then(m => m.FindWorkModule) },

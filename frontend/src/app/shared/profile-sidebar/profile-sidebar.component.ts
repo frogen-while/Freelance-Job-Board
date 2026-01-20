@@ -13,8 +13,6 @@ interface FreelancerStats {
   hourly_rate?: number | null;
   experience_level?: string | null;
   jobs_completed?: number;
-  rating?: number | null;
-  reviews_count?: number;
 }
 
 interface EmployerStats {
@@ -22,8 +20,6 @@ interface EmployerStats {
   industry?: string;
   jobs_posted?: number;
   total_spent?: number;
-  rating?: number | null;
-  reviews_count?: number;
 }
 
 @Component({
@@ -89,9 +85,7 @@ export class ProfileSidebarComponent implements OnInit {
           this.freelancerStats = {
             hourly_rate: res.data.hourly_rate,
             experience_level: res.data.experience_level,
-            jobs_completed: res.data.jobs_completed || 0,
-            rating: res.data.rating,
-            reviews_count: res.data.reviews_count || 0
+            jobs_completed: res.data.jobs_completed || 0
           };
         }
       }
@@ -108,9 +102,7 @@ export class ProfileSidebarComponent implements OnInit {
             company_name: res.data.company_name,
             industry: res.data.industry,
             jobs_posted: res.data.jobs_posted || 0,
-            total_spent: res.data.total_spent || 0,
-            rating: res.data.rating,
-            reviews_count: res.data.reviews_count || 0
+            total_spent: res.data.total_spent || 0
           };
         }
       }

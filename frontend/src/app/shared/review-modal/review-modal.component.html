@@ -1,0 +1,62 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="close()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="close()" [disabled]="submitting">
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <div class="modal-header">
+      <h2>Leave a Review</h2>
+      <p class="subtitle" *ngIf="jobTitle">For: {{ jobTitle }}</p>
+      <p class="reviewee" *ngIf="revieweeName">Reviewing: <strong>{{ revieweeName }}</strong></p>
+    </div>
+
+    <div class="modal-body" *ngIf="!success">
+      <div class="rating-section">
+        <label>Your Rating</label>
+        <div class="stars">
+          <span 
+            *ngFor="let star of [1, 2, 3, 4, 5]"
+            [class]="getStarClass(star)"
+            (click)="setRating(star)"
+            (mouseenter)="setHoverRating(star)"
+            (mouseleave)="clearHoverRating()">
+            ★
+          </span>
+        </div>
+        <span class="rating-text" *ngIf="rating">{{ rating }} / 5</span>
+      </div>
+
+      <div class="feedback-section">
+        <label for="feedback">Your Feedback (Optional)</label>
+        <textarea 
+          id="feedback"
+          [(ngModel)]="feedback"
+          placeholder="Share your experience working with this person..."
+          rows="4"
+          [disabled]="submitting">
+        </textarea>
+      </div>
+
+      <div class="error-message" *ngIf="error">
+        <mat-icon>error</mat-icon>
+        {{ error }}
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-dark-secondary" (click)="close()" [disabled]="submitting">
+          Cancel
+        </button>
+        <button class="btn-gradient" (click)="submitReview()" [disabled]="submitting || rating === 0">
+          <span *ngIf="!submitting">Submit Review</span>
+          <span *ngIf="submitting">Submitting...</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="success-message" *ngIf="success">
+      <mat-icon class="success-icon">check_circle</mat-icon>
+      <h3>Review Submitted!</h3>
+      <p>Thank you for your feedback.</p>
+    </div>
+  </div>
+</div>

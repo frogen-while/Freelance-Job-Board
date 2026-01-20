@@ -35,10 +35,6 @@
           <span class="stat-value">{{ freelancerStats.jobs_completed || 0 }}</span>
           <span class="stat-label">Jobs Done</span>
         </div>
-        <div class="stat-item" *ngIf="freelancerStats.rating">
-          <span class="stat-value">{{ formatRating(freelancerStats.rating) }}</span>
-          <span class="stat-label">{{ freelancerStats.reviews_count }} reviews</span>
-        </div>
         <div class="stat-item" *ngIf="freelancerStats.experience_level">
           <span class="stat-value experience">{{ getExperienceLabel() }}</span>
           <span class="stat-label">Experience</span>
@@ -59,10 +55,6 @@
         <div class="stat-item" *ngIf="employerStats.total_spent && employerStats.total_spent > 0">
           <span class="stat-value">${{ employerStats.total_spent | number:'1.0-0' }}</span>
           <span class="stat-label">Total Spent</span>
-        </div>
-        <div class="stat-item" *ngIf="employerStats.rating">
-          <span class="stat-value">{{ formatRating(employerStats.rating) }}</span>
-          <span class="stat-label">{{ employerStats.reviews_count }} reviews</span>
         </div>
       </div>
     </ng-container>

@@ -15,7 +15,7 @@
           <div class="header-info">
             <h1 class="name">{{ getFullName() }}</h1>
             <p class="headline" *ngIf="profileData.headline">{{ profileData.headline }}</p>
-            <p class="email" *ngIf="isOwnProfile && user">{{ user.email }}</p>
+            <p class="email" *ngIf="profileUserInfo?.email">{{ profileUserInfo.email }}</p>
             <p class="member-since" *ngIf="getMemberSince()">Member since {{ getMemberSince() }}</p>
           </div>
         </div>
@@ -55,10 +55,6 @@
             <div class="info-item" *ngIf="freelancerData.jobs_completed > 0">
               <span class="label">Jobs Completed</span>
               <span class="value">{{ freelancerData.jobs_completed }}</span>
-            </div>
-            <div class="info-item" *ngIf="freelancerData.rating">
-              <span class="label">Rating</span>
-              <span class="value">{{ formatRating(freelancerData.rating) }} ({{ freelancerData.reviews_count }} reviews)</span>
             </div>
           </ng-container>
           <ng-container *ngIf="isEmployer">
@@ -106,6 +102,36 @@
           <div class="skills-list">
             <span class="skill-tag-light" *ngFor="let skillId of selectedSkills">{{ getSkillName(skillId) }}</span>
           </div>
+        </div>
+
+        <div class="info-section" *ngIf="reviews.length > 0">
+          <div class="section-header">
+            <h2>Recent Reviews</h2>
+            <div class="rating-summary" *ngIf="reviewStats.review_count > 0">
+              <span class="rating-value">{{ formatRating(reviewStats.average_rating) }}</span>
+              <span class="rating-count">({{ reviewStats.review_count }} reviews)</span>
+            </div>
+          </div>
+          <div class="reviews-list">
+            <div class="review-card" *ngFor="let review of reviews">
+              <div class="review-header">
+                <div class="reviewer">
+                  <strong>{{ review.reviewer_name || 'Reviewer' }}</strong>
+                  <span class="job-title" *ngIf="review.job_title">{{ review.job_title }}</span>
+                </div>
+                <div class="review-meta">
+                  <span class="rating">{{ review.rating }}/5</span>
+                  <span class="date" *ngIf="review.created_at">{{ review.created_at | date: 'mediumDate' }}</span>
+                </div>
+              </div>
+              <p class="review-feedback">{{ review.feedback || 'No feedback provided.' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-section" *ngIf="reviews.length === 0">
+          <h2>Recent Reviews</h2>
+          <p class="description">No reviews yet.</p>
         </div>
       </div>
 
