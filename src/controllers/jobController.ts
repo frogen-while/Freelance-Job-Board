@@ -4,7 +4,7 @@ import { userRepo } from '../repositories/userRepo.js';
 import { categoryRepo } from '../repositories/categoryRepo.js';
 import { employerProfilesRepo } from '../repositories/employerProfilesRepo.js';
 import { JobStatus, ExperienceLevel, JobType, DurationEstimate } from '../interfaces/Job.js';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
 
 export const createJob = async (req: Request, res: Response) => {
     const {
@@ -90,11 +90,8 @@ export const getAllJobs = async (req: Request, res: Response) => {
 };
 
 export const getJobById = async (req: Request, res: Response) => {
-    const jobId = parseInt(req.params.id, 10);
-
-    if (isNaN(jobId)) {
-        return sendError(res, 400, 'Invalid job ID format.');
-    }
+    const jobId = parseIdParam(res, req.params.id, 'job');
+    if (jobId === null) return;
 
     try {
         const  job = await jobRepo.findById(jobId);
@@ -112,11 +109,8 @@ export const getJobById = async (req: Request, res: Response) => {
 };
 
 export const getJobsByEmployerId = async (req: Request, res: Response) => {
-    const employerId = parseInt(req.params.employerId, 10);
-
-    if (isNaN(employerId)) {
-        return sendError(res, 400, 'Invalid employer ID format.');
-    }
+    const employerId = parseIdParam(res, req.params.employerId, 'employer');
+    if (employerId === null) return;
 
     try {
         const jobs = await jobRepo.findByEmployerId(employerId);
@@ -128,11 +122,8 @@ export const getJobsByEmployerId = async (req: Request, res: Response) => {
 };
 
 export const deleteJob = async(req: Request, res: Response) =>{
-    const jobId = parseInt(req.params.id, 10);
-
-    if (isNaN(jobId)) {
-        return sendError(res, 400, 'Invalid job ID format.');
-    }
+    const jobId = parseIdParam(res, req.params.id, 'job');
+    if (jobId === null) return;
 
     try {
         await jobRepo.deleteByID(jobId);
@@ -145,15 +136,12 @@ export const deleteJob = async(req: Request, res: Response) =>{
 };
 
 export const updateJob = async (req: Request, res: Response) => {
-    const jobId = parseInt(req.params.id, 10);
+    const jobId = parseIdParam(res, req.params.id, 'job');
     const { 
         employer_id, category_id, title, description, budget, status, deadline,
         experience_level, job_type, duration_estimate, is_remote, location, skill_ids
     } = req.body; 
-
-    if (isNaN(jobId)) {
-        return sendError(res, 400, 'Invalid job ID format.');
-    }
+    if (jobId === null) return;
 
     const updateData: {
         employer_id?: number;

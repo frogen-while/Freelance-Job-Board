@@ -3,7 +3,7 @@ import { jobAplRepo } from '../repositories/jobaplRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { JobApplicationStatus } from '../interfaces/jobapl.js';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
 
 export const createJobApplication = async (req: Request, res: Response) => {
     const {job_id, freelancer_id, bid_amount, proposal_text, status} = req.body;
@@ -61,11 +61,8 @@ export const getAllJobApplications = async (req: Request, res: Response) => {
 };
 
 export const getJobApplicationById = async (req: Request, res: Response) => {
-    const applicationId = parseInt(req.params.id, 10); 
-
-    if (isNaN(applicationId)) {
-        return sendError(res, 400, 'Invalid application ID format.');
-    }
+    const applicationId = parseIdParam(res, req.params.id, 'application');
+    if (applicationId === null) return;
 
     try {
         // Use findByIdWithDetails to get freelancer info for checkout page
@@ -84,11 +81,8 @@ export const getJobApplicationById = async (req: Request, res: Response) => {
 };
 
 export const deleteJobApplication = async(req: Request, res: Response) => {
-    const applicationId = parseInt(req.params.id, 10); 
-
-    if (isNaN(applicationId)) {
-        return sendError(res, 400, 'Invalid application ID format.');
-    }
+    const applicationId = parseIdParam(res, req.params.id, 'application');
+    if (applicationId === null) return;
 
     try {
         await jobAplRepo.deleteByID(applicationId);
@@ -100,12 +94,9 @@ export const deleteJobApplication = async(req: Request, res: Response) => {
 };
 
 export const updateJobApplication = async (req: Request, res: Response) => {
-    const applicationId = parseInt(req.params.id, 10);
+    const applicationId = parseIdParam(res, req.params.id, 'application');
     const { job_id, freelancer_id, bid_amount, proposal_text, status } = req.body; 
-
-    if (isNaN(applicationId)) {
-        return sendError(res, 400, 'Invalid application ID format.');
-    }
+    if (applicationId === null) return;
 
     const updateData: {job_id?: number, freelancer_id?: number, bid_amount?: number, proposal_text?: string, status?: JobApplicationStatus} = {};
     
@@ -151,11 +142,8 @@ export const updateJobApplication = async (req: Request, res: Response) => {
 };
 
 export const getApplicationsByJobId = async (req: Request, res: Response) => {
-    const jobId = parseInt(req.params.jobId, 10);
-
-    if (isNaN(jobId)) {
-        return sendError(res, 400, 'Invalid job ID format.');
-    }
+    const jobId = parseIdParam(res, req.params.jobId, 'job');
+    if (jobId === null) return;
 
     try {
         const applications = await jobAplRepo.findByJobId(jobId);
@@ -167,11 +155,8 @@ export const getApplicationsByJobId = async (req: Request, res: Response) => {
 };
 
 export const getApplicationsByFreelancerId = async (req: Request, res: Response) => {
-    const freelancerId = parseInt(req.params.freelancerId, 10);
-
-    if (isNaN(freelancerId)) {
-        return sendError(res, 400, 'Invalid freelancer ID format.');
-    }
+    const freelancerId = parseIdParam(res, req.params.freelancerId, 'freelancer');
+    if (freelancerId === null) return;
 
     try {
         const applications = await jobAplRepo.findByFreelancerId(freelancerId);
@@ -183,12 +168,9 @@ export const getApplicationsByFreelancerId = async (req: Request, res: Response)
 };
 
 export const updateApplicationStatus = async (req: Request, res: Response) => {
-    const applicationId = parseInt(req.params.id, 10);
+    const applicationId = parseIdParam(res, req.params.id, 'application');
     const { status } = req.body;
-
-    if (isNaN(applicationId)) {
-        return sendError(res, 400, 'Invalid application ID format.');
-    }
+    if (applicationId === null) return;
 
     if (!status || !['Pending', 'Accepted', 'Rejected'].includes(status)) {
         return sendError(res, 400, 'Valid status is required (Pending, Accepted, Rejected).');

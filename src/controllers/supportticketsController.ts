@@ -4,7 +4,7 @@ import { supportTicketsRepo } from '../repositories/supportticketsRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { auditLogRepo, AuditActions, EntityTypes } from '../repositories/auditLogRepo.js';
 import { TicketStatus, TicketPriority } from '../interfaces/Supportticket.js';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
 import { User } from '../interfaces/User.js';
 
 const VALID_STATUSES: TicketStatus[] = ['Open', 'In Progress', 'Escalated', 'Resolved', 'Closed'];
@@ -74,11 +74,8 @@ export const getAllSupportTickets = async (req: Request, res: Response) => {
 };
 
 export const getSupportTicketById = async (req: Request, res: Response) => {
-    const ticketId = parseInt(req.params.id, 10); 
-
-    if (isNaN(ticketId)) {
-        return sendError(res, 400, 'Invalid ticket ID format.');
-    }
+    const ticketId = parseIdParam(res, req.params.id, 'ticket');
+    if (ticketId === null) return;
 
     try {
         const ticket = await supportTicketsRepo.findById(ticketId);
@@ -96,11 +93,8 @@ export const getSupportTicketById = async (req: Request, res: Response) => {
 };
 
 export const deleteSupportTicket = async(req: Request, res: Response) =>{
-    const ticketId = parseInt(req.params.id, 10); 
-
-    if (isNaN(ticketId)) {
-        return sendError(res, 400, 'Invalid ticket ID format.');
-    }
+    const ticketId = parseIdParam(res, req.params.id, 'ticket');
+    if (ticketId === null) return;
 
     try {
         await supportTicketsRepo.deleteByID(ticketId)
@@ -113,13 +107,10 @@ export const deleteSupportTicket = async(req: Request, res: Response) =>{
 };
 
 export const updateSupportTicket = async (req: Request, res: Response) => {
-    const ticketId = parseInt(req.params.id, 10);
+    const ticketId = parseIdParam(res, req.params.id, 'ticket');
     const currentUser = (req as any).currentUser as User | undefined;
     const { subject, message, status } = req.body; 
-
-    if (isNaN(ticketId)) {
-        return sendError(res, 400, 'Invalid ticket ID format.');
-    }
+    if (ticketId === null) return;
 
     const updateData: { subject?: string, message?: string, status?: TicketStatus } = {};
     
@@ -169,12 +160,9 @@ export const updateSupportTicket = async (req: Request, res: Response) => {
 };
 
 export const escalateSupportTicket = async (req: Request, res: Response) => {
-    const ticketId = parseInt(req.params.id, 10);
+    const ticketId = parseIdParam(res, req.params.id, 'ticket');
     const currentUser = (req as any).currentUser as User;
-
-    if (isNaN(ticketId)) {
-        return sendError(res, 400, 'Invalid ticket ID format.');
-    }
+    if (ticketId === null) return;
 
     try {
         const ticket = await supportTicketsRepo.findById(ticketId);
@@ -235,13 +223,10 @@ export const getMySupportTickets = async (req: Request, res: Response) => {
 };
 
 export const assignTicket = async (req: Request, res: Response) => {
-    const ticketId = parseInt(req.params.id, 10);
+    const ticketId = parseIdParam(res, req.params.id, 'ticket');
     const { staff_id } = req.body;
     const currentUser = (req as any).currentUser as User;
-
-    if (isNaN(ticketId)) {
-        return sendError(res, 400, 'Invalid ticket ID format.');
-    }
+    if (ticketId === null) return;
 
     try {
         const ticket = await supportTicketsRepo.findById(ticketId);
@@ -286,13 +271,10 @@ export const assignTicket = async (req: Request, res: Response) => {
 };
 
 export const updateTicketPriority = async (req: Request, res: Response) => {
-    const ticketId = parseInt(req.params.id, 10);
+    const ticketId = parseIdParam(res, req.params.id, 'ticket');
     const { priority } = req.body;
     const currentUser = (req as any).currentUser as User;
-
-    if (isNaN(ticketId)) {
-        return sendError(res, 400, 'Invalid ticket ID format.');
-    }
+    if (ticketId === null) return;
 
     if (!priority || !VALID_PRIORITIES.includes(priority)) {
         return sendError(res, 400, `Priority must be one of: ${VALID_PRIORITIES.join(', ')}`);

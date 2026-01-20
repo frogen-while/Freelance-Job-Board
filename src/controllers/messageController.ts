@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { messageRepo } from '../repositories/messageRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
 
 export const getAllMessages = async (req: Request, res: Response) => {
     try {
@@ -14,11 +14,8 @@ export const getAllMessages = async (req: Request, res: Response) => {
 };
 
 export const getMessagesByUser = async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.userId, 10);
-
-    if (isNaN(userId)) {
-        return sendError(res, 400, 'Invalid user ID format.');
-    }
+    const userId = parseIdParam(res, req.params.userId, 'user');
+    if (userId === null) return;
 
     try {
         const messages = await messageRepo.findByUser(userId);
@@ -30,12 +27,10 @@ export const getMessagesByUser = async (req: Request, res: Response) => {
 };
 
 export const getConversation = async (req: Request, res: Response) => {
-    const userId1 = parseInt(req.params.userId1, 10);
-    const userId2 = parseInt(req.params.userId2, 10);
-
-    if (isNaN(userId1) || isNaN(userId2)) {
-        return sendError(res, 400, 'Invalid user ID format.');
-    }
+    const userId1 = parseIdParam(res, req.params.userId1, 'user');
+    if (userId1 === null) return;
+    const userId2 = parseIdParam(res, req.params.userId2, 'user');
+    if (userId2 === null) return;
 
     try {
         const messages = await messageRepo.findConversation(userId1, userId2);
@@ -47,11 +42,8 @@ export const getConversation = async (req: Request, res: Response) => {
 };
 
 export const getMessagesByJob = async (req: Request, res: Response) => {
-    const jobId = parseInt(req.params.jobId, 10);
-
-    if (isNaN(jobId)) {
-        return sendError(res, 400, 'Invalid job ID format.');
-    }
+    const jobId = parseIdParam(res, req.params.jobId, 'job');
+    if (jobId === null) return;
 
     try {
         const messages = await messageRepo.findByJob(jobId);
@@ -108,11 +100,8 @@ export const sendMessage = async (req: Request, res: Response) => {
 };
 
 export const getMessageById = async (req: Request, res: Response) => {
-    const messageId = parseInt(req.params.id, 10);
-
-    if (isNaN(messageId)) {
-        return sendError(res, 400, 'Invalid message ID format.');
-    }
+    const messageId = parseIdParam(res, req.params.id, 'message');
+    if (messageId === null) return;
 
     try {
         const message = await messageRepo.findById(messageId);
@@ -127,11 +116,8 @@ export const getMessageById = async (req: Request, res: Response) => {
 };
 
 export const markMessageAsRead = async (req: Request, res: Response) => {
-    const messageId = parseInt(req.params.id, 10);
-
-    if (isNaN(messageId)) {
-        return sendError(res, 400, 'Invalid message ID format.');
-    }
+    const messageId = parseIdParam(res, req.params.id, 'message');
+    if (messageId === null) return;
 
     try {
         await messageRepo.markAsRead(messageId);
@@ -159,11 +145,8 @@ export const markAllAsRead = async (req: Request, res: Response) => {
 };
 
 export const deleteMessage = async (req: Request, res: Response) => {
-    const messageId = parseInt(req.params.id, 10);
-
-    if (isNaN(messageId)) {
-        return sendError(res, 400, 'Invalid message ID format.');
-    }
+    const messageId = parseIdParam(res, req.params.id, 'message');
+    if (messageId === null) return;
 
     try {
         await messageRepo.deleteById(messageId);
@@ -175,11 +158,8 @@ export const deleteMessage = async (req: Request, res: Response) => {
 };
 
 export const getUnreadCount = async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.userId, 10);
-
-    if (isNaN(userId)) {
-        return sendError(res, 400, 'Invalid user ID format.');
-    }
+    const userId = parseIdParam(res, req.params.userId, 'user');
+    if (userId === null) return;
 
     try {
         const count = await messageRepo.getUnreadCount(userId);
@@ -191,11 +171,8 @@ export const getUnreadCount = async (req: Request, res: Response) => {
 };
 
 export const getConversations = async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.userId, 10);
-
-    if (isNaN(userId)) {
-        return sendError(res, 400, 'Invalid user ID format.');
-    }
+    const userId = parseIdParam(res, req.params.userId, 'user');
+    if (userId === null) return;
 
     try {
         const conversations = await messageRepo.getConversations(userId);

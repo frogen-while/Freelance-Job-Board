@@ -3,7 +3,7 @@ import { assignmentRepo } from '../repositories/assignmentRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
 import { AssignmentStatus } from '../interfaces/Assignment.js';
-    import { sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
 
 export const createAssignment = async (req: Request, res: Response) => {
     const {job_id, freelancer_id, status} = req.body;
@@ -53,10 +53,9 @@ export const getAllAssignments = async (req: Request, res: Response) => {
 };
 
 export const getAssignmentById = async (req: Request, res: Response) => {
-    const assignmentId = parseInt(req.params.id, 10); 
-
-    if (isNaN(assignmentId)) {
-        return sendError(res, 400, 'Invalid assignment ID format.');
+    const assignmentId = parseIdParam(res, req.params.id, 'assignment');
+    if (assignmentId === null) {
+        return;
     }
 
     try {
@@ -75,10 +74,9 @@ export const getAssignmentById = async (req: Request, res: Response) => {
 };
 
 export const deleteAssignment = async(req: Request, res: Response) =>{
-    const assignmentId = parseInt(req.params.id, 10); 
-
-    if (isNaN(assignmentId)) {
-        return sendError(res, 400, 'Invalid assignment ID format.');
+    const assignmentId = parseIdParam(res, req.params.id, 'assignment');
+    if (assignmentId === null) {
+        return;
     }
 
     try {
@@ -92,11 +90,10 @@ export const deleteAssignment = async(req: Request, res: Response) =>{
 };
 
 export const updateAssignment = async (req: Request, res: Response) => {
-    const assignmentId = parseInt(req.params.id, 10);
+    const assignmentId = parseIdParam(res, req.params.id, 'assignment');
     const { job_id, freelancer_id, status} = req.body; 
-
-    if (isNaN(assignmentId)) {
-        return sendError(res, 400, 'Invalid assignment ID format.');
+    if (assignmentId === null) {
+        return;
     }
 
     const updateData: {job_id?: number, freelancer_id?: number, status?: AssignmentStatus} = {};

@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { userRepo } from '../repositories/userRepo.js';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
 import bcrypt from 'bcrypt';
 
 
 
 export const registerUser = async (req: Request, res: Response) => {
-    const { first_name, last_name, email, password, type_name } = req.body;
+    const { first_name, last_name, email, password, main_role } = req.body;
 
     if (!first_name || !last_name || !email || !password) {
         return sendError(res, 400, 'First name, last name, email and password are required.');
@@ -16,8 +16,8 @@ export const registerUser = async (req: Request, res: Response) => {
         return sendError(res, 400, 'Password must be at least 8 characters.');
     }
 
-    if (type_name && !['Employer', 'Freelancer', 'Reviewer', 'Support'].includes(type_name)) {
-        return sendError(res, 400, 'type_name must be one of: Employer, Freelancer, Reviewer, Support.');
+    if (main_role && !['Employer', 'Freelancer'].includes(main_role)) {
+        return sendError(res, 400, 'main_role must be one of: Employer, Freelancer.');
     }
 
     try {
@@ -29,7 +29,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
 
         const password_hash = await bcrypt.hash(password, 10);
-        const newUserId = await userRepo.create(String(first_name), String(last_name), String(email).toLowerCase(), password_hash, type_name);
+        const newUserId = await userRepo.create(String(first_name), String(last_name), String(email).toLowerCase(), password_hash, main_role);
 
         if (newUserId) {
             return sendSuccess(res, { user_id: newUserId, email: String(email).toLowerCase() }, 201);
@@ -56,11 +56,8 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
 };
 export const getUserById = async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.id, 10); 
-
-    if (isNaN(userId)) {
-        return sendError(res, 400, 'Invalid user ID format.');
-    }
+    const userId = parseIdParam(res, req.params.id, 'user');
+    if (userId === null) return;
 
     try {
         const user = await userRepo.findById(userId);
@@ -77,11 +74,8 @@ export const getUserById = async (req: Request, res: Response) => {
     }
 };
 export const deleteUser = async(req: Request, res: Response) =>{
-    const userId = parseInt(req.params.id, 10); 
-
-    if (isNaN(userId)) {
-        return sendError(res, 400, 'Invalid user ID format.');
-    }
+    const userId = parseIdParam(res, req.params.id, 'user');
+    if (userId === null) return;
 
     try {
         await userRepo.deleteByID(userId)
@@ -94,25 +88,21 @@ export const deleteUser = async(req: Request, res: Response) =>{
 };
 
 export const updateUser = async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.id, 10);
-    const { first_name, last_name, main_role, type_name } = req.body; 
+    const userId = parseIdParam(res, req.params.id, 'user');
+    const { first_name, last_name, main_role } = req.body; 
+    if (userId === null) return;
 
-    if (isNaN(userId)) {
-        return sendError(res, 400, 'Invalid user ID format.');
+    if (main_role && !['Admin', 'Manager', 'Support', 'Employer', 'Freelancer'].includes(main_role)) {
+        return sendError(res, 400, 'main_role must be one of: Admin, Manager, Support, Employer, Freelancer.');
     }
 
-    if (type_name && !['Employer', 'Freelancer', 'Reviewer', 'Support'].includes(type_name)) {
-        return sendError(res, 400, 'type_name must be one of: Employer, Freelancer, Reviewer, Support.');
-    }
-
-    const updateData: { first_name?: string, last_name?: string, main_role?: string, type_name?: string } = {};
+    const updateData: { first_name?: string, last_name?: string, main_role?: string } = {};
     if (first_name) updateData.first_name = first_name;
     if (last_name) updateData.last_name = last_name;
     if (main_role) updateData.main_role = main_role;
-    if (type_name) updateData.type_name = type_name;
 
     if (Object.keys(updateData).length === 0) {
-        return sendError(res, 400, 'No valid fields provided for update (allowed: first_name, last_name, main_role, type_name).');
+        return sendError(res, 400, 'No valid fields provided for update (allowed: first_name, last_name, main_role).');
     }
 
     try {

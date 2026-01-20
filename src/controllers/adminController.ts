@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { userRepo } from '../repositories/userRepo.js';
 import { supportTicketsRepo } from '../repositories/supportticketsRepo.js';
 import { auditLogRepo, AuditActions, EntityTypes } from '../repositories/auditLogRepo.js';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
 import { User, MainRole } from '../interfaces/User.js';
 import { TicketStatus } from '../interfaces/Supportticket.js';
 
@@ -46,13 +46,10 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
 export const assignRole = async (req: Request, res: Response) => {
   try {
-    const userId = parseInt(req.params.id, 10);
+    const userId = parseIdParam(res, req.params.id, 'user');
     const { role } = req.body;
     const currentUser = (req as any).currentUser as User;
-
-    if (isNaN(userId)) {
-      return sendError(res, 400, 'Invalid user ID.');
-    }
+    if (userId === null) return;
 
     if (!role || !validRoles.includes(role)) {
       return sendError(res, 400, `Invalid role. Valid roles: ${validRoles.join(', ')}`);
@@ -108,12 +105,9 @@ export const assignRole = async (req: Request, res: Response) => {
 
 export const blockUser = async (req: Request, res: Response) => {
   try {
-    const userId = parseInt(req.params.id, 10);
+    const userId = parseIdParam(res, req.params.id, 'user');
     const currentUser = (req as any).currentUser as User;
-
-    if (isNaN(userId)) {
-      return sendError(res, 400, 'Invalid user ID.');
-    }
+    if (userId === null) return;
 
     const targetUser = await userRepo.findById(userId);
     if (!targetUser) {
@@ -160,12 +154,9 @@ export const blockUser = async (req: Request, res: Response) => {
 
 export const unblockUser = async (req: Request, res: Response) => {
   try {
-    const userId = parseInt(req.params.id, 10);
+    const userId = parseIdParam(res, req.params.id, 'user');
     const currentUser = (req as any).currentUser as User;
-
-    if (isNaN(userId)) {
-      return sendError(res, 400, 'Invalid user ID.');
-    }
+    if (userId === null) return;
 
     const targetUser = await userRepo.findById(userId);
     if (!targetUser) {

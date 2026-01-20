@@ -3,7 +3,7 @@ import { paymentsRepo } from '../repositories/paymentsRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
 import { jobAplRepo } from '../repositories/jobaplRepo.js';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
 
 export const createPayment = async (req: Request, res: Response) => {
     const { job_id, payer_id, payee_id, amount } = req.body;
@@ -58,11 +58,8 @@ export const getAllPayments = async (req: Request, res: Response) => {
 };
 
 export const getPaymentById = async (req: Request, res: Response) => {
-    const paymentId = parseInt(req.params.id, 10); 
-
-    if (isNaN(paymentId)) {
-        return sendError(res, 400, 'Invalid payment ID format.');
-    }
+    const paymentId = parseIdParam(res, req.params.id, 'payment');
+    if (paymentId === null) return;
 
     try {
         const payment = await paymentsRepo.findById(paymentId);
@@ -80,11 +77,8 @@ export const getPaymentById = async (req: Request, res: Response) => {
 };
 
 export const deletePayment = async(req: Request, res: Response) =>{
-    const paymentId = parseInt(req.params.id, 10); 
-
-    if (isNaN(paymentId)) {
-        return sendError(res, 400, 'Invalid payment ID format.');
-    }
+    const paymentId = parseIdParam(res, req.params.id, 'payment');
+    if (paymentId === null) return;
 
     try {
         await paymentsRepo.deleteByID(paymentId)
@@ -97,12 +91,9 @@ export const deletePayment = async(req: Request, res: Response) =>{
 };
 
 export const updatePayment = async (req: Request, res: Response) => {
-    const paymentId = parseInt(req.params.id, 10);
+    const paymentId = parseIdParam(res, req.params.id, 'payment');
     const { job_id, payer_id, payee_id, amount } = req.body; 
-
-    if (isNaN(paymentId)) {
-        return sendError(res, 400, 'Invalid payment ID format.');
-    }
+    if (paymentId === null) return;
 
     const updateData: { job_id?: number, payer_id?: number, payee_id?: number, amount?: number } = {};
     

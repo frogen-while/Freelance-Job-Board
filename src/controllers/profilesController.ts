@@ -1,15 +1,13 @@
 import type { Request, Response } from 'express';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
 import { profilesRepo } from '../repositories/profilesRepo.js';
 import { profileSkillsRepo } from '../repositories/profileSkillsRepo.js';
 import { freelancerProfilesRepo } from '../repositories/freelancerProfilesRepo.js';
 import { employerProfilesRepo } from '../repositories/employerProfilesRepo.js';
 
 export const getProfileByUserId = async (req: Request, res: Response) => {
-  const userId = Number.parseInt(req.params.userId, 10);
-  if (Number.isNaN(userId)) {
-    return sendError(res, 400, 'Invalid user ID format.');
-  }
+  const userId = parseIdParam(res, req.params.userId, 'user');
+  if (userId === null) return;
 
   try {
     const profile = await profilesRepo.findByUserId(userId);
@@ -25,10 +23,8 @@ export const getProfileByUserId = async (req: Request, res: Response) => {
 };
 
 export const upsertProfile = async (req: Request, res: Response) => {
-  const userId = Number.parseInt(req.params.userId, 10);
-  if (Number.isNaN(userId)) {
-    return sendError(res, 400, 'Invalid user ID format.');
-  }
+  const userId = parseIdParam(res, req.params.userId, 'user');
+  if (userId === null) return;
 
   const {
     display_name = null,
@@ -78,10 +74,8 @@ export const upsertProfile = async (req: Request, res: Response) => {
 };
 
 export const getProfileSkills = async (req: Request, res: Response) => {
-  const userId = Number.parseInt(req.params.userId, 10);
-  if (Number.isNaN(userId)) {
-    return sendError(res, 400, 'Invalid user ID format.');
-  }
+  const userId = parseIdParam(res, req.params.userId, 'user');
+  if (userId === null) return;
 
   try {
     const skills = await profileSkillsRepo.listSkillsForUser(userId);
@@ -93,10 +87,8 @@ export const getProfileSkills = async (req: Request, res: Response) => {
 };
 
 export const setProfileSkills = async (req: Request, res: Response) => {
-  const userId = Number.parseInt(req.params.userId, 10);
-  if (Number.isNaN(userId)) {
-    return sendError(res, 400, 'Invalid user ID format.');
-  }
+  const userId = parseIdParam(res, req.params.userId, 'user');
+  if (userId === null) return;
 
   const { skill_ids } = req.body as { skill_ids?: unknown };
   if (!Array.isArray(skill_ids) || !skill_ids.every((x) => Number.isInteger(x))) {
@@ -152,10 +144,8 @@ export const getFeaturedFreelancers = async (req: Request, res: Response) => {
 
 // Freelancer-specific profile endpoints
 export const getFreelancerProfile = async (req: Request, res: Response) => {
-  const userId = Number.parseInt(req.params.userId, 10);
-  if (Number.isNaN(userId)) {
-    return sendError(res, 400, 'Invalid user ID format.');
-  }
+  const userId = parseIdParam(res, req.params.userId, 'user');
+  if (userId === null) return;
 
   try {
     const profile = await freelancerProfilesRepo.findFullByUserId(userId);
@@ -171,10 +161,8 @@ export const getFreelancerProfile = async (req: Request, res: Response) => {
 };
 
 export const upsertFreelancerProfile = async (req: Request, res: Response) => {
-  const userId = Number.parseInt(req.params.userId, 10);
-  if (Number.isNaN(userId)) {
-    return sendError(res, 400, 'Invalid user ID format.');
-  }
+  const userId = parseIdParam(res, req.params.userId, 'user');
+  if (userId === null) return;
 
   const {
     title,
@@ -212,10 +200,8 @@ export const upsertFreelancerProfile = async (req: Request, res: Response) => {
 
 // Employer-specific profile endpoints
 export const getEmployerProfile = async (req: Request, res: Response) => {
-  const userId = Number.parseInt(req.params.userId, 10);
-  if (Number.isNaN(userId)) {
-    return sendError(res, 400, 'Invalid user ID format.');
-  }
+  const userId = parseIdParam(res, req.params.userId, 'user');
+  if (userId === null) return;
 
   try {
     const profile = await employerProfilesRepo.findFullByUserId(userId);
@@ -231,10 +217,8 @@ export const getEmployerProfile = async (req: Request, res: Response) => {
 };
 
 export const upsertEmployerProfile = async (req: Request, res: Response) => {
-  const userId = Number.parseInt(req.params.userId, 10);
-  if (Number.isNaN(userId)) {
-    return sendError(res, 400, 'Invalid user ID format.');
-  }
+  const userId = parseIdParam(res, req.params.userId, 'user');
+  if (userId === null) return;
 
   const {
     company_name,

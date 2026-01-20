@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { reviewRepo } from '../repositories/reviewRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
 
 export const createReview = async (req: Request, res: Response) => {
     const { job_id, reviewer_id, reviewee_id, rating, feedback } = req.body;
@@ -75,11 +75,8 @@ export const getAllReviews = async (req: Request, res: Response) => {
 };
 
 export const getReviewById = async (req: Request, res: Response) => {
-    const reviewId = parseInt(req.params.id, 10);
-
-    if (isNaN(reviewId)) {
-        return sendError(res, 400, 'Invalid review ID format.');
-    }
+    const reviewId = parseIdParam(res, req.params.id, 'review');
+    if (reviewId === null) return;
 
     try {
         const review = await reviewRepo.findById(reviewId);
@@ -94,11 +91,8 @@ export const getReviewById = async (req: Request, res: Response) => {
 };
 
 export const getReviewsByUser = async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.userId, 10);
-
-    if (isNaN(userId)) {
-        return sendError(res, 400, 'Invalid user ID format.');
-    }
+    const userId = parseIdParam(res, req.params.userId, 'user');
+    if (userId === null) return;
 
     try {
         const reviews = await reviewRepo.findByReviewee(userId);
@@ -119,11 +113,8 @@ export const getReviewsByUser = async (req: Request, res: Response) => {
 };
 
 export const updateReview = async (req: Request, res: Response) => {
-    const reviewId = parseInt(req.params.id, 10);
-
-    if (isNaN(reviewId)) {
-        return sendError(res, 400, 'Invalid review ID format.');
-    }
+    const reviewId = parseIdParam(res, req.params.id, 'review');
+    if (reviewId === null) return;
 
     try {
         const review = await reviewRepo.findById(reviewId);
@@ -147,11 +138,8 @@ export const updateReview = async (req: Request, res: Response) => {
 };
 
 export const deleteReview = async (req: Request, res: Response) => {
-    const reviewId = parseInt(req.params.id, 10);
-
-    if (isNaN(reviewId)) {
-        return sendError(res, 400, 'Invalid review ID format.');
-    }
+    const reviewId = parseIdParam(res, req.params.id, 'review');
+    if (reviewId === null) return;
 
     try {
         await reviewRepo.deleteById(reviewId);
@@ -163,11 +151,8 @@ export const deleteReview = async (req: Request, res: Response) => {
 };
 
 export const getUserRating = async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.userId, 10);
-
-    if (isNaN(userId)) {
-        return sendError(res, 400, 'Invalid user ID format.');
-    }
+    const userId = parseIdParam(res, req.params.userId, 'user');
+    if (userId === null) return;
 
     try {
         const averageRating = await reviewRepo.getAverageRating(userId);

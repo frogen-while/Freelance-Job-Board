@@ -22,3 +22,16 @@ export function sendError(
   if (details !== undefined) error.details = details;
   return res.status(status).json({ success: false, error });
 }
+
+export function parseIdParam(
+  res: Response,
+  value: string,
+  label: string
+): number | null {
+  const id = Number.parseInt(value, 10);
+  if (Number.isNaN(id)) {
+    sendError(res, 400, `Invalid ${label} ID format.`);
+    return null;
+  }
+  return id;
+}

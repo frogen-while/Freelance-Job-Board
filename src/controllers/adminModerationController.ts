@@ -2,18 +2,15 @@ import { Request, Response } from 'express';
 import { jobFlagsRepo } from '../repositories/jobFlagsRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
 import { auditLogRepo, AuditActions, EntityTypes } from '../repositories/auditLogRepo.js';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
 import { User } from '../interfaces/User.js';
 
 export const flagJob = async (req: Request, res: Response) => {
   try {
-    const jobId = parseInt(req.params.id, 10);
+    const jobId = parseIdParam(res, req.params.id, 'job');
     const { reason } = req.body;
     const currentUser = (req as any).currentUser as User;
-
-    if (isNaN(jobId)) {
-      return sendError(res, 400, 'Invalid job ID.');
-    }
+    if (jobId === null) return;
 
     if (!reason || typeof reason !== 'string' || reason.trim().length === 0) {
       return sendError(res, 400, 'Reason is required.');
@@ -48,11 +45,8 @@ export const flagJob = async (req: Request, res: Response) => {
 
 export const getJobFlags = async (req: Request, res: Response) => {
   try {
-    const jobId = parseInt(req.params.id, 10);
-
-    if (isNaN(jobId)) {
-      return sendError(res, 400, 'Invalid job ID.');
-    }
+    const jobId = parseIdParam(res, req.params.id, 'job');
+    if (jobId === null) return;
 
     const flags = await jobFlagsRepo.getByJobId(jobId);
     return sendSuccess(res, flags);
@@ -91,13 +85,10 @@ export const getPendingFlags = async (req: Request, res: Response) => {
 
 export const reviewFlag = async (req: Request, res: Response) => {
   try {
-    const flagId = parseInt(req.params.flagId, 10);
+    const flagId = parseIdParam(res, req.params.flagId, 'flag');
     const { status } = req.body;
     const currentUser = (req as any).currentUser as User;
-
-    if (isNaN(flagId)) {
-      return sendError(res, 400, 'Invalid flag ID.');
-    }
+    if (flagId === null) return;
 
     if (!status || !['reviewed', 'dismissed'].includes(status)) {
       return sendError(res, 400, 'Status must be "reviewed" or "dismissed".');
@@ -123,13 +114,10 @@ export const reviewFlag = async (req: Request, res: Response) => {
 
 export const hideJob = async (req: Request, res: Response) => {
   try {
-    const jobId = parseInt(req.params.id, 10);
+    const jobId = parseIdParam(res, req.params.id, 'job');
     const { reason } = req.body;
     const currentUser = (req as any).currentUser as User;
-
-    if (isNaN(jobId)) {
-      return sendError(res, 400, 'Invalid job ID.');
-    }
+    if (jobId === null) return;
 
     if (!reason || typeof reason !== 'string' || reason.trim().length === 0) {
       return sendError(res, 400, 'Reason is required.');
@@ -169,12 +157,9 @@ export const hideJob = async (req: Request, res: Response) => {
 
 export const restoreJob = async (req: Request, res: Response) => {
   try {
-    const jobId = parseInt(req.params.id, 10);
+    const jobId = parseIdParam(res, req.params.id, 'job');
     const currentUser = (req as any).currentUser as User;
-
-    if (isNaN(jobId)) {
-      return sendError(res, 400, 'Invalid job ID.');
-    }
+    if (jobId === null) return;
 
     const job = await jobRepo.findById(jobId);
     if (!job) {

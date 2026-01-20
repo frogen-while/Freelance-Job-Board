@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { categoryRepo } from '../repositories/categoryRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
 
 
 export const createCategory = async (req: Request, res: Response) => {
@@ -60,10 +60,9 @@ export const getAllCategories = async (req: Request, res: Response) => {
 
 };
 export const getCategoryById = async (req: Request, res: Response) => {
-    const CategoryId = parseInt(req.params.id, 10); 
-
-    if (isNaN(CategoryId)) {
-        return sendError(res, 400, 'Invalid category ID format.');
+    const CategoryId = parseIdParam(res, req.params.id, 'category');
+    if (CategoryId === null) {
+        return;
     }
 
     try {
@@ -81,10 +80,9 @@ export const getCategoryById = async (req: Request, res: Response) => {
     }
 };
 export const deleteCategory = async(req: Request, res: Response) =>{
-    const CategoryId = parseInt(req.params.id, 10); 
-
-    if (isNaN(CategoryId)) {
-        return sendError(res, 400, 'Invalid Category ID format.');
+    const CategoryId = parseIdParam(res, req.params.id, 'category');
+    if (CategoryId === null) {
+        return;
     }
 
     try {
@@ -98,11 +96,10 @@ export const deleteCategory = async(req: Request, res: Response) =>{
 };
 
 export const updateCategory = async (req: Request, res: Response) => {
-    const CategoryId = parseInt(req.params.id, 10);
+    const CategoryId = parseIdParam(res, req.params.id, 'category');
     const { name, description, manager_id } = req.body; 
-
-    if (isNaN(CategoryId)) {
-        return sendError(res, 400, 'Invalid category ID format.');
+    if (CategoryId === null) {
+        return;
     }
 
     const updateData: { name?: string, description?: string, manager_id?: number | null } = {};

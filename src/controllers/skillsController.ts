@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { sendError, sendSuccess } from '../utils/http.js';
+import { parseIdParam, sendError, sendSuccess } from '../utils/http.js';
 import { skillsRepo } from '../repositories/skillsRepo.js';
 
 export const getAllSkills = async (req: Request, res: Response) => {
@@ -43,10 +43,8 @@ export const createSkill = async (req: Request, res: Response) => {
 };
 
 export const deleteSkill = async (req: Request, res: Response) => {
-  const skillId = Number.parseInt(req.params.id, 10);
-  if (Number.isNaN(skillId)) {
-    return sendError(res, 400, 'Invalid skill ID format.');
-  }
+  const skillId = parseIdParam(res, req.params.id, 'skill');
+  if (skillId === null) return;
 
   try {
     await skillsRepo.deleteById(skillId);
