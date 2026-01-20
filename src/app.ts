@@ -52,14 +52,6 @@ app.use('/api', (req: Request, res: Response) => {
   return sendError(res, 404, 'Not Found');
 });
 
-const docsPath = path.join(__dirname, '..', 'docs');
-if (fs.existsSync(docsPath)) {
-  console.log('Serving docs from:', docsPath);
-  app.use('/docs', express.static(docsPath));
-} else {
-  console.log('Docs folder not found at:', docsPath);
-}
-
 const distPath = path.join(__dirname, '..', 'frontend', 'dist', 'frontend');
 
 if (fs.existsSync(distPath)) {

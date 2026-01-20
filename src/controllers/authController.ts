@@ -27,12 +27,12 @@ function signToken(payload: JwtUserPayload): string {
 }
 
 export const register = async (req: Request, res: Response) => {
-  const { first_name, last_name, email, password, type_name } = req.body as {
+  const { first_name, last_name, email, password, main_role } = req.body as {
     first_name?: unknown;
     last_name?: unknown;
     email?: unknown;
     password?: unknown;
-    type_name?: unknown;
+    main_role?: unknown;
   };
 
   if (typeof first_name !== 'string' || first_name.trim().length === 0) {
@@ -59,8 +59,8 @@ export const register = async (req: Request, res: Response) => {
     );
   }
 
-  if (typeof type_name !== 'string' || !['Employer', 'Freelancer'].includes(type_name)) {
-    return sendError(res, 400, 'type_name must be one of: Employer, Freelancer.');
+  if (typeof main_role !== 'string' || !['Employer', 'Freelancer'].includes(main_role)) {
+    return sendError(res, 400, 'main_role must be one of: Employer, Freelancer.');
   }
 
   try {
@@ -71,7 +71,7 @@ export const register = async (req: Request, res: Response) => {
     }
 
     const password_hash = await bcrypt.hash(password, 10);
-    const newUserId = await userRepo.create(first_name.trim(), last_name.trim(), normalizedEmail, password_hash, type_name as MainRole);
+    const newUserId = await userRepo.create(first_name.trim(), last_name.trim(), normalizedEmail, password_hash, main_role as MainRole);
 
     if (!newUserId) {
       return sendError(res, 500, 'Failed to create user.');

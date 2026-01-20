@@ -11,30 +11,17 @@ CREATE DATABASE freelance_job_board
 USE freelance_job_board;
 
 
-CREATE TABLE usertypes (
-  type_id INT AUTO_INCREMENT PRIMARY KEY,
-  type_name ENUM('Employer', 'Freelancer', 'Reviewer', 'Support') NOT NULL
-) ENGINE=InnoDB;
-
 CREATE TABLE users (
   user_id INT AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(100) NOT NULL,
   last_name VARCHAR(100) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
-  main_role ENUM('Administrator', 'Management', 'Regular', 'Unregistered') NOT NULL,
+  main_role ENUM('Admin', 'Manager', 'Support', 'Employer', 'Freelancer') NOT NULL,
   status ENUM('active', 'suspended', 'archived') DEFAULT 'active',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX idx_users_email (email)
-) ENGINE=InnoDB;
-
-CREATE TABLE user_usertypes (
-  user_id INT NOT NULL,
-  type_id INT NOT NULL,
-  PRIMARY KEY (user_id, type_id),
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-  FOREIGN KEY (type_id) REFERENCES usertypes(type_id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE skills (
@@ -215,10 +202,3 @@ CREATE TABLE supporttickets (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
-
-
-INSERT INTO usertypes (type_name) VALUES 
-  ('Employer'),
-  ('Freelancer'),
-  ('Reviewer'),
-  ('Support');

@@ -23,14 +23,6 @@ export async function openDb(): Promise<void> {
   console.log('Database connected and initialized successfully.');
 }
 
-export const userTypesTableDef = {
-  name: 'usertypes',
-  columns: {
-    type_id: { type: 'INTEGER', primaryKey: true, autoincrement: true },
-    type_name: { type: "TEXT CHECK(type_name IN ('Employer', 'Freelancer', 'Support'))", notNull: true }
-  }
-};
-
 export const usersTableDef = {
   name: 'users',
   columns: {
@@ -47,19 +39,6 @@ export const usersTableDef = {
     created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" },
     updated_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   }
-};
-
-export const userUserTypesTableDef = {
-  name: 'user_usertypes',
-  columns: {
-    user_id: { type: 'INTEGER', notNull: true },
-    type_id: { type: 'INTEGER', notNull: true }
-  },
-  primaryKey: ['user_id', 'type_id'],
-  foreignKeys: [
-    { column: 'user_id', references: 'users(user_id) ON DELETE CASCADE' },
-    { column: 'type_id', references: 'usertypes(type_id) ON DELETE CASCADE' }
-  ]
 };
 
 export const skillsTableDef = {
@@ -371,9 +350,7 @@ function createTableStatement(def: {
 
 export async function createSchemaAndData(): Promise<void> {
   const definitions = [
-    userTypesTableDef,
     usersTableDef,
-    userUserTypesTableDef,
     skillsTableDef,
     profilesTableDef,
     freelancerProfilesTableDef,
@@ -397,15 +374,6 @@ export async function createSchemaAndData(): Promise<void> {
   }
 
   await runMigrations();
-
-  const existingTypes = await db.connection!.get('SELECT COUNT(*) as count FROM usertypes');
-  if (existingTypes.count === 0) {
-    const types = ['Employer', 'Freelancer', 'Support'];
-    for (const t of types) {
-      await db.connection!.run('INSERT INTO usertypes (type_name) VALUES (?)', t);
-    }
-  }
-
   await seedSkills();
   await seedCategories();
 }

@@ -114,9 +114,7 @@ export const profilesRepo = {
         u.last_name,
         GROUP_CONCAT(s.name) as skill_names
       FROM profiles p
-      INNER JOIN users u ON p.user_id = u.user_id
-      INNER JOIN user_usertypes ut ON u.user_id = ut.user_id
-      INNER JOIN usertypes utype ON ut.type_id = utype.type_id AND utype.type_name = 'Freelancer'
+      INNER JOIN users u ON p.user_id = u.user_id AND u.main_role = 'Freelancer'
       LEFT JOIN freelancer_profiles fp ON p.user_id = fp.user_id
       LEFT JOIN profile_skills ps ON p.user_id = ps.user_id
       LEFT JOIN skills s ON ps.skill_id = s.skill_id
@@ -171,9 +169,7 @@ export const profilesRepo = {
         u.last_name,
         GROUP_CONCAT(s.name) as skill_names
       FROM profiles p
-      INNER JOIN users u ON p.user_id = u.user_id
-      INNER JOIN user_usertypes ut ON u.user_id = ut.user_id
-      INNER JOIN usertypes utype ON ut.type_id = utype.type_id AND utype.type_name = 'Freelancer'
+      INNER JOIN users u ON p.user_id = u.user_id AND u.main_role = 'Freelancer'
       LEFT JOIN freelancer_profiles fp ON p.user_id = fp.user_id
       LEFT JOIN profile_skills ps ON p.user_id = ps.user_id
       LEFT JOIN skills s ON ps.skill_id = s.skill_id
@@ -208,9 +204,7 @@ export const profilesRepo = {
     const result = await db.connection?.get<{ count: number }>(
       `SELECT COUNT(DISTINCT p.profile_id) as count
        FROM profiles p
-       INNER JOIN users u ON p.user_id = u.user_id
-       INNER JOIN user_usertypes ut ON u.user_id = ut.user_id
-       INNER JOIN usertypes utype ON ut.type_id = utype.type_id AND utype.type_name = 'Freelancer'
+       INNER JOIN users u ON p.user_id = u.user_id AND u.main_role = 'Freelancer'
        WHERE u.status = 'active'`
     );
     return result?.count ?? 0;
