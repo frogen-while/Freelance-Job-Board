@@ -11,7 +11,3 @@ frontend/cypress/videos/
 frontend/cypress/screenshots/
 frontend/*lock*
 src/config/seed*
-.codacy
-.github/instructions/codacy.instructions.md
-.cursor
-.github
