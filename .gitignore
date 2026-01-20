@@ -1,9 +1,17 @@
 node_modules/
 package-lock.json
 freelance.sqlite3
+db/freelance.sqlite3
+uploads/
+memory-bank/
+.env
 frontend/.angular/
 frontend/dist/
 frontend/cypress/videos/
 frontend/cypress/screenshots/
 frontend/*lock*
 src/config/seed*
+.codacy
+.github/instructions/codacy.instructions.md
+.cursor
+.github
