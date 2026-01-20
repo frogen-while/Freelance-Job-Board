@@ -10,6 +10,7 @@ import { AuthService } from '../../core/auth.service';
 export class LoginComponent implements OnInit {
   email = '';
   password = '';
+  showPassword = false;
   error: string | null = null;
   attemptsLeft: number | null = null;
   retryInMinutes: number | null = null;
@@ -55,6 +56,10 @@ export class LoginComponent implements OnInit {
         this.retryInMinutes = typeof details?.retry_in_minutes === 'number' ? details.retry_in_minutes : null;
       }
     });
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 
   private redirectAfterAuth() {
