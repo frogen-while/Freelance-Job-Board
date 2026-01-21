@@ -222,6 +222,9 @@
 .freelancer-avatar {
   @include avatar-lg;
   position: relative;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
 
   .availability-dot {
     position: absolute;

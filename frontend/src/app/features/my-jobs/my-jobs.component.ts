@@ -15,6 +15,7 @@ export class MyJobsComponent implements OnInit {
   loading = true;
   errorMessage = '';
   statusFilter: string = 'all';
+  activeTab: 'submissions' | 'jobs' = 'submissions';
 
   assignments: Assignment[] = [];
   completedAssignments: Assignment[] = [];
@@ -32,6 +33,7 @@ export class MyJobsComponent implements OnInit {
   revieweeId: number | null = null;
   revieweeName = '';
   reviewedJobs: Set<number> = new Set();
+  freelancerReviewedJobs: Set<number> = new Set();
 
   stats = {
     total: 0,
@@ -63,7 +65,7 @@ export class MyJobsComponent implements OnInit {
       next: (res) => {
         if (res.success && res.data) {
           this.jobs = res.data.filter(job => job.employer_id === user.user_id);
-          this.filteredJobs = this.jobs;
+          this.applyJobFilters();
           this.calculateStats();
           // Check review status for completed jobs
           this.jobs.filter(j => j.status === 'Completed').forEach(job => {
@@ -93,6 +95,7 @@ export class MyJobsComponent implements OnInit {
         if (res.success && res.data) {
           this.assignments = res.data.filter(a => a.status === 'Active');
           this.completedAssignments = res.data.filter(a => a.status === 'Completed');
+          this.completedAssignments.forEach(a => this.checkMutualReviews(a));
         } else {
           this.assignments = [];
           this.completedAssignments = [];
@@ -107,20 +110,34 @@ export class MyJobsComponent implements OnInit {
   }
 
   private calculateStats(): void {
-    this.stats.total = this.jobs.length;
-    this.stats.open = this.jobs.filter(j => j.status === 'Open').length;
-    this.stats.inProgress = this.jobs.filter(j => j.status === 'In Progress').length;
-    this.stats.completed = this.jobs.filter(j => j.status === 'Completed').length;
+    const visibleJobs = this.getVisibleJobs();
+    this.stats.total = visibleJobs.length;
+    this.stats.open = visibleJobs.filter(j => j.status === 'Open').length;
+    this.stats.inProgress = visibleJobs.filter(j => j.status === 'In Progress').length;
+    this.stats.completed = visibleJobs.filter(j => j.status === 'Completed').length;
   }
 
   filterByStatus(status: string): void {
     this.statusFilter = status;
-    if (status === 'all') {
-      this.filteredJobs = this.jobs;
-    } else if (status === 'active') {
-      this.filteredJobs = this.jobs.filter(j => j.status === 'Open' || j.status === 'In Progress');
+    this.applyJobFilters();
+  }
+
+  switchTab(tab: 'submissions' | 'jobs'): void {
+    this.activeTab = tab;
+  }
+
+  private getVisibleJobs(): Job[] {
+    return this.jobs.filter(j => !this.isJobArchived(j.job_id));
+  }
+
+  private applyJobFilters(): void {
+    const base = this.getVisibleJobs();
+    if (this.statusFilter === 'all') {
+      this.filteredJobs = base;
+    } else if (this.statusFilter === 'active') {
+      this.filteredJobs = base.filter(j => j.status === 'Open' || j.status === 'In Progress');
     } else {
-      this.filteredJobs = this.jobs.filter(j => j.status === status);
+      this.filteredJobs = base.filter(j => j.status === this.statusFilter);
     }
   }
 
@@ -156,6 +173,10 @@ export class MyJobsComponent implements OnInit {
             item.status = updatedStatus as 'accepted' | 'changes_requested';
             item.reviewer_message = res.data?.reviewer_message ?? message;
           }
+        }
+        if (updatedStatus === 'accepted') {
+          this.loadAssignments();
+          this.loadJobs();
         }
       },
       error: () => {
@@ -222,9 +243,48 @@ export class MyJobsComponent implements OnInit {
       next: (res) => {
         if (res.success && res.data?.hasReviewed) {
           this.reviewedJobs.add(jobId);
+          this.applyJobFilters();
+          this.calculateStats();
         }
       }
     });
+  }
+
+  private checkMutualReviews(assignment: Assignment): void {
+    const user = this.auth.getUser();
+    if (!user) return;
+
+    const employerId = user.user_id;
+    const freelancerId = assignment.freelancer_id;
+    const jobId = assignment.job_id;
+
+    this.api.hasReviewedJob(jobId, employerId).subscribe({
+      next: (res) => {
+        if (res.success && res.data?.hasReviewed) {
+          this.reviewedJobs.add(jobId);
+          this.applyCompletedAssignmentsFilter();
+        }
+      }
+    });
+
+    this.api.hasReviewedJob(jobId, freelancerId).subscribe({
+      next: (res) => {
+        if (res.success && res.data?.hasReviewed) {
+          this.freelancerReviewedJobs.add(jobId);
+          this.applyCompletedAssignmentsFilter();
+        }
+      }
+    });
+  }
+
+  private applyCompletedAssignmentsFilter(): void {
+    this.completedAssignments = this.completedAssignments.filter(a => !this.isJobArchived(a.job_id));
+    this.applyJobFilters();
+    this.calculateStats();
+  }
+
+  private isJobArchived(jobId: number): boolean {
+    return this.reviewedJobs.has(jobId) && this.freelancerReviewedJobs.has(jobId);
   }
 
   getReviewerId(): number | null {

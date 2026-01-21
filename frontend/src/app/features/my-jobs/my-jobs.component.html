@@ -35,8 +35,19 @@
       </div>
     </section>
 
+    <section class="view-tabs">
+      <div class="filter-tabs">
+        <button class="filter-tab"
+                [class.active]="activeTab === 'submissions'"
+                (click)="switchTab('submissions')">Submissions</button>
+        <button class="filter-tab"
+                [class.active]="activeTab === 'jobs'"
+                (click)="switchTab('jobs')">Jobs</button>
+      </div>
+    </section>
+
     <!-- Submissions Window -->
-    <section class="submissions-window">
+    <section class="submissions-window" *ngIf="activeTab === 'submissions'">
       <div class="window-header">
         <div>
           <h2 class="section-title">Current Work Submissions</h2>
@@ -89,11 +100,11 @@
                 </div>
 
                 <div class="review-actions">
-                  <input type="text" placeholder="Optional message" [(ngModel)]="reviewMessage[item.deliverable_id]" />
-                  <button class="btn-dark-secondary" [disabled]="reviewing[item.deliverable_id]" (click)="reviewDeliverable(item.deliverable_id, 'changes_requested')">
+                  <input type="text" placeholder="Optional message" [(ngModel)]="reviewMessage[item.deliverable_id]" [disabled]="item.status === 'accepted'" />
+                  <button class="btn-dark-secondary" [disabled]="reviewing[item.deliverable_id] || item.status === 'accepted'" (click)="reviewDeliverable(item.deliverable_id, 'changes_requested')">
                     Request Update
                   </button>
-                  <button class="btn-gradient" [disabled]="reviewing[item.deliverable_id]" (click)="reviewDeliverable(item.deliverable_id, 'accepted')">
+                  <button class="btn-gradient" [disabled]="reviewing[item.deliverable_id] || item.status === 'accepted'" (click)="reviewDeliverable(item.deliverable_id, 'accepted')">
                     Accept
                   </button>
                 </div>
@@ -121,7 +132,7 @@
     </section>
 
     <!-- Filters -->
-    <section class="filters-section">
+    <section class="filters-section" *ngIf="activeTab === 'jobs'">
       <div class="filter-tabs">
         <button class="filter-tab" 
                 [class.active]="statusFilter === 'all'" 
@@ -139,20 +150,20 @@
     </section>
 
     <!-- Loading State -->
-    <div class="loading-state-dark" *ngIf="loading">
+    <div class="loading-state-dark" *ngIf="loading && activeTab === 'jobs'">
       <div class="spinner"></div>
       <span>Loading your jobs...</span>
     </div>
 
     <!-- Error State -->
-    <div class="error-state-dark" *ngIf="errorMessage && !loading">
+    <div class="error-state-dark" *ngIf="errorMessage && !loading && activeTab === 'jobs'">
       <div class="error-icon">⚠️</div>
       <p>{{ errorMessage }}</p>
       <button class="btn-dark-secondary" (click)="loadJobs()">Try Again</button>
     </div>
 
     <!-- Jobs List -->
-    <section class="jobs-section" *ngIf="!loading && !errorMessage">
+    <section class="jobs-section" *ngIf="!loading && !errorMessage && activeTab === 'jobs'">
       <div class="jobs-list" *ngIf="filteredJobs.length > 0">
         <div class="job-card" *ngFor="let job of filteredJobs">
           <div class="job-header" (click)="viewJob(job.job_id)">

@@ -350,6 +350,10 @@ export const reviewAssignmentDeliverable = async (req: Request, res: Response) =
             return sendError(res, 404, 'Deliverable not found.');
         }
 
+        if (deliverable.status === 'accepted') {
+            return sendError(res, 400, 'Deliverable already accepted.');
+        }
+
         const assignment = await assignmentRepo.findById(deliverable.assignment_id);
         if (!assignment) {
             return sendError(res, 404, 'Assignment not found.');
@@ -360,10 +364,12 @@ export const reviewAssignmentDeliverable = async (req: Request, res: Response) =
             return sendError(res, 403, 'You do not have access to review this deliverable.');
         }
 
+        const trimmedMessage = typeof reviewer_message === 'string' ? reviewer_message.trim() : '';
+
         const updated = await assignmentDeliverablesRepo.updateStatus(
             deliverableId,
             status as 'accepted' | 'changes_requested',
-            reviewer_message ?? null
+            trimmedMessage || null
         );
 
         if (!updated) {
@@ -376,10 +382,19 @@ export const reviewAssignmentDeliverable = async (req: Request, res: Response) =
             await jobRepo.update(job.job_id, { status: 'Completed' });
         }
 
+        if (status === 'changes_requested') {
+            if (assignment.status === 'Completed') {
+                await assignmentRepo.updateStatus(assignment.assignment_id, 'Active');
+            }
+            if (job.status === 'Completed') {
+                await jobRepo.update(job.job_id, { status: 'In Progress' });
+            }
+        }
+
         // Send message to freelancer when changes are requested
         if (status === 'changes_requested') {
-            const messageBody = reviewer_message 
-            ? `Changes requested for the job "${job.title}": ${reviewer_message}`
+            const messageBody = trimmedMessage
+            ? `Changes requested for the job "${job.title}": ${trimmedMessage}`
             : `Changes requested for the job "${job.title}". Please review and make the updates.`;
             
             await messageRepo.create({
