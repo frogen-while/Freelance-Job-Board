@@ -2,7 +2,7 @@ import 'dotenv/config';
 import app from './app.js';
 import { openDb } from './config/init_db.js';
 
-const PORT = 12170;
+const PORT = 12176;
 
 async function startServer() {
   try {
