@@ -18,7 +18,6 @@ function getJwtSecret(): string {
     throw new Error('JWT_SECRET environment variable must be set in production');
   }
 
-  console.warn('WARNING: Using insecure JWT secret - DO NOT USE IN PRODUCTION');
   return 'dev-insecure-secret';
 }
 
