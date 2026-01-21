@@ -10,7 +10,7 @@ export interface Job {
   title: string;
   description: string;
   budget: number;
-  status: JobStatus; 
+  status: JobStatus;
   deadline: string;
   experience_level?: ExperienceLevel | null;
   job_type?: JobType;

@@ -92,11 +92,11 @@ export const deletePayment = async(req: Request, res: Response) =>{
 
 export const updatePayment = async (req: Request, res: Response) => {
     const paymentId = parseIdParam(res, req.params.id, 'payment');
-    const { job_id, payer_id, payee_id, amount } = req.body; 
+    const { job_id, payer_id, payee_id, amount } = req.body;
     if (paymentId === null) return;
 
     const updateData: { job_id?: number, payer_id?: number, payee_id?: number, amount?: number } = {};
-    
+
     if (job_id !== undefined) {
         const job = await jobRepo.findById(job_id);
         if (!job) {
@@ -128,13 +128,13 @@ export const updatePayment = async (req: Request, res: Response) => {
     if (Object.keys(updateData).length === 0) {
         return sendError(res, 400, 'No valid fields provided for update (allowed: job_id, payer_id, payee_id, amount)')
     }
-    
+
     try {
         const existingPayment = await paymentsRepo.findById(paymentId);
         if (!existingPayment) {
             return sendError(res, 404, 'Payment not found.');
         }
-        
+
         const success = await paymentsRepo.update(paymentId, updateData);
 
         if (success) {
@@ -148,14 +148,6 @@ export const updatePayment = async (req: Request, res: Response) => {
     }
 };
 
-/**
- * Process payment and accept application
- * This endpoint:
- * 1. Creates a payment record (status: completed)
- * 2. Updates application status to Accepted
- * 3. Updates job status to In Progress
- * 4. Rejects all other pending applications
- */
 export const processCheckout = async (req: Request, res: Response) => {
     const { application_id, job_id, payer_id, payee_id, amount } = req.body;
 
@@ -168,7 +160,7 @@ export const processCheckout = async (req: Request, res: Response) => {
     }
 
     try {
-        // Verify application exists and is pending
+
         const application = await jobAplRepo.findById(application_id);
         if (!application) {
             return sendError(res, 404, 'Application not found.');
@@ -177,41 +169,33 @@ export const processCheckout = async (req: Request, res: Response) => {
             return sendError(res, 400, 'Application has already been processed.');
         }
 
-        // Verify job exists
         const job = await jobRepo.findById(job_id);
         if (!job) {
             return sendError(res, 404, 'Job not found.');
         }
 
-        // Verify payer (employer) exists
         const payer = await userRepo.findById(payer_id);
         if (!payer) {
             return sendError(res, 400, 'Payer not found.');
         }
 
-        // Verify payee (freelancer) exists
         const payee = await userRepo.findById(payee_id);
         if (!payee) {
             return sendError(res, 400, 'Payee not found.');
         }
 
-        // 1. Create payment record
         const paymentId = await paymentsRepo.create(job_id, payer_id, payee_id, amount);
         if (!paymentId) {
             return sendError(res, 500, 'Failed to create payment.');
         }
 
-        // 2. Update application status to Accepted
         await jobAplRepo.update(application_id, { status: 'Accepted' });
 
-        // 3. Update job status to "In Progress"
         await jobRepo.update(job_id, { status: 'In Progress' });
 
-        // 3.1 Create assignment for accepted freelancer
         const { assignmentRepo } = await import('../repositories/assignmentRepo.js');
         await assignmentRepo.create(job_id, payee_id);
 
-        // 4. Reject all other pending applications for this job
         const allApplications = await jobAplRepo.findByJobId(job_id);
         for (const app of allApplications) {
             if (app.application_id !== application_id && app.status === 'Pending') {
@@ -219,9 +203,9 @@ export const processCheckout = async (req: Request, res: Response) => {
             }
         }
 
-        return sendSuccess(res, { 
-            payment_id: paymentId, 
-            message: 'Payment processed successfully. Job is now in progress.' 
+        return sendSuccess(res, {
+            payment_id: paymentId,
+            message: 'Payment processed successfully. Job is now in progress.'
         }, 201);
 
     } catch (error) {

@@ -103,8 +103,8 @@ export class ProfileComponent implements OnInit {
   skillSearch = '';
 
   constructor(
-    public auth: AuthService, 
-    private api: ApiService, 
+    public auth: AuthService,
+    private api: ApiService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -117,7 +117,7 @@ export class ProfileComponent implements OnInit {
       this.router.navigateByUrl('/login');
       return;
     }
-    
+
     if (userIdParam) {
       this.profileUserId = Number(userIdParam);
       this.isOwnProfile = currentUser?.user_id === this.profileUserId;
@@ -125,13 +125,13 @@ export class ProfileComponent implements OnInit {
       this.profileUserId = currentUser.user_id;
       this.isOwnProfile = true;
     }
-    
+
     if (this.isOwnProfile && currentUser) {
       this.user = currentUser;
       this.isFreelancer = this.auth.isFreelancer();
       this.isEmployer = !this.isFreelancer;
     }
-    
+
     this.loadUserInfo();
     this.loadProfile();
     this.loadSkills();
@@ -140,7 +140,7 @@ export class ProfileComponent implements OnInit {
 
   loadUserInfo(): void {
     if (!this.profileUserId) return;
-    
+
     this.api.getUserById(this.profileUserId).subscribe({
       next: (res: any) => {
         if (res.success && res.data) {
@@ -157,7 +157,7 @@ export class ProfileComponent implements OnInit {
         }
       }
     });
-    
+
     if (this.isOwnProfile) {
       if (this.isFreelancer) {
         this.loadFreelancerProfile();

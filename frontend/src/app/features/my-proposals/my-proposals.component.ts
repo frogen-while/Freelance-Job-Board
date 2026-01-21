@@ -28,23 +28,14 @@ export class MyProposalsComponent implements OnInit {
   assignmentsLoading = true;
   errorMessage = '';
   assignmentsError = '';
-  statusFilter: string = 'all';
   activeTab: 'proposals' | 'current' = 'proposals';
 
-  // Review modal state
   reviewModalOpen = false;
   reviewJobId: number | null = null;
   reviewJobTitle = '';
   revieweeId: number | null = null;
   revieweeName = '';
   reviewedJobs: Set<number> = new Set();
-
-  stats = {
-    total: 0,
-    pending: 0,
-    accepted: 0,
-    rejected: 0
-  };
 
   constructor(
     private auth: AuthService,
@@ -71,9 +62,8 @@ export class MyProposalsComponent implements OnInit {
     this.api.getApplicationsByFreelancerId(user.user_id).subscribe({
       next: (res) => {
         if (res.success && res.data) {
-          this.proposals = res.data;
+          this.proposals = res.data.filter(p => p.status === 'Pending');
           this.filteredProposals = this.proposals;
-          this.calculateStats();
         }
         this.loading = false;
       },
@@ -99,7 +89,7 @@ export class MyProposalsComponent implements OnInit {
           this.assignments = res.data;
           this.activeAssignments = this.assignments.filter(a => a.status === 'Active');
           this.completedAssignments = this.assignments.filter(a => a.status === 'Completed');
-          // Check review status for completed assignments
+
           this.completedAssignments.forEach(a => this.checkIfReviewed(a.job_id));
         } else {
           this.activeAssignments = [];
@@ -114,28 +104,8 @@ export class MyProposalsComponent implements OnInit {
     });
   }
 
-  private calculateStats(): void {
-    this.stats.total = this.proposals.length;
-    this.stats.pending = this.proposals.filter(p => p.status === 'Pending').length;
-    this.stats.accepted = this.proposals.filter(p => p.status === 'Accepted').length;
-    this.stats.rejected = this.proposals.filter(p => p.status === 'Rejected').length;
-  }
-
-  filterByStatus(status: string): void {
-    this.statusFilter = status;
-    if (status === 'all') {
-      this.filteredProposals = this.proposals;
-    } else {
-      this.filteredProposals = this.proposals.filter(p => p.status === status);
-    }
-  }
-
   switchTab(tab: 'proposals' | 'current'): void {
     this.activeTab = tab;
-  }
-
-  getStatusClass(status: string): string {
-    return status.toLowerCase();
   }
 
   viewJob(jobId: number): void {
@@ -203,30 +173,20 @@ export class MyProposalsComponent implements OnInit {
     });
   }
 
-  trackByAssignmentId(_index: number, assignment: Assignment): number {
-    return assignment.assignment_id;
-  }
-
-  trackByDeliverableId(_index: number, deliverable: AssignmentDeliverable): number {
-    return deliverable.deliverable_id;
-  }
-
   hasPendingSubmission(assignmentId: number): boolean {
     const list = this.deliverables[assignmentId] || [];
     return list.some(d => (d.status || 'submitted') === 'submitted');
   }
 
-  // Review functionality
   openReviewModal(assignment: Assignment): void {
     this.reviewJobId = assignment.job_id;
     this.reviewJobTitle = assignment.job_title || `Job #${assignment.job_id}`;
-    // For freelancer reviewing employer, we need employer_id from job
-    // For now we'll use a different approach - fetch job details
+
     this.api.getJobById(assignment.job_id).subscribe({
       next: (res) => {
         if (res.success && res.data) {
           this.revieweeId = res.data.employer_id;
-          // We'd need employer name, but we'll use a placeholder
+
           this.revieweeName = 'Employer';
           this.reviewModalOpen = true;
         }
@@ -256,7 +216,7 @@ export class MyProposalsComponent implements OnInit {
   checkIfReviewed(jobId: number): void {
     const user = this.auth.getUser();
     if (!user) return;
-    
+
     this.api.hasReviewedJob(jobId, user.user_id).subscribe({
       next: (res) => {
         if (res.success && res.data?.hasReviewed) {

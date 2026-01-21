@@ -48,7 +48,7 @@ export class RegisterComponent {
             this.error = ('error' in res && res.error?.message) ? res.error.message : 'Registration failed.';
             return;
           }
-          // After registration, always go to onboarding
+
           this.router.navigate(['/onboarding']);
         },
         error: (err) => {

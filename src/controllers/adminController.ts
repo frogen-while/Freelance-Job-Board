@@ -252,7 +252,7 @@ export const bulkBlockUsers = async (req: Request, res: Response) => {
     }
 
     const filteredIds = user_ids.filter((id: any) => typeof id === 'number' && id !== currentUser.user_id);
-    
+
     if (filteredIds.length === 0) {
       return sendError(res, 400, 'No valid user IDs provided.');
     }
@@ -292,7 +292,7 @@ export const bulkUnblockUsers = async (req: Request, res: Response) => {
     }
 
     const filteredIds = user_ids.filter((id: any) => typeof id === 'number');
-    
+
     if (filteredIds.length === 0) {
       return sendError(res, 400, 'No valid user IDs provided.');
     }
@@ -336,7 +336,7 @@ export const bulkAssignRole = async (req: Request, res: Response) => {
     }
 
     const filteredIds = user_ids.filter((id: any) => typeof id === 'number' && id !== currentUser.user_id);
-    
+
     if (filteredIds.length === 0) {
       return sendError(res, 400, 'No valid user IDs provided.');
     }
@@ -389,7 +389,7 @@ export const bulkUpdateTicketStatus = async (req: Request, res: Response) => {
     }
 
     const filteredIds = ticket_ids.filter((id: any) => typeof id === 'number');
-    
+
     if (filteredIds.length === 0) {
       return sendError(res, 400, 'No valid ticket IDs provided.');
     }
@@ -430,7 +430,7 @@ export const bulkDeleteTickets = async (req: Request, res: Response) => {
     }
 
     const filteredIds = ticket_ids.filter((id: any) => typeof id === 'number');
-    
+
     if (filteredIds.length === 0) {
       return sendError(res, 400, 'No valid ticket IDs provided.');
     }

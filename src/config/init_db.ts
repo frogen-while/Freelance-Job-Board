@@ -17,7 +17,7 @@ export async function openDb(): Promise<void> {
     filename: process.env.DBFILE || './db/freelance.sqlite3',
     driver: sqlite3.Database
   });
-  
+
   await createSchemaAndData();
   await db.connection.exec('PRAGMA foreign_keys = ON');
   console.log('Database connected and initialized successfully.');
@@ -172,7 +172,7 @@ export const jobApplicationsTableDef = {
     freelancer_id: { type: 'INTEGER', notNull: true },
     bid_amount: { type: 'REAL', notNull: true },
     proposal_text: { type: 'TEXT' },
-    status: { type: "TEXT DEFAULT 'Pending' CHECK(status IN ('Pending', 'Accepted', 'Rejected'))" },
+    status: { type: "TEXT DEFAULT 'Pending' CHECK(status IN ('Pending', 'Accepted', 'Rejected', 'Completed'))" },
     created_at: { type: "DATETIME DEFAULT CURRENT_TIMESTAMP" }
   },
   foreignKeys: [
@@ -311,15 +311,13 @@ export const auditLogsTableDef = {
   ]
 };
 
-
-
-function createTableStatement(def: { 
+function createTableStatement(def: {
     name: string;
     columns: { [key: string]: { type: string; primaryKey?: boolean; autoincrement?: boolean; notNull?: boolean; unique?: boolean; default?: any }},
     primaryKey?: string[];
     foreignKeys?: { column: string; references: string }[];
   }): string {
-  
+
   const cols = Object.entries(def.columns).map(([name, opts]) => {
     let colDef = `${name} ${opts.type}`;
     if (opts.primaryKey) colDef += ' PRIMARY KEY';
@@ -328,18 +326,18 @@ function createTableStatement(def: {
     if (opts.unique) colDef += ' UNIQUE';
     if (opts.default !== undefined) colDef += ` DEFAULT ${opts.default}`;
     return colDef;
-  });    
-  
+  });
+
   if(def.primaryKey) {
     cols.push(`PRIMARY KEY (${def.primaryKey.join(', ')})`);
   }
-  
+
   if(def.foreignKeys) {
     def.foreignKeys.forEach(fk => {
       cols.push(`FOREIGN KEY (${fk.column}) REFERENCES ${fk.references}`);
     });
   }
-  
+
   return `CREATE TABLE IF NOT EXISTS ${def.name} (\n ${cols.join(',\n ')} \n);`;
 }
 
@@ -374,7 +372,7 @@ export async function createSchemaAndData(): Promise<void> {
 }
 
 async function runMigrations(): Promise<void> {
-  // Add is_blocked column to users if not exists
+
   const usersInfo = await db.connection!.all("PRAGMA table_info(users)");
   const hasIsBlocked = usersInfo.some((col: any) => col.name === 'is_blocked');
   if (!hasIsBlocked) {
@@ -416,12 +414,46 @@ async function runMigrations(): Promise<void> {
       console.log('Migration: Added reviewed_at column to assignment_deliverables table');
     }
   }
+
+  await createIndexes();
+}
+
+async function createIndexes(): Promise<void> {
+  const indexes = [
+    'CREATE INDEX IF NOT EXISTS idx_jobs_employer_id ON jobs(employer_id)',
+    'CREATE INDEX IF NOT EXISTS idx_jobs_category_id ON jobs(category_id)',
+    'CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status)',
+    'CREATE INDEX IF NOT EXISTS idx_jobs_created_at ON jobs(created_at DESC)',
+    'CREATE INDEX IF NOT EXISTS idx_jobappl_job_id ON jobapplications(job_id)',
+    'CREATE INDEX IF NOT EXISTS idx_jobappl_freelancer_id ON jobapplications(freelancer_id)',
+    'CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON messages(sender_id)',
+    'CREATE INDEX IF NOT EXISTS idx_messages_receiver_id ON messages(receiver_id)',
+    'CREATE INDEX IF NOT EXISTS idx_messages_sent_at ON messages(sent_at DESC)',
+    'CREATE INDEX IF NOT EXISTS idx_assignments_freelancer_id ON assignments(freelancer_id)',
+    'CREATE INDEX IF NOT EXISTS idx_assignments_job_id ON assignments(job_id)',
+    'CREATE INDEX IF NOT EXISTS idx_reviews_reviewee_id ON reviews(reviewee_id)',
+    'CREATE INDEX IF NOT EXISTS idx_reviews_job_id ON reviews(job_id)',
+    'CREATE INDEX IF NOT EXISTS idx_tickets_user_id ON supporttickets(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_tickets_status ON supporttickets(status)',
+    'CREATE INDEX IF NOT EXISTS idx_tickets_assigned_to ON supporttickets(assigned_to)',
+    'CREATE INDEX IF NOT EXISTS idx_audit_user_id ON audit_logs(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_audit_created_at ON audit_logs(created_at DESC)'
+  ];
+
+  for (const indexSql of indexes) {
+    try {
+      await db.connection!.run(indexSql);
+    } catch (err) {
+
+    }
+  }
+  console.log('Migration: Performance indexes created');
 }
 
 async function seedSkills(): Promise<void> {
   const existingSkills = await db.connection!.get('SELECT COUNT(*) as count FROM skills');
   if (existingSkills.count > 0) {
-    return; 
+    return;
   }
 
   try {
@@ -442,7 +474,7 @@ async function seedCategories(): Promise<void> {
   const existingCategories = await db.connection!.get('SELECT COUNT(*) as count FROM categories');
   if (existingCategories.count > 0) {
     return
-  } 
+  }
 
   try {
     const categoriesPath = join(__dirname, '../../db/categories.json');

@@ -7,13 +7,13 @@
   </div>
 
   <div class="page-content">
-    <!-- Filters Sidebar -->
+
     <aside class="filters-sidebar">
       <div class="filter-section">
         <h3 class="filter-title">Search</h3>
         <div class="search-input-wrapper">
-          <input 
-            type="text" 
+          <input
+            type="text"
             class="filter-search"
             [(ngModel)]="searchQuery"
             placeholder="Search by skill..."
@@ -28,14 +28,14 @@
       <div class="filter-section">
         <h3 class="filter-title">Categories</h3>
         <div class="category-filters">
-          <button 
-            class="category-filter-btn" 
+          <button
+            class="category-filter-btn"
             [class.active]="selectedCategory === null"
             (click)="onCategoryChange(null)">
             All Categories
           </button>
-          <button 
-            class="category-filter-btn" 
+          <button
+            class="category-filter-btn"
             *ngFor="let cat of categories"
             [class.active]="selectedCategory === cat.category_id"
             (click)="onCategoryChange(cat.category_id)">
@@ -49,7 +49,6 @@
       </button>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
       <div class="results-header">
         <p class="results-count" *ngIf="!loading">
@@ -57,13 +56,11 @@
         </p>
       </div>
 
-      <!-- Loading State -->
       <div class="loading-state" *ngIf="loading">
         <div class="spinner"></div>
         <p>Loading freelancers...</p>
       </div>
 
-      <!-- Empty State -->
       <div class="empty-state" *ngIf="!loading && freelancers.length === 0">
         <mat-icon class="empty-icon">people</mat-icon>
         <h3>No freelancers found</h3>
@@ -71,13 +68,12 @@
         <button class="btn-accent" (click)="clearFilters()">Clear Filters</button>
       </div>
 
-      <!-- Freelancers Grid -->
       <div class="freelancers-grid" *ngIf="!loading && freelancers.length > 0">
-        <div class="freelancer-card" *ngFor="let freelancer of freelancers" 
+        <div class="freelancer-card" *ngFor="let freelancer of freelancers"
              [routerLink]="['/profile', freelancer.user_id]" style="cursor: pointer;">
           <div class="card-header">
             <div class="freelancer-avatar">
-              <img *ngIf="freelancer.photo_url" [src]="freelancer.photo_url" [alt]="getDisplayName(freelancer)" />
+              <img *ngIf="freelancer.photo_url" [src]="freelancer.photo_url" [alt]="getDisplayName(freelancer)" [title]="getDisplayName(freelancer)" />
               <span *ngIf="!freelancer.photo_url" class="avatar-initials">{{ fmt.getInitials(freelancer) }}</span>
             </div>
             <div class="freelancer-basic">
@@ -90,7 +86,6 @@
             {{ freelancer.description | slice:0:120 }}{{ freelancer.description.length > 120 ? '...' : '' }}
           </p>
 
-          <!-- Stats Row -->
           <div class="freelancer-stats">
             <div class="stat-item" *ngIf="freelancer.experience_level">
               <span class="stat-label">Experience</span>
@@ -124,18 +119,17 @@
         </div>
       </div>
 
-      <!-- Pagination -->
       <div class="pagination" *ngIf="totalPages > 1">
-        <button 
-          class="page-btn" 
+        <button
+          class="page-btn"
           [disabled]="currentPage === 1"
           (click)="goToPage(currentPage - 1)">
           ← Previous
         </button>
-        
+
         <div class="page-numbers">
-          <button 
-            class="page-num" 
+          <button
+            class="page-num"
             *ngFor="let page of [].constructor(totalPages); let i = index"
             [class.active]="currentPage === i + 1"
             (click)="goToPage(i + 1)">
@@ -143,8 +137,8 @@
           </button>
         </div>
 
-        <button 
-          class="page-btn" 
+        <button
+          class="page-btn"
           [disabled]="currentPage === totalPages"
           (click)="goToPage(currentPage + 1)">
           Next →
@@ -152,7 +146,6 @@
       </div>
     </main>
 
-    <!-- Profile Sidebar -->
     <aside class="profile-sidebar-wrapper">
       <app-profile-sidebar></app-profile-sidebar>
     </aside>

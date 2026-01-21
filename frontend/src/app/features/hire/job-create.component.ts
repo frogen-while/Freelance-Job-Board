@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { AuthService, PublicUser } from '../../core/auth.service';
-import { 
-  Category, 
-  Skill, 
-  CreateJobPayload, 
-  ExperienceLevel, 
-  JobType, 
-  DurationEstimate 
+import {
+  Category,
+  Skill,
+  CreateJobPayload,
+  ExperienceLevel,
+  JobType,
+  DurationEstimate
 } from '../../core/models';
 
 @Component({
@@ -21,8 +21,7 @@ export class JobCreateComponent implements OnInit {
   categories: Category[] = [];
   skills: Skill[] = [];
   filteredSkills: Skill[] = [];
-  
-  // Form data
+
   title = '';
   description = '';
   budget: number | null = null;
@@ -35,8 +34,7 @@ export class JobCreateComponent implements OnInit {
   location = '';
   selectedSkills: number[] = [];
   skillSearch = '';
-  
-  // UI state
+
   loading = false;
   saving = false;
   successMessage = '';
@@ -52,8 +50,7 @@ export class JobCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = this.auth.getUser();
-    
-    // Guards handle auth/employer check, but double-check here
+
     if (!this.user) {
       return;
     }
@@ -85,8 +82,8 @@ export class JobCreateComponent implements OnInit {
 
   filterSkills(): void {
     const query = this.skillSearch.toLowerCase();
-    this.filteredSkills = this.skills.filter(skill => 
-      skill.name.toLowerCase().includes(query) && 
+    this.filteredSkills = this.skills.filter(skill =>
+      skill.name.toLowerCase().includes(query) &&
       !this.selectedSkills.includes(skill.skill_id)
     );
   }

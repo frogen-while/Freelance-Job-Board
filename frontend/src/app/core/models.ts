@@ -4,14 +4,10 @@ export interface ApiResponse<T> {
   error?: { message: string };
 }
 
-// ============ TYPES ============
-
 export type ExperienceLevel = 'entry' | 'intermediate' | 'expert';
 export type JobType = 'fixed' | 'hourly';
 export type DurationEstimate = 'less_than_week' | '1_2_weeks' | '2_4_weeks' | '1_3_months' | '3_6_months' | 'more_than_6_months';
 export type CompanySize = '1-10' | '11-50' | '51-200' | '201-500' | '501+';
-
-// ============ JOB ============
 
 export interface Job {
   job_id: number;
@@ -22,7 +18,7 @@ export interface Job {
   budget: number;
   status: 'Open' | 'In Progress' | 'Completed' | 'Cancelled';
   deadline: string;
-  // New fields
+
   experience_level?: ExperienceLevel | null;
   job_type?: JobType;
   duration_estimate?: DurationEstimate | null;
@@ -33,8 +29,6 @@ export interface Job {
   updated_at?: string;
 }
 
-// ============ CATEGORY ============
-
 export interface Category {
   category_id: number;
   name: string;
@@ -42,9 +36,6 @@ export interface Category {
   manager_id: number | null;
 }
 
-// ============ PROFILES ============
-
-// Base profile (shared by all users)
 export interface Profile {
   profile_id: number;
   user_id: number;
@@ -58,7 +49,6 @@ export interface Profile {
   updated_at?: string;
 }
 
-// Freelancer-specific profile data
 export interface FreelancerProfileData {
   id?: number;
   user_id: number;
@@ -70,32 +60,30 @@ export interface FreelancerProfileData {
   jobs_completed?: number;
 }
 
-// Freelancer profile (combined data from backend JOIN)
 export interface FreelancerProfile {
   profile_id: number;
   user_id: number;
-  // From profiles
+
   display_name: string | null;
   headline: string | null;
   description: string | null;
   photo_url: string | null;
   location: string | null;
   onboarding_completed?: boolean;
-  // From freelancer_profiles
+
   title?: string | null;
   hourly_rate: number | null;
   experience_level?: ExperienceLevel | null;
   github_url?: string | null;
   linkedin_url?: string | null;
   jobs_completed?: number;
-  // From users
+
   first_name: string;
   last_name: string;
-  // Skills
+
   skills: string[];
 }
 
-// Employer-specific profile data
 export interface EmployerProfileData {
   id?: number;
   user_id: number;
@@ -108,17 +96,16 @@ export interface EmployerProfileData {
   total_spent?: number;
 }
 
-// Employer profile (combined data from backend JOIN)
 export interface EmployerProfile {
   profile_id: number;
   user_id: number;
-  // From profiles
+
   display_name: string | null;
   headline: string | null;
   description: string | null;
   photo_url: string | null;
   location: string | null;
-  // From employer_profiles
+
   company_name?: string | null;
   company_description?: string | null;
   company_website?: string | null;
@@ -126,12 +113,10 @@ export interface EmployerProfile {
   industry?: string | null;
   jobs_posted?: number;
   total_spent?: number;
-  // From users
+
   first_name: string;
   last_name: string;
 }
-
-// ============ RESPONSES ============
 
 export interface FreelancersResponse {
   freelancers: FreelancerProfile[];
@@ -143,14 +128,10 @@ export interface EmployersResponse {
   total: number;
 }
 
-// ============ SKILL ============
-
 export interface Skill {
   skill_id: number;
   name: string;
 }
-
-// ============ JOB FILTERS ============
 
 export interface JobFilters {
   q?: string;
@@ -163,8 +144,6 @@ export interface JobFilters {
   budget_max?: number;
   skills?: number[];
 }
-
-// ============ CREATE JOB PAYLOAD ============
 
 export interface CreateJobPayload {
   employer_id: number;
@@ -181,9 +160,7 @@ export interface CreateJobPayload {
   skill_ids?: number[];
 }
 
-// ============ JOB APPLICATION ============
-
-export type JobApplicationStatus = 'Pending' | 'Accepted' | 'Rejected';
+export type JobApplicationStatus = 'Pending' | 'Accepted' | 'Rejected' | 'Completed';
 
 export interface JobApplication {
   application_id: number;
@@ -193,7 +170,7 @@ export interface JobApplication {
   proposal_text?: string;
   status: JobApplicationStatus;
   created_at?: string;
-  // Joined freelancer data
+
   first_name?: string;
   last_name?: string;
   email?: string;
@@ -202,13 +179,11 @@ export interface JobApplication {
   photo_url?: string;
   hourly_rate?: number;
   experience_level?: ExperienceLevel;
-  // Joined job data (for freelancer's view)
+
   job_title?: string;
   job_budget?: number;
   job_status?: string;
 }
-
-// ============ ASSIGNMENTS ============
 
 export type AssignmentStatus = 'Active' | 'Completed' | 'Terminated';
 
@@ -241,8 +216,6 @@ export interface AssignmentDeliverable {
   created_at?: string;
 }
 
-// ============ MESSAGE ============
-
 export interface Message {
   message_id: number;
   sender_id: number;
@@ -251,7 +224,7 @@ export interface Message {
   body: string;
   is_read: boolean;
   sent_at: string;
-  // Joined data
+
   sender_name?: string;
   receiver_name?: string;
   job_title?: string;
@@ -268,8 +241,6 @@ export interface Conversation {
   job_title?: string;
 }
 
-// ============ REVIEW ============
-
 export type Rating = 1 | 2 | 3 | 4 | 5;
 
 export interface Review {
@@ -280,12 +251,10 @@ export interface Review {
   rating: Rating;
   feedback?: string | null;
   created_at?: string;
-  // Joined data
+
   reviewer_name?: string;
   job_title?: string;
 }
-
-// ============ ADMIN MODELS ============
 
 export type UserRole = 'Admin' | 'Manager' | 'Support' | 'Employer' | 'Freelancer';
 
@@ -348,7 +317,7 @@ export interface AuditLog {
   details: string | null;
   ip_address: string | null;
   created_at: string;
-  // Joined
+
   user_email?: string;
   user_name?: string;
 }
@@ -363,7 +332,7 @@ export interface SupportTicket {
   assigned_to?: number | null;
   created_at?: string;
   updated_at?: string;
-  // Joined
+
   user_email?: string;
   user_name?: string;
   assigned_name?: string;

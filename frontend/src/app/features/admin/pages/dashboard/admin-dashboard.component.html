@@ -5,7 +5,7 @@
   </header>
 
   <div class="stats-content" *ngIf="!loading">
-    <!-- Overview Cards -->
+
     <section class="overview-section">
       <div class="stats-grid">
         <div class="stat-card-dark stat-card-dark--horizontal" data-color="blue">
@@ -55,10 +55,9 @@
       </div>
     </section>
 
-    <!-- Charts Row -->
     <section class="charts-section">
       <div class="charts-grid">
-        <!-- User Distribution -->
+
         <div class="chart-card">
           <h3 class="chart-title">User Distribution</h3>
           <div class="chart-container">
@@ -76,7 +75,6 @@
           </div>
         </div>
 
-        <!-- Job Status -->
         <div class="chart-card">
           <h3 class="chart-title">Jobs by Status</h3>
           <div class="chart-container">
@@ -96,7 +94,6 @@
       </div>
     </section>
 
-    <!-- Budget by Category Chart -->
     <section class="revenue-section" *ngIf="revenueStats?.top_categories?.length">
       <div class="chart-card wide">
         <h3 class="chart-title">Budget by Category</h3>
@@ -106,7 +103,6 @@
       </div>
     </section>
 
-    <!-- Bottom Section: Users and Tickets -->
     <div class="bottom-grid">
       <section class="glass-card">
         <div class="card-header">
@@ -123,10 +119,7 @@
             <span class="role-badge" [ngClass]="u.main_role.toLowerCase()">{{ u.main_role }}</span>
           </div>
         </div>
-        <div *ngIf="recentUsers.length === 0" class="empty-state-dark">
-          <mat-icon>people_outline</mat-icon>
-          <p>No users yet</p>
-        </div>
+        <app-empty-state *ngIf="recentUsers.length === 0" icon="people_outline" title="No users yet"></app-empty-state>
       </section>
 
       <section class="glass-card">
@@ -144,17 +137,10 @@
             <span class="date-text">{{ dateService.format(t.created_at, 'date') }}</span>
           </div>
         </div>
-        <div *ngIf="openTickets.length === 0" class="empty-state-dark">
-          <mat-icon>check_circle</mat-icon>
-          <p>No open tickets</p>
-        </div>
+        <app-empty-state *ngIf="openTickets.length === 0" icon="check_circle" title="No open tickets"></app-empty-state>
       </section>
     </div>
   </div>
 
-  <!-- Loading -->
-  <div class="loading-state-dark" *ngIf="loading">
-    <div class="spinner"></div>
-    <span>Loading dashboard...</span>
-  </div>
+  <app-loading-state *ngIf="loading" message="Loading dashboard..."></app-loading-state>
 </div>

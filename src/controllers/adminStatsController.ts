@@ -6,7 +6,7 @@ import { db } from '../config/init_db.js';
 export const getOverviewStats = async (req: Request, res: Response) => {
   try {
     const stats = await statsRepo.getOverviewStats();
-    // Transform to flat structure for frontend
+
     return sendSuccess(res, {
       total_users: stats.users.total,
       total_jobs: stats.jobs.total,
@@ -27,12 +27,11 @@ export const getRevenueStats = async (req: Request, res: Response) => {
   try {
     const { period = 'month' } = req.query;
     const validPeriods = ['week', 'month', 'year', 'all'];
-    
+
     if (!validPeriods.includes(period as string)) {
       return sendError(res, 400, `Invalid period. Valid periods: ${validPeriods.join(', ')}`);
     }
 
-    // Get top categories by job budget
     const topCategories = await db.connection?.all<{ category_id: number; category_name: string; total: number }[]>(`
       SELECT c.category_id, c.name as category_name, COALESCE(SUM(j.budget), 0) as total
       FROM categories c
@@ -43,9 +42,8 @@ export const getRevenueStats = async (req: Request, res: Response) => {
       LIMIT 5
     `) || [];
 
-    // Calculate total budget from jobs (since payments table may be empty)
     const budgetStats = await db.connection?.get<{ total: number; this_month: number; avg: number }>(`
-      SELECT 
+      SELECT
         COALESCE(SUM(budget), 0) as total,
         COALESCE(SUM(CASE WHEN created_at >= datetime('now', '-30 days') THEN budget ELSE 0 END), 0) as this_month,
         COALESCE(AVG(budget), 0) as avg
@@ -69,17 +67,16 @@ export const getUserStats = async (req: Request, res: Response) => {
   try {
     const { period = 'month' } = req.query;
     const validPeriods = ['week', 'month', 'year'];
-    
+
     if (!validPeriods.includes(period as string)) {
       return sendError(res, 400, `Invalid period. Valid periods: ${validPeriods.join(', ')}`);
     }
 
-    // Count by actual activity, not by role
     const [blocked, totalEmployers, totalFreelancers, activeEmployers, activeFreelancers] = await Promise.all([
       db.connection?.get<{ count: number }>('SELECT COUNT(*) as count FROM users WHERE is_blocked = 1'),
       db.connection?.get<{ count: number }>('SELECT COUNT(DISTINCT employer_id) as count FROM jobs'),
       db.connection?.get<{ count: number }>('SELECT COUNT(DISTINCT freelancer_id) as count FROM jobapplications'),
-      // Active = created/applied in last 30 days
+
       db.connection?.get<{ count: number }>("SELECT COUNT(DISTINCT employer_id) as count FROM jobs WHERE created_at >= datetime('now', '-30 days')"),
       db.connection?.get<{ count: number }>("SELECT COUNT(DISTINCT freelancer_id) as count FROM jobapplications WHERE created_at >= datetime('now', '-30 days')")
     ]);
@@ -103,7 +100,7 @@ export const getJobStats = async (req: Request, res: Response) => {
   try {
     const { period = 'month' } = req.query;
     const validPeriods = ['week', 'month', 'year'];
-    
+
     if (!validPeriods.includes(period as string)) {
       return sendError(res, 400, `Invalid period. Valid periods: ${validPeriods.join(', ')}`);
     }

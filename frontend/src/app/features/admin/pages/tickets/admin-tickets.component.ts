@@ -14,15 +14,15 @@ export class AdminTicketsComponent implements OnInit {
   filteredTickets: SupportTicket[] = [];
   managers: AdminUser[] = [];
   selectedManagerIds: Record<number, number | null> = {};
-  
+
   loading = true;
   errorMessage = '';
   successMessage = '';
-  
+
   statusFilter = '';
   showDetailModal = false;
   selectedTicket: SupportTicket | null = null;
-  
+
   statuses = ['Open', 'In Progress', 'Resolved', 'Closed'];
   currentRole: UserRole | null = null;
   currentUserId: number | null = null;
@@ -50,10 +50,10 @@ export class AdminTicketsComponent implements OnInit {
   loadTickets(): void {
     this.loading = true;
     this.errorMessage = '';
-    
+
     const filters: any = {};
     if (this.statusFilter) filters.status = this.statusFilter;
-    
+
     this.api.getFilteredTickets(filters).subscribe({
       next: (res) => {
         if (res.success && res.data) {

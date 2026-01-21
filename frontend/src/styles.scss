@@ -41,14 +41,12 @@
   --space-12: #{tokens.$space-12};
   --space-16: #{tokens.$space-16};
 
-  // Radius
   --radius-sm: #{tokens.$radius-sm};
   --radius-md: #{tokens.$radius-md};
   --radius-lg: #{tokens.$radius-lg};
   --radius-xl: #{tokens.$radius-xl};
   --radius-full: #{tokens.$radius-full};
 
-  // Shadows
   --shadow-sm: #{tokens.$shadow-sm};
   --shadow-md: #{tokens.$shadow-md};
   --shadow-lg: #{tokens.$shadow-lg};
@@ -79,9 +77,6 @@ body {
   }
 }
 
-// --------------------------------------------
-// TYPOGRAPHY
-// --------------------------------------------
 h1, h2, h3, h4, h5, h6 {
   font-weight: tokens.$font-weight-semibold;
   line-height: tokens.$line-height-tight;
@@ -110,9 +105,6 @@ a {
   }
 }
 
-// --------------------------------------------
-// BUTTONS
-// --------------------------------------------
 .btn {
   display: inline-flex;
   align-items: center;
@@ -226,7 +218,6 @@ a {
   }
 }
 
-// Gradient buttons (for dark backgrounds)
 .btn-gradient {
   @extend .btn;
   background: tokens.$gradient-accent;
@@ -254,7 +245,6 @@ a {
   }
 }
 
-// Dark theme button variants
 .btn-dark-secondary {
   @extend .btn;
   background: tokens.$white-10;
@@ -279,7 +269,6 @@ a {
   }
 }
 
-// Accept/Reject buttons (for proposals)
 .btn-accept {
   @extend .btn;
   padding: tokens.$space-1 tokens.$space-3;
@@ -308,14 +297,10 @@ a {
   }
 }
 
-// Full width button
 .btn-block {
   width: 100%;
 }
 
-// --------------------------------------------
-// CARDS
-// --------------------------------------------
 .card {
   background: tokens.$bg-card;
   border-radius: tokens.$radius-lg;
@@ -349,9 +334,6 @@ a {
   background: rgba(tokens.$bg-page, 0.5);
 }
 
-// --------------------------------------------
-// FORMS
-// --------------------------------------------
 .form-group {
   margin-bottom: tokens.$space-5;
 }
@@ -442,7 +424,6 @@ a {
   margin-top: tokens.$space-1;
 }
 
-// Dark theme form variants (for modal/dark backgrounds)
 .form-group-dark {
   margin-bottom: tokens.$space-4;
 
@@ -483,9 +464,6 @@ a {
   line-height: 1.5;
 }
 
-// --------------------------------------------
-// SKILL TAGS
-// --------------------------------------------
 .skill-tag {
   display: inline-flex;
   align-items: center;
@@ -495,14 +473,12 @@ a {
   border-radius: tokens.$radius-md;
 }
 
-// Light theme (default) - for cards on white backgrounds
 .skill-tag-light {
   @extend .skill-tag;
   background: rgba(tokens.$accent, 0.12);
   color: darken(tokens.$accent, 12%);
 }
 
-// Pill variant - full rounded
 .skill-tag-pill {
   @extend .skill-tag;
   padding: tokens.$space-1 tokens.$space-3;
@@ -512,14 +488,12 @@ a {
   color: #818cf8;
 }
 
-// Dark theme - for dark backgrounds
 .skill-tag-dark {
   @extend .skill-tag;
   background: tokens.$white-10;
   color: tokens.$white-80;
 }
 
-// Selected/editable - solid background with remove button
 .skill-tag-selected {
   @extend .skill-tag;
   gap: tokens.$space-1;
@@ -551,9 +525,6 @@ a {
   font-size: tokens.$font-size-xs;
 }
 
-// --------------------------------------------
-// BADGES
-// --------------------------------------------
 .badge {
   display: inline-flex;
   align-items: center;
@@ -600,9 +571,6 @@ a {
   color: tokens.$text-secondary;
 }
 
-// --------------------------------------------
-// LAYOUT
-// --------------------------------------------
 .container {
   width: 100%;
   max-width: 1200px;
@@ -652,10 +620,6 @@ a {
   color: tokens.$text-secondary;
 }
 
-// --------------------------------------------
-// UTILITY STATES (base + theme modifiers)
-// --------------------------------------------
-// Base state mixin
 %state-base {
   display: flex;
   flex-direction: column;
@@ -760,9 +724,6 @@ a {
   p { color: tokens.$success-dark; margin: 0; }
 }
 
-// --------------------------------------------
-// MESSAGES / ALERTS
-// --------------------------------------------
 .message {
   padding: tokens.$space-4;
   border-radius: tokens.$radius-md;
@@ -794,9 +755,6 @@ a {
   }
 }
 
-// --------------------------------------------
-// MODALS
-// --------------------------------------------
 .modal-overlay {
   @include u.flex-center;
   position: fixed;
@@ -857,16 +815,10 @@ a {
   border-top: 1px solid tokens.$white-10;
 }
 
-// --------------------------------------------
-// ANIMATIONS (only essential spinners)
-// --------------------------------------------
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-// --------------------------------------------
-// UTILITY CLASSES
-// --------------------------------------------
 .text-center { text-align: center; }
 .text-left { text-align: left; }
 .text-right { text-align: right; }
@@ -899,9 +851,6 @@ a {
   border: 0;
 }
 
-// --------------------------------------------
-// STATUS BADGES
-// --------------------------------------------
 .status-badge {
   font-size: tokens.$font-size-xs;
   font-weight: tokens.$font-weight-medium;
@@ -940,9 +889,6 @@ a {
   color: #9ca3af;
 }
 
-// --------------------------------------------
-// AVATAR SIZES
-// --------------------------------------------
 .avatar {
   @include u.flex-center;
   border-radius: 50%;
@@ -968,9 +914,6 @@ a {
 .avatar-lg { width: 80px; height: 80px; .initials { font-size: tokens.$font-size-xl; } }
 .avatar-xl { width: 100px; height: 100px; .initials { font-size: tokens.$font-size-2xl; } }
 
-// --------------------------------------------
-// HERO SECTION
-// --------------------------------------------
 .hero-section {
   @include u.flex-center;
   position: relative;
@@ -1063,9 +1006,6 @@ a {
   flex-wrap: wrap;
 }
 
-// --------------------------------------------
-// SECTION LAYOUT
-// --------------------------------------------
 .section-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -1126,9 +1066,6 @@ a {
   }
 }
 
-// --------------------------------------------
-// GRID UTILITIES
-// --------------------------------------------
 .grid-2-1 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1154,7 +1091,6 @@ a {
   }
 }
 
-// Stat card - shared base
 %stat-card-base {
   border-radius: tokens.$radius-xl;
   padding: tokens.$space-6;
@@ -1223,7 +1159,6 @@ a {
   .stat-value { color: #fff; }
   .stat-label { color: tokens.$white-60; }
 
-  // Color variants
   &[data-color="blue"] .stat-icon {
     background: rgba(99, 102, 241, 0.2);
     mat-icon { color: #818cf8; }
@@ -1244,7 +1179,6 @@ a {
     mat-icon { color: #fb923c; }
   }
 
-  // Horizontal variant
   &--horizontal {
     display: flex;
     align-items: center;
@@ -1263,7 +1197,6 @@ a {
   }
 }
 
-// Glass card for dark backgrounds
 .glass-card {
   background: tokens.$white-5;
   border: 1px solid tokens.$white-10;
@@ -1274,7 +1207,6 @@ a {
   }
 }
 
-// Action card for dark backgrounds
 .action-card-dark {
   @extend .glass-card;
   padding: tokens.$space-5;
@@ -1316,7 +1248,6 @@ a {
 
   &:hover .action-arrow { transform: translateX(4px); }
 
-  // Color variants
   &[data-color="blue"] .action-icon {
     background: rgba(99, 102, 241, 0.15);
     mat-icon { color: #818cf8; }
@@ -1333,7 +1264,6 @@ a {
   }
 }
 
-// Dark section utilities
 .section-title-dark {
   font-size: tokens.$font-size-xl;
   font-weight: tokens.$font-weight-semibold;
@@ -1349,9 +1279,6 @@ a {
   &:hover { color: #a5b4fc; }
 }
 
-// --------------------------------------------
-// MATERIAL ICON SIZING
-// --------------------------------------------
 .mat-icon-sm {
   font-size: 16px !important;
   width: 16px !important;
@@ -1376,9 +1303,6 @@ a {
   height: 32px !important;
 }
 
-// --------------------------------------------
-// UTILITY CLASSES FOR DARK BACKGROUNDS
-// --------------------------------------------
 .glass-card-dark {
   @extend .glass-card;
   padding: tokens.$space-8;
@@ -1421,13 +1345,13 @@ a {
 
 .amount-display {
   margin: tokens.$space-6 0;
-  
+
   span { display: block; margin-bottom: tokens.$space-1; }
 }
 
 .btn-row {
   display: flex;
   gap: tokens.$space-3;
-  
+
   button { flex: 1; }
 }

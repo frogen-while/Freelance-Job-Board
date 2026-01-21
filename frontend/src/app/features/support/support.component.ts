@@ -47,12 +47,11 @@ export class SupportComponent implements OnInit, OnDestroy {
     this.isAdminRole = this.authService.isAdminRole();
     this.currentUser = this.authService.getUser();
     this.initializeFAQ();
-    
+
     if (this.currentUser && !this.isAdminRole) {
       this.loadUserTickets();
     }
-    
-    // Also subscribe to user changes
+
     this.authService.getUser$()
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {

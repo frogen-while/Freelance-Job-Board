@@ -33,11 +33,11 @@ export class AuthService {
   private readonly tokenKey = 'token';
   private readonly userKey = 'auth_user';
   private readonly base = environment.apiBase;
-  
+
   private authReady$ = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient) {
-    // Auth state is ready immediately since we use localStorage
+
     this.authReady$.next(true);
   }
 
@@ -98,7 +98,6 @@ export class AuthService {
     return user?.onboarding_completed === false;
   }
 
-  // Admin role checks (using standard: Admin, Manager, Support)
   isAdmin(): boolean {
     const user = this.getUser();
     return user?.main_role === 'Admin';
@@ -119,7 +118,6 @@ export class AuthService {
     return ['Admin', 'Manager', 'Support'].includes(user?.main_role || '');
   }
 
-  // Staff-only: Admin/Manager/Support roles
   isStaffOnly(): boolean {
     const user = this.getUser();
     if (!user) return false;
@@ -165,6 +163,10 @@ export class AuthService {
   }
 
   logout(): void {
+
+    this.http.post(`${this.base}/auth/logout`, {}).subscribe({
+      error: () => {}
+    });
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
   }

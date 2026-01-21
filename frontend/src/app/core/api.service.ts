@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { 
-  ApiResponse, 
-  Job, 
-  Category, 
-  FreelancerProfile, 
-  FreelancersResponse, 
+import {
+  ApiResponse,
+  Job,
+  Category,
+  FreelancerProfile,
+  FreelancersResponse,
   Skill,
   EmployerProfile,
   EmployersResponse,
@@ -39,12 +39,10 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  // ============ JOBS ============
-
   getJobs(filters?: JobFilters): Observable<ApiResponse<Job[]>> {
     let url = `${this.base}/jobs`;
     const params: string[] = [];
-    
+
     if (filters?.q) params.push(`q=${encodeURIComponent(filters.q)}`);
     if (filters?.category_id) params.push(`category=${filters.category_id}`);
     if (filters?.status) params.push(`status=${encodeURIComponent(filters.status)}`);
@@ -54,9 +52,9 @@ export class ApiService {
     if (filters?.budget_min) params.push(`budget_min=${filters.budget_min}`);
     if (filters?.budget_max) params.push(`budget_max=${filters.budget_max}`);
     if (filters?.skills && filters.skills.length > 0) params.push(`skills=${filters.skills.join(',')}`);
-    
+
     if (params.length > 0) url += `?${params.join('&')}`;
-    
+
     return this.http.get<ApiResponse<Job[]>>(url);
   }
 
@@ -80,8 +78,6 @@ export class ApiService {
     return this.http.put<ApiResponse<any>>(`${this.base}/jobs/${jobId}`, data);
   }
 
-  // ============ CATEGORIES ============
-
   getCategories(): Observable<ApiResponse<Category[]>> {
     return this.http.get<ApiResponse<Category[]>>(`${this.base}/categories`);
   }
@@ -90,13 +86,9 @@ export class ApiService {
     return this.http.get<ApiResponse<Category>>(`${this.base}/categories/${categoryId}`);
   }
 
-  // ============ USERS ============
-
   getUserById(userId: number): Observable<ApiResponse<{ user_id: number; first_name: string; last_name: string; email: string }>> {
     return this.http.get<ApiResponse<{ user_id: number; first_name: string; last_name: string; email: string }>>(`${this.base}/users/${userId}`);
   }
-
-  // ============ BASE PROFILES ============
 
   getProfileByUserId(userId: number): Observable<ApiResponse<any>> {
     return this.http.get<ApiResponse<any>>(`${this.base}/profiles/${userId}`);
@@ -113,8 +105,6 @@ export class ApiService {
   }): Observable<ApiResponse<any>> {
     return this.http.put<ApiResponse<any>>(`${this.base}/profiles/${userId}`, data);
   }
-
-  // ============ FREELANCER PROFILES ============
 
   getFreelancerProfile(userId: number): Observable<ApiResponse<FreelancerProfileData>> {
     return this.http.get<ApiResponse<FreelancerProfileData>>(`${this.base}/profiles/${userId}/freelancer`);
@@ -133,21 +123,19 @@ export class ApiService {
   getFreelancers(options?: { skill?: string; limit?: number; offset?: number }): Observable<ApiResponse<FreelancersResponse>> {
     let url = `${this.base}/profiles/freelancers`;
     const params: string[] = [];
-    
+
     if (options?.skill) params.push(`skill=${encodeURIComponent(options.skill)}`);
     if (options?.limit) params.push(`limit=${options.limit}`);
     if (options?.offset) params.push(`offset=${options.offset}`);
-    
+
     if (params.length > 0) url += `?${params.join('&')}`;
-    
+
     return this.http.get<ApiResponse<FreelancersResponse>>(url);
   }
 
   getFeaturedFreelancers(limit: number = 6): Observable<ApiResponse<FreelancerProfile[]>> {
     return this.http.get<ApiResponse<FreelancerProfile[]>>(`${this.base}/profiles/freelancers/featured?limit=${limit}`);
   }
-
-  // ============ EMPLOYER PROFILES ============
 
   getEmployerProfile(userId: number): Observable<ApiResponse<EmployerProfileData>> {
     return this.http.get<ApiResponse<EmployerProfileData>>(`${this.base}/profiles/${userId}/employer`);
@@ -166,16 +154,14 @@ export class ApiService {
   getEmployers(options?: { limit?: number; offset?: number }): Observable<ApiResponse<EmployersResponse>> {
     let url = `${this.base}/profiles/employers`;
     const params: string[] = [];
-    
+
     if (options?.limit) params.push(`limit=${options.limit}`);
     if (options?.offset) params.push(`offset=${options.offset}`);
-    
+
     if (params.length > 0) url += `?${params.join('&')}`;
-    
+
     return this.http.get<ApiResponse<EmployersResponse>>(url);
   }
-
-  // ============ SKILLS ============
 
   getSkills(): Observable<ApiResponse<Skill[]>> {
     return this.http.get<ApiResponse<Skill[]>>(`${this.base}/skills`);
@@ -184,8 +170,6 @@ export class ApiService {
   getProfileSkills(userId: number): Observable<ApiResponse<Skill[]>> {
     return this.http.get<ApiResponse<Skill[]>>(`${this.base}/profiles/${userId}/skills`);
   }
-
-  // ============ JOB APPLICATIONS ============
 
   applyToJob(payload: {
     job_id: number;
@@ -213,8 +197,6 @@ export class ApiService {
     return this.http.patch<ApiResponse<{ message: string }>>(`${this.base}/jobapplications/${applicationId}/status`, { status });
   }
 
-  // ============ ASSIGNMENTS ============
-
   getAssignmentsByFreelancerId(freelancerId: number): Observable<ApiResponse<Assignment[]>> {
     return this.http.get<ApiResponse<Assignment[]>>(`${this.base}/assignments/freelancer/${freelancerId}`);
   }
@@ -241,7 +223,6 @@ export class ApiService {
     );
   }
 
-  // Process payment and accept application (combined endpoint)
   processPaymentAndAccept(payload: {
     application_id: number;
     job_id: number;
@@ -251,8 +232,6 @@ export class ApiService {
   }): Observable<ApiResponse<{ payment_id: number; message: string }>> {
     return this.http.post<ApiResponse<{ payment_id: number; message: string }>>(`${this.base}/payments/checkout`, payload);
   }
-
-  // ============ MESSAGES ============
 
   getMessages(): Observable<ApiResponse<Message[]>> {
     return this.http.get<ApiResponse<Message[]>>(`${this.base}/messages`);
@@ -290,8 +269,6 @@ export class ApiService {
     return this.http.get<ApiResponse<Conversation[]>>(`${this.base}/messages/user/${userId}/conversations`);
   }
 
-// ============ REVIEWS ============
-
   getReviewsByUser(userId: number): Observable<ApiResponse<{ reviews: Review[]; stats: { average_rating: number | null; review_count: number } }>> {
     return this.http.get<ApiResponse<{ reviews: Review[]; stats: { average_rating: number | null; review_count: number } }>>(`${this.base}/reviews/user/${userId}`);
   }
@@ -307,8 +284,6 @@ export class ApiService {
   hasReviewedJob(jobId: number, reviewerId: number): Observable<ApiResponse<{ hasReviewed: boolean }>> {
     return this.http.get<ApiResponse<{ hasReviewed: boolean }>>(`${this.base}/reviews/job/${jobId}/reviewer/${reviewerId}`);
   }
-
-  // ============ SUPPORT TICKETS ============
 
   createSupportTicket(payload: {
     user_id: number;
@@ -348,8 +323,6 @@ export class ApiService {
     return this.http.delete<ApiResponse<any>>(`${this.base}/supporttickets/${ticketId}`);
   }
 
-  // ============ ADMIN: STATISTICS ============
-
   getOverviewStats(): Observable<ApiResponse<OverviewStats>> {
     return this.http.get<ApiResponse<OverviewStats>>(`${this.base}/admin/stats/overview`);
   }
@@ -366,18 +339,16 @@ export class ApiService {
     return this.http.get<ApiResponse<JobStats>>(`${this.base}/admin/stats/jobs`);
   }
 
-  // ============ ADMIN: USER MANAGEMENT ============
-
   getAdminUsers(filters?: { role?: string; blocked?: boolean; search?: string }): Observable<ApiResponse<AdminUser[]>> {
     let url = `${this.base}/admin/users`;
     const params: string[] = [];
-    
+
     if (filters?.role) params.push(`role=${filters.role}`);
     if (filters?.blocked !== undefined) params.push(`blocked=${filters.blocked}`);
     if (filters?.search) params.push(`search=${encodeURIComponent(filters.search)}`);
-    
+
     if (params.length > 0) url += `?${params.join('&')}`;
-    
+
     return this.http.get<ApiResponse<AdminUser[]>>(url);
   }
 
@@ -401,18 +372,16 @@ export class ApiService {
     return this.http.post<ApiResponse<{ message: string; affected: number }>>(`${this.base}/admin/users/bulk/unblock`, { user_ids: userIds });
   }
 
-  // ============ ADMIN: TICKET MANAGEMENT ============
-
   getFilteredTickets(filters?: { status?: string; priority?: string; assigned_to?: number }): Observable<ApiResponse<SupportTicket[]>> {
     let url = `${this.base}/supporttickets/filtered`;
     const params: string[] = [];
-    
+
     if (filters?.status) params.push(`status=${filters.status}`);
     if (filters?.priority) params.push(`priority=${filters.priority}`);
     if (filters?.assigned_to) params.push(`assigned_to=${filters.assigned_to}`);
-    
+
     if (params.length > 0) url += `?${params.join('&')}`;
-    
+
     return this.http.get<ApiResponse<SupportTicket[]>>(url);
   }
 
@@ -432,12 +401,10 @@ export class ApiService {
     return this.http.post<ApiResponse<{ message: string; affected: number }>>(`${this.base}/supporttickets/bulk-status`, { ticket_ids: ticketIds, status });
   }
 
-  // ============ ADMIN: AUDIT LOGS ============
-
   getAuditLogs(filters?: { user_id?: number; action?: string; entity_type?: string; from?: string; to?: string; limit?: number; offset?: number }): Observable<ApiResponse<AuditLog[]>> {
     let url = `${this.base}/admin/audit-logs`;
     const params: string[] = [];
-    
+
     if (filters?.user_id) params.push(`user_id=${filters.user_id}`);
     if (filters?.action) params.push(`action=${encodeURIComponent(filters.action)}`);
     if (filters?.entity_type) params.push(`entity_type=${encodeURIComponent(filters.entity_type)}`);
@@ -445,9 +412,9 @@ export class ApiService {
     if (filters?.to) params.push(`to=${filters.to}`);
     if (filters?.limit) params.push(`limit=${filters.limit}`);
     if (filters?.offset) params.push(`offset=${filters.offset}`);
-    
+
     if (params.length > 0) url += `?${params.join('&')}`;
-    
+
     return this.http.get<ApiResponse<AuditLog[]>>(url);
   }
 }

@@ -4,15 +4,8 @@
     <p class="page-subtitle">Manage support requests</p>
   </header>
 
-  <div class="success-message" *ngIf="successMessage">
-    <mat-icon>check_circle</mat-icon>
-    <span>{{ successMessage }}</span>
-  </div>
-  
-  <div class="error-message" *ngIf="errorMessage">
-    <mat-icon>error_outline</mat-icon>
-    <span>{{ errorMessage }}</span>
-  </div>
+  <app-alert-message [message]="successMessage" type="success"></app-alert-message>
+  <app-alert-message [message]="errorMessage" type="error"></app-alert-message>
 
   <div class="filters-bar">
     <select [(ngModel)]="statusFilter" (change)="onFilterChange()">
@@ -71,19 +64,12 @@
         </tr>
       </tbody>
     </table>
-    
-    <div class="empty-state-dark" *ngIf="filteredTickets.length === 0">
-      <mat-icon>inbox</mat-icon>
-      <p>No tickets found</p>
-    </div>
+
+    <app-empty-state *ngIf="filteredTickets.length === 0" icon="inbox" title="No tickets found"></app-empty-state>
   </div>
 
-  <div class="loading-state-dark" *ngIf="loading">
-    <div class="spinner"></div>
-    <span>Loading tickets...</span>
-  </div>
+  <app-loading-state *ngIf="loading" message="Loading tickets..."></app-loading-state>
 
-  <!-- Detail Modal -->
   <div class="modal-overlay" *ngIf="showDetailModal" (click)="closeDetailModal()">
     <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
@@ -95,7 +81,7 @@
           <mat-icon>close</mat-icon>
         </button>
       </div>
-      
+
       <div class="modal-body" *ngIf="selectedTicket">
         <div class="ticket-info">
           <div class="info-row">
@@ -115,7 +101,7 @@
             <span>{{ dateService.format(selectedTicket.created_at, 'short') }}</span>
           </div>
         </div>
-        
+
         <div class="ticket-message">
           <h4>Message</h4>
           <p>{{ selectedTicket.message }}</p>

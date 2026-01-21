@@ -14,7 +14,6 @@
   margin: 0 auto;
 }
 
-// Profile Header
 .profile-header {
   display: flex;
   justify-content: space-between;
@@ -146,7 +145,6 @@
   }
 }
 
-// Messages
 .message {
   padding: $space-md;
   border-radius: $radius-lg;
@@ -164,7 +162,6 @@
   }
 }
 
-// Profile Body (View Mode)
 .profile-body {
   background: white;
   border-radius: $radius-2xl;
@@ -217,7 +214,6 @@
   }
 }
 
-// Profile Links Section
 .links-section {
   h2 {
     margin-bottom: $space-sm;
@@ -283,7 +279,6 @@
   gap: $space-xs;
 }
 
-// Profile Edit Mode
 .profile-edit {
   background: white;
   border-radius: $radius-2xl;
@@ -389,7 +384,6 @@
   }
 }
 
-// Skills in Edit Mode
 .selected-skills {
   display: flex;
   flex-wrap: wrap;
@@ -434,7 +428,6 @@
   }
 }
 
-// Form Actions
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -466,7 +459,6 @@
   font-size: $font-size-md;
 }
 
-// Responsive
 @media (max-width: 600px) {
   .profile-page {
     padding: 80px $space-md $space-xl;

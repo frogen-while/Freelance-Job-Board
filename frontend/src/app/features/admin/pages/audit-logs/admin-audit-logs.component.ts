@@ -12,22 +12,20 @@ export class AdminAuditLogsComponent implements OnInit {
   logs: AuditLog[] = [];
   loading = true;
   errorMessage = '';
-  
-  // Filters
+
   actionFilter = '';
   entityFilter = '';
-  
-  // Pagination
+
   currentPage = 1;
   pageSize = 50;
   hasMore = true;
-  
+
   actions = [
     'LOGIN', 'LOGOUT', 'ROLE_CHANGE', 'USER_BLOCKED', 'USER_UNBLOCKED',
     'JOB_CREATED', 'JOB_UPDATED', 'JOB_HIDDEN', 'JOB_RESTORED',
     'TICKET_CREATED', 'TICKET_ASSIGNED', 'TICKET_PRIORITY_CHANGED'
   ];
-  
+
   entityTypes = ['USER', 'JOB', 'TICKET', 'APPLICATION', 'MESSAGE'];
 
   constructor(private api: ApiService, public dateService: DateService) {}
@@ -41,19 +39,19 @@ export class AdminAuditLogsComponent implements OnInit {
       this.loading = true;
       this.currentPage = 1;
     }
-    
+
     const filters: any = {
       limit: this.pageSize,
       offset: (this.currentPage - 1) * this.pageSize
     };
-    
+
     if (this.actionFilter) filters.action = this.actionFilter;
     if (this.entityFilter) filters.entity_type = this.entityFilter;
-    
+
     this.api.getAuditLogs(filters).subscribe({
       next: (res) => {
         if (res.success && res.data) {
-          // Backend returns { data: [...], pagination: {...} }
+
           const logsData = Array.isArray(res.data) ? res.data : (res.data as any).data || [];
           if (append) {
             this.logs = [...this.logs, ...logsData];

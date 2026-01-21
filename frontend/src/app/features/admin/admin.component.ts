@@ -18,7 +18,7 @@ export class AdminComponent implements OnInit {
   constructor(public auth: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    // Redirect support-only users to tickets page
+
     if (this.isSupportOnly()) {
       this.router.navigate(['/admin/tickets']);
     }
@@ -31,7 +31,7 @@ export class AdminComponent implements OnInit {
   }
 
   isSupportOnly(): boolean {
-    // Support role but not manager or admin
+
     return this.auth.isSupport() && !this.auth.isManager() && !this.auth.isAdmin();
   }
 }

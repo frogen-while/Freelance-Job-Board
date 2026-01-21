@@ -3,8 +3,6 @@ import { userRepo } from '../repositories/userRepo.js';
 import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 import bcrypt from 'bcrypt';
 
-
-
 export const registerUser = async (req: Request, res: Response) => {
     const { first_name, last_name, email, password, main_role } = req.body;
 
@@ -26,7 +24,6 @@ export const registerUser = async (req: Request, res: Response) => {
         if (existingUser) {
             return sendError(res, 409, 'User with this email already exists.');
         }
-
 
         const password_hash = await bcrypt.hash(password, 10);
         const newUserId = await userRepo.create(String(first_name), String(last_name), String(email).toLowerCase(), password_hash, main_role);
@@ -52,7 +49,6 @@ export const getAllUsers = async (req: Request, res: Response) => {
         console.error('Error fetching Users', error)
         rethrowHttpError(error, 500, 'An internal server error occurred while fetching users.');
     }
-    
 
 };
 export const getUserById = async (req: Request, res: Response) => {
@@ -89,7 +85,7 @@ export const deleteUser = async(req: Request, res: Response) =>{
 
 export const updateUser = async (req: Request, res: Response) => {
     const userId = parseIdParam(res, req.params.id, 'user');
-    const { first_name, last_name, main_role } = req.body; 
+    const { first_name, last_name, main_role } = req.body;
     if (userId === null) return;
 
     if (main_role && !['Admin', 'Manager', 'Support', 'Employer', 'Freelancer'].includes(main_role)) {
@@ -110,7 +106,7 @@ export const updateUser = async (req: Request, res: Response) => {
         if (!existingUser) {
             return sendError(res, 404, 'User not found.');
         }
-        
+
         const success = await userRepo.update(userId, updateData);
 
         if (success) {

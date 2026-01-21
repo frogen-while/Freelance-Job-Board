@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { 
-    createSupportTicket, 
-    updateSupportTicket, 
-    getAllSupportTickets, 
-    getSupportTicketById, 
+import {
+    createSupportTicket,
+    updateSupportTicket,
+    getAllSupportTickets,
+    getSupportTicketById,
     deleteSupportTicket,
     escalateSupportTicket,
     getMySupportTickets,
@@ -19,7 +19,7 @@ import { asyncHandler } from '../utils/http.js';
 
 const router = Router();
 
-router.post('/', requireAuth, asyncHandler(createSupportTicket)); 
+router.post('/', requireAuth, asyncHandler(createSupportTicket));
 
 router.get('/my', requireAuth, asyncHandler(getMySupportTickets));
 

@@ -56,9 +56,9 @@ export const createSupportTicket = async (req: Request, res: Response) => {
 export const getAllSupportTickets = async (req: Request, res: Response) => {
     try {
         const currentUser = (req as any).currentUser as User | undefined;
-        // Check if user_id is provided as a query parameter
+
         const userId = req.query.user_id;
-        
+
         if (userId) {
             const parsedUserId = parseInt(userId as string, 10);
             if (isNaN(parsedUserId)) {
@@ -68,7 +68,6 @@ export const getAllSupportTickets = async (req: Request, res: Response) => {
             return sendSuccess(res, data);
         }
 
-        // If no user_id, return tickets based on role
         if (isManagerUser(currentUser)) {
             const data = await supportTicketsRepo.getWithFilters({ assigned_to: currentUser?.user_id });
             return sendSuccess(res, data);
@@ -124,11 +123,11 @@ export const deleteSupportTicket = async(req: Request, res: Response) =>{
 export const updateSupportTicket = async (req: Request, res: Response) => {
     const ticketId = parseIdParam(res, req.params.id, 'ticket');
     const currentUser = (req as any).currentUser as User | undefined;
-    const { subject, message, status } = req.body; 
+    const { subject, message, status } = req.body;
     if (ticketId === null) return;
 
     const updateData: { subject?: string, message?: string, status?: TicketStatus } = {};
-    
+
     if (subject !== undefined) updateData.subject = subject;
     if (message !== undefined) updateData.message = message;
     if (status !== undefined) {
@@ -141,7 +140,7 @@ export const updateSupportTicket = async (req: Request, res: Response) => {
     if (Object.keys(updateData).length === 0) {
         return sendError(res, 400, 'No valid fields provided for update (allowed: subject, message, status)');
     }
-    
+
     try {
         if (isSupportUser(currentUser)) {
             return sendError(res, 403, 'Support users cannot update ticket status.');
@@ -155,7 +154,7 @@ export const updateSupportTicket = async (req: Request, res: Response) => {
         if (isManagerUser(currentUser) && existingTicket.assigned_to !== currentUser?.user_id) {
             return sendError(res, 403, 'You can only update tickets assigned to you.');
         }
-        
+
         const oldStatus = existingTicket.status;
         const success = await supportTicketsRepo.update(ticketId, updateData);
 
@@ -226,12 +225,12 @@ export const escalateSupportTicket = async (req: Request, res: Response) => {
 };
 
 export const getMySupportTickets = async (req: Request, res: Response) => {
-    // Get user_id from JWT token (req.user.sub) or from currentUser if loaded by role middleware
+
     const currentUser = (req as any).currentUser as User | undefined;
     const tokenUser = (req as any).user as { sub: number } | undefined;
-    
+
     const userId = currentUser?.user_id ?? tokenUser?.sub;
-    
+
     if (!userId) {
         return sendError(res, 401, 'User not authenticated.');
     }
@@ -360,13 +359,13 @@ export const getTicketsFiltered = async (req: Request, res: Response) => {
     try {
         const currentUser = (req as any).currentUser as User | undefined;
         const { status, priority, assigned_to, page = '1', limit = '50' } = req.query;
-        
+
         const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
         const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 50));
         const offset = (pageNum - 1) * limitNum;
 
         const filters: any = { limit: limitNum, offset };
-        
+
         if (status && VALID_STATUSES.includes(status as TicketStatus)) {
             filters.status = status as TicketStatus;
         }
@@ -383,7 +382,6 @@ export const getTicketsFiltered = async (req: Request, res: Response) => {
 
         const tickets = await supportTicketsRepo.getWithFilters(filters);
 
-        // Return tickets array directly for frontend compatibility
         return sendSuccess(res, tickets);
     } catch (error) {
         console.error('Error fetching filtered tickets:', error);

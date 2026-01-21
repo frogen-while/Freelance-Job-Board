@@ -14,13 +14,12 @@ export interface EmployerProfile {
   updated_at?: string;
 }
 
-// Extended employer profile with user and base profile info
 export interface EmployerProfileFull extends EmployerProfile {
-  // From users table
+
   first_name: string;
   last_name: string;
   email: string;
-  // From profiles table
+
   display_name?: string | null;
   headline?: string | null;
   description?: string | null;

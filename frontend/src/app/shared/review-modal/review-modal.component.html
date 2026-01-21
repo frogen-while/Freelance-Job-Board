@@ -14,7 +14,7 @@
       <div class="rating-section">
         <label>Your Rating</label>
         <div class="stars">
-          <span 
+          <span
             *ngFor="let star of [1, 2, 3, 4, 5]"
             [class]="getStarClass(star)"
             (click)="setRating(star)"
@@ -28,7 +28,7 @@
 
       <div class="feedback-section">
         <label for="feedback">Your Feedback (Optional)</label>
-        <textarea 
+        <textarea
           id="feedback"
           [(ngModel)]="feedback"
           placeholder="Share your experience working with this person..."

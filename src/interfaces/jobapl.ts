@@ -1,4 +1,4 @@
-export type JobApplicationStatus = 'Pending'| 'Accepted' |'Rejected';
+export type JobApplicationStatus = 'Pending'| 'Accepted' |'Rejected' | 'Completed';
 
 export interface JobApl {
   application_id: number;

@@ -1,6 +1,6 @@
 <div class="proposals-page">
   <div class="page-container">
-    <!-- Header -->
+
     <br><br>
     <header class="page-header">
       <div class="header-content">
@@ -25,60 +25,9 @@
     </section>
 
     <section *ngIf="activeTab === 'proposals'">
-      <!-- Stats -->
-      <section class="stats-section">
-        <div class="stats-grid">
-          <div class="stat-card">
-            <span class="stat-value">{{ stats.total }}</span>
-            <span class="stat-label">Total Proposals</span>
-          </div>
-          <div class="stat-card pending">
-            <span class="stat-value">{{ stats.pending }}</span>
-            <span class="stat-label">Pending</span>
-          </div>
-          <div class="stat-card accepted">
-            <span class="stat-value">{{ stats.accepted }}</span>
-            <span class="stat-label">Accepted</span>
-          </div>
-          <div class="stat-card rejected">
-            <span class="stat-value">{{ stats.rejected }}</span>
-            <span class="stat-label">Rejected</span>
-          </div>
-        </div>
-      </section>
+      <app-loading-state *ngIf="loading" message="Loading your proposals..."></app-loading-state>
+      <app-error-state *ngIf="errorMessage && !loading" [message]="errorMessage" (retry)="loadProposals()"></app-error-state>
 
-      <!-- Filters -->
-      <section class="filters-section">
-        <div class="filter-tabs">
-          <button class="filter-tab" 
-                  [class.active]="statusFilter === 'all'" 
-                  (click)="filterByStatus('all')">All</button>
-          <button class="filter-tab" 
-                  [class.active]="statusFilter === 'Pending'" 
-                  (click)="filterByStatus('Pending')">Pending</button>
-          <button class="filter-tab" 
-                  [class.active]="statusFilter === 'Accepted'" 
-                  (click)="filterByStatus('Accepted')">Accepted</button>
-          <button class="filter-tab" 
-                  [class.active]="statusFilter === 'Rejected'" 
-                  (click)="filterByStatus('Rejected')">Rejected</button>
-        </div>
-      </section>
-
-      <!-- Loading State -->
-      <div class="loading-state-dark" *ngIf="loading">
-        <div class="spinner"></div>
-        <span>Loading your proposals...</span>
-      </div>
-
-      <!-- Error State -->
-      <div class="error-state-dark" *ngIf="errorMessage && !loading">
-        <div class="error-icon">⚠️</div>
-        <p>{{ errorMessage }}</p>
-        <button class="btn-dark-secondary" (click)="loadProposals()">Try Again</button>
-      </div>
-
-      <!-- Proposals List -->
       <section class="proposals-section" *ngIf="!loading && !errorMessage">
         <div class="proposals-list" *ngIf="filteredProposals.length > 0">
           <div class="proposal-card" *ngFor="let proposal of filteredProposals" (click)="viewJob(proposal.job_id)">
@@ -98,20 +47,17 @@
             </div>
             <div class="proposal-side">
               <span class="bid-amount">{{ fmt.formatBudget(proposal.bid_amount) }}</span>
-              <span class="proposal-status" [class]="getStatusClass(proposal.status)">{{ proposal.status }}</span>
+              <span class="proposal-status" [class]="fmt.getStatusClass(proposal.status)">{{ proposal.status }}</span>
             </div>
           </div>
         </div>
 
-        <!-- Empty State -->
-        <div class="empty-state" *ngIf="filteredProposals.length === 0">
-          <div class="empty-icon">
-            <mat-icon>description</mat-icon>
-          </div>
-          <h3 class="empty-title">No proposals yet</h3>
-          <p class="empty-desc">Start applying to jobs to see your proposals here</p>
+        <app-empty-state *ngIf="filteredProposals.length === 0"
+          icon="description"
+          title="No proposals yet"
+          description="Start applying to jobs to see your proposals here">
           <a class="btn-gradient" routerLink="/find-work/browse">Browse Jobs</a>
-        </div>
+        </app-empty-state>
       </section>
     </section>
 
@@ -123,19 +69,11 @@
         </div>
       </div>
 
-      <div class="loading-state-dark" *ngIf="assignmentsLoading">
-        <div class="spinner"></div>
-        <span>Loading your current work...</span>
-      </div>
-
-      <div class="error-state-dark" *ngIf="assignmentsError && !assignmentsLoading">
-        <div class="error-icon">⚠️</div>
-        <p>{{ assignmentsError }}</p>
-        <button class="btn-dark-secondary" (click)="loadAssignments()">Try Again</button>
-      </div>
+      <app-loading-state *ngIf="assignmentsLoading" message="Loading your current work..."></app-loading-state>
+      <app-error-state *ngIf="assignmentsError && !assignmentsLoading" [message]="assignmentsError" (retry)="loadAssignments()"></app-error-state>
 
       <div class="assignments-list" *ngIf="!assignmentsLoading && !assignmentsError && activeAssignments.length > 0">
-        <div class="assignment-card" *ngFor="let assignment of activeAssignments; trackBy: trackByAssignmentId">
+        <div class="assignment-card" *ngFor="let assignment of activeAssignments; trackBy: fmt.trackByAssignmentId">
           <div class="assignment-main" (click)="viewJob(assignment.job_id)">
             <h3 class="proposal-title">{{ assignment.job_title || ('Job #' + assignment.job_id) }}</h3>
             <div class="proposal-meta">
@@ -158,8 +96,8 @@
           <div class="deliverables" *ngIf="deliverablesOpen[assignment.assignment_id]">
             <div class="deliverables-form">
               <div class="upload-field">
-                <label class="upload-label">File (up to 50MB)</label>
-                <input type="file" (change)="onFileSelected(assignment.assignment_id, $event)" />
+                <label class="upload-label" [attr.for]="'file-' + assignment.assignment_id">File (up to 50MB)</label>
+                <input type="file" [id]="'file-' + assignment.assignment_id" title="Upload file (up to 50MB)" (change)="onFileSelected(assignment.assignment_id, $event)" />
                 <span class="upload-hint" *ngIf="uploadFiles[assignment.assignment_id]">
                   {{ uploadFiles[assignment.assignment_id]?.name }}
                 </span>
@@ -182,7 +120,7 @@
             </div>
 
             <div class="deliverables-list" *ngIf="(deliverables[assignment.assignment_id] || []).length > 0">
-              <div class="deliverable-item" *ngFor="let item of deliverables[assignment.assignment_id]; trackBy: trackByDeliverableId">
+              <div class="deliverable-item" *ngFor="let item of deliverables[assignment.assignment_id]; trackBy: fmt.trackByDeliverableId">
                 <span class="deliverable-status" [class]="item.status || 'submitted'">{{ item.status || 'submitted' }}</span>
                 <span class="deliverable-name" *ngIf="item.file_path">
                   <mat-icon>attach_file</mat-icon>
@@ -199,69 +137,23 @@
               </div>
             </div>
 
-            <div class="empty-state" *ngIf="(deliverables[assignment.assignment_id] || []).length === 0">
-              <div class="empty-icon">
-                <mat-icon>upload</mat-icon>
-              </div>
-              <h3 class="empty-title">No uploads yet</h3>
-              <p class="empty-desc">Upload a file or add a link to submit your work.</p>
-            </div>
+            <app-empty-state *ngIf="(deliverables[assignment.assignment_id] || []).length === 0"
+              icon="upload"
+              title="No uploads yet"
+              description="Upload a file or add a link to submit your work.">
+            </app-empty-state>
           </div>
         </div>
       </div>
 
-      <div class="empty-state" *ngIf="!assignmentsLoading && !assignmentsError && activeAssignments.length === 0">
-        <div class="empty-icon">
-          <mat-icon>work_outline</mat-icon>
-        </div>
-        <h3 class="empty-title">No active assignments</h3>
-        <p class="empty-desc">Once a proposal is accepted, your current work will appear here.</p>
-      </div>
-
-      <!-- Completed Assignments Section -->
-      <div class="completed-section" *ngIf="!assignmentsLoading && completedAssignments.length > 0">
-        <div class="window-header">
-          <div>
-            <h2 class="section-title">Completed Work</h2>
-            <p class="section-subtitle">Leave reviews for your past employers</p>
-          </div>
-        </div>
-
-        <div class="assignments-list">
-          <div class="assignment-card completed" *ngFor="let assignment of completedAssignments; trackBy: trackByAssignmentId">
-            <div class="assignment-main" (click)="viewJob(assignment.job_id)">
-              <h3 class="proposal-title">{{ assignment.job_title || ('Job #' + assignment.job_id) }}</h3>
-              <div class="proposal-meta">
-                <span class="meta-item">
-                  <mat-icon>attach_money</mat-icon>
-                  {{ fmt.formatBudget(assignment.job_budget || 0) }}
-                </span>
-                <span class="meta-item completed-badge">
-                  <mat-icon>check_circle</mat-icon>
-                  Completed
-                </span>
-              </div>
-            </div>
-            <div class="assignment-side">
-              <button 
-                *ngIf="canReviewAssignment(assignment)"
-                class="btn-review"
-                (click)="openReviewModal(assignment); $event.stopPropagation()">
-                <mat-icon>star</mat-icon>
-                Review Employer
-              </button>
-              <span *ngIf="reviewedJobs.has(assignment.job_id)" class="reviewed-badge">
-                <mat-icon>check_circle</mat-icon>
-                Reviewed
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <app-empty-state *ngIf="!assignmentsLoading && !assignmentsError && activeAssignments.length === 0"
+        icon="work_outline"
+        title="No active assignments"
+        description="Once a proposal is accepted, your current work will appear here.">
+      </app-empty-state>
     </section>
   </div>
 
-  <!-- Review Modal -->
   <app-review-modal
     *ngIf="reviewModalOpen"
     [isOpen]="reviewModalOpen"

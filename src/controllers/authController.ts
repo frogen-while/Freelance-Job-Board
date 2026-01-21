@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { userRepo } from '../repositories/userRepo.js';
+import { auditLogRepo, AuditActions, EntityTypes } from '../repositories/auditLogRepo.js';
 import { rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 import { validatePassword } from '../utils/passwordValidator.js';
 import { MainRole } from '../interfaces/User.js';
@@ -111,7 +112,6 @@ export const login = async (req: Request, res: Response) => {
       return sendError(res, 403, 'Your account has been blocked. Please contact support.');
     }
 
-    // Temporary lockout check for repeated failed attempts
     const now = new Date();
     const lockUntil = user.lock_until ? new Date(user.lock_until) : null;
     if (lockUntil && lockUntil > now) {
@@ -131,7 +131,7 @@ export const login = async (req: Request, res: Response) => {
       const nextFailed = currentFailed + 1;
 
       if (nextFailed >= 3) {
-        const lock = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+        const lock = new Date(Date.now() + 5 * 60 * 1000);
         await userRepo.setLoginFailure(user.user_id, 0, lock);
         return sendError(
           res,
@@ -153,7 +153,6 @@ export const login = async (req: Request, res: Response) => {
       );
     }
 
-    // Successful login: reset counters/lock
     await userRepo.resetLoginFailures(user.user_id);
 
     const publicUser = await userRepo.findById(user.user_id);
@@ -161,10 +160,37 @@ export const login = async (req: Request, res: Response) => {
       return sendError(res, 500, 'Failed to load user.');
     }
 
+    await auditLogRepo.logAction({
+      user_id: publicUser.user_id,
+      action: AuditActions.LOGIN,
+      entity_type: EntityTypes.USER,
+      entity_id: publicUser.user_id,
+      ip_address: req.ip || req.socket.remoteAddress
+    });
+
     const token = signToken({ sub: publicUser.user_id, email: publicUser.email, main_role: publicUser.main_role });
     return sendSuccess(res, { token, user: publicUser }, 200);
   } catch (error) {
     console.error('Auth login error:', error);
     rethrowHttpError(error, 500, 'An internal server error occurred during login.');
+  }
+};
+
+export const logout = async (req: Request, res: Response) => {
+  try {
+    const authUser = (req as any).currentUser;
+    if (authUser?.sub) {
+      await auditLogRepo.logAction({
+        user_id: authUser.sub,
+        action: AuditActions.LOGOUT,
+        entity_type: EntityTypes.USER,
+        entity_id: authUser.sub,
+        ip_address: req.ip || req.socket.remoteAddress
+      });
+    }
+    return sendSuccess(res, { message: 'Logged out successfully.' });
+  } catch (error) {
+    console.error('Auth logout error:', error);
+    rethrowHttpError(error, 500, 'An internal server error occurred during logout.');
   }
 };

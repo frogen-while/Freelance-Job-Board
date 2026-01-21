@@ -1,5 +1,5 @@
 <div class="browse-page">
-  <!-- Header -->
+
   <header class="page-header">
     <div class="header-inner">
       <div class="header-text">
@@ -12,14 +12,14 @@
   <div class="page-body">
     <div class="page-inner">
       <div class="content-layout">
-        <!-- Main Content -->
+
         <div class="main-content">
-          <!-- Filters Bar -->
+
           <div class="filters-bar">
             <div class="search-wrapper">
               <mat-icon class="search-icon">search</mat-icon>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 class="search-input"
                 [(ngModel)]="searchQuery"
                 placeholder="Search jobs..."
@@ -28,8 +28,8 @@
             </div>
 
             <div class="filter-group">
-              <select class="filter-select" 
-                      [ngModel]="selectedCategory" 
+              <select class="filter-select"
+                      [ngModel]="selectedCategory"
                       (ngModelChange)="onCategoryChange($event)">
                 <option [ngValue]="null">All Categories</option>
                 <option *ngFor="let cat of categories" [ngValue]="cat.category_id">
@@ -49,13 +49,12 @@
             </button>
           </div>
 
-          <!-- Extended Filters Panel -->
           <div class="filters-panel" *ngIf="showFilters">
             <div class="filter-row">
               <div class="filter-group">
                 <label>Status</label>
-                <select class="filter-select" 
-                        [(ngModel)]="selectedStatus" 
+                <select class="filter-select"
+                        [(ngModel)]="selectedStatus"
                         (ngModelChange)="onStatusChange($event)">
                   <option value="">All Status</option>
                   <option value="Open">Open</option>
@@ -65,8 +64,8 @@
 
               <div class="filter-group">
                 <label>Experience Level</label>
-                <select class="filter-select" 
-                        [(ngModel)]="selectedExperience" 
+                <select class="filter-select"
+                        [(ngModel)]="selectedExperience"
                         (ngModelChange)="onExperienceChange($event)">
                   <option value="">Any Level</option>
                   <option value="entry">Entry Level</option>
@@ -77,8 +76,8 @@
 
               <div class="filter-group">
                 <label>Project Type</label>
-                <select class="filter-select" 
-                        [(ngModel)]="selectedJobType" 
+                <select class="filter-select"
+                        [(ngModel)]="selectedJobType"
                         (ngModelChange)="onJobTypeChange($event)">
                   <option value="">Any Type</option>
                   <option value="fixed">Fixed Price</option>
@@ -96,13 +95,11 @@
             </div>
           </div>
 
-          <!-- Loading -->
           <div class="loading-state" *ngIf="loading">
             <div class="spinner"></div>
             <p>Loading jobs...</p>
           </div>
 
-          <!-- Empty State -->
           <div class="empty-state" *ngIf="!loading && jobs.length === 0">
             <div class="empty-icon">
               <mat-icon>work</mat-icon>
@@ -112,7 +109,6 @@
             <button class="btn-gradient" (click)="clearFilters()">Clear Filters</button>
           </div>
 
-          <!-- Jobs Grid -->
           <div class="jobs-grid" *ngIf="!loading && jobs.length > 0">
             <div class="job-card" *ngFor="let job of jobs" (click)="onViewJob(job)">
               <div class="card-top">
@@ -126,12 +122,11 @@
               </div>
 
               <h3 class="job-title">{{ job.title }}</h3>
-              
+
               <p class="job-description">
                 {{ job.description | slice:0:180 }}{{ job.description.length > 180 ? '...' : '' }}
               </p>
 
-              <!-- Job Tags -->
               <div class="job-tags" *ngIf="job.experience_level || job.job_type || (job.skills && job.skills.length)">
                 <span class="tag experience" *ngIf="job.experience_level">{{ fmt.getExperienceLabel(job.experience_level) }}</span>
                 <span class="tag job-type" *ngIf="job.job_type">{{ getJobTypeLabel(job.job_type) }}</span>
@@ -162,7 +157,6 @@
           </div>
         </div>
 
-        <!-- Profile Sidebar -->
         <aside class="profile-sidebar-wrapper">
           <app-profile-sidebar></app-profile-sidebar>
         </aside>

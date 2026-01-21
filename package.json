@@ -1,15 +1,16 @@
 {
   "name": "skillconnect",
   "version": "1.0.0",
-  "description": "WAD project",
+  "description": "Freelance Job Board - WAD project",
   "main": "server.js",
   "type": "module",
   "scripts": {
     "init-db": "tsx src/config/init_db.ts",
-    "seed": "tsx src/config/seed.ts",
     "dev": "tsx src/server.ts",
-    "start:frontend": "npm --prefix frontend install --no-audit --no-fund && npm --prefix frontend run start -- --open",
-    "build:frontend": "npm --prefix frontend run build"
+    "start": "node dist/server.js",
+    "build": "tsc && cd frontend && npm install && npm run build",
+    "build:backend": "tsc",
+    "build:frontend": "cd frontend && npm install && npm run build"
   },
   "author": "",
   "license": "ISC",
@@ -24,20 +25,13 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "@faker-js/faker": "^10.2.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/formidable": "^3.4.6",
-    "@types/jasmine": "^5.1.14",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.0.2",
-    "ts-node": "^10.9.2",
     "tsx": "^4.20.5",
     "typescript": "^5.9.3"
-  },
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node"
   }
 }

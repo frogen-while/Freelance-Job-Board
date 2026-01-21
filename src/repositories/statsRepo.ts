@@ -134,7 +134,7 @@ export const statsRepo = {
   async getRevenueStats(period: 'week' | 'month' | 'year' | 'all' = 'month'): Promise<RevenueStats> {
     let dateFilter = '';
     let groupBy = '';
-    
+
     switch (period) {
       case 'week':
         dateFilter = "AND created_at >= datetime('now', '-7 days')";
@@ -161,7 +161,7 @@ export const statsRepo = {
         refunded: number;
         avg: number;
       }>(`
-        SELECT 
+        SELECT
           COALESCE(SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END), 0) as total,
           COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed,
           COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending,
@@ -171,11 +171,11 @@ export const statsRepo = {
         FROM payments WHERE 1=1 ${dateFilter}
       `),
       db.connection?.all<{ period: string; amount: number; count: number }[]>(`
-        SELECT 
+        SELECT
           ${groupBy} as period,
           COALESCE(SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END), 0) as amount,
           COUNT(CASE WHEN status = 'completed' THEN 1 END) as count
-        FROM payments 
+        FROM payments
         WHERE 1=1 ${dateFilter}
         GROUP BY ${groupBy}
         ORDER BY period ASC
@@ -196,7 +196,7 @@ export const statsRepo = {
   async getUserStats(period: 'week' | 'month' | 'year' = 'month'): Promise<UserStats> {
     let dateFilter = '';
     let groupBy = '';
-    
+
     switch (period) {
       case 'week':
         dateFilter = "AND created_at >= datetime('now', '-7 days')";
@@ -237,7 +237,7 @@ export const statsRepo = {
 
   async getJobStats(period: 'week' | 'month' | 'year' = 'month'): Promise<JobStats> {
     let dateFilter = '';
-    
+
     switch (period) {
       case 'week':
         dateFilter = "AND j.created_at >= datetime('now', '-7 days')";
@@ -262,18 +262,18 @@ export const statsRepo = {
       `),
       db.connection?.get<{ avg: number }>(`SELECT AVG(budget) as avg FROM jobs j WHERE budget IS NOT NULL ${dateFilter}`),
       db.connection?.all<{ experience_level: string; count: number }[]>(`
-        SELECT experience_level, COUNT(*) as count FROM jobs j 
-        WHERE experience_level IS NOT NULL ${dateFilter} 
+        SELECT experience_level, COUNT(*) as count FROM jobs j
+        WHERE experience_level IS NOT NULL ${dateFilter}
         GROUP BY experience_level
       `),
       db.connection?.get<{ fixed: number; hourly: number }>(`
-        SELECT 
+        SELECT
           COUNT(CASE WHEN job_type = 'fixed' THEN 1 END) as fixed,
           COUNT(CASE WHEN job_type = 'hourly' THEN 1 END) as hourly
         FROM jobs j WHERE 1=1 ${dateFilter}
       `),
       db.connection?.get<{ total: number; completed: number }>(`
-        SELECT 
+        SELECT
           COUNT(*) as total,
           COUNT(CASE WHEN status = 'Completed' THEN 1 END) as completed
         FROM jobs j WHERE 1=1 ${dateFilter}

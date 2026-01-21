@@ -1,4 +1,4 @@
-import 'dotenv/config'; 
+import 'dotenv/config';
 import app from './app.js';
 import { openDb } from './config/init_db.js';
 

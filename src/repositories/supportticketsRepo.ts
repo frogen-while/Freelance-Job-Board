@@ -23,7 +23,7 @@ export const supportTicketsRepo = {
             `INSERT INTO supporttickets (user_id, subject, message, status) VALUES (?, ?, ?, ?)`,
             user_id, subject, message, status
         );
-        
+
         return result?.lastID ?? null;
     },
 
@@ -64,7 +64,7 @@ export const supportTicketsRepo = {
         }
 
         if (setClauses.length === 0) {
-            return false; 
+            return false;
         }
 
         setClauses.push('updated_at = CURRENT_TIMESTAMP');
@@ -73,7 +73,7 @@ export const supportTicketsRepo = {
         const result = await db.connection?.run(statement, ...params);
         return (result?.changes ?? 0) > 0;
     },
-    
+
     async deleteByID(ticket_id: number): Promise<void> {
         await db.connection?.run(
             'DELETE FROM supporttickets WHERE ticket_id = ?',

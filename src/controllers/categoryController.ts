@@ -3,7 +3,6 @@ import { categoryRepo } from '../repositories/categoryRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 
-
 export const createCategory = async (req: Request, res: Response) => {
     const { name, description, manager_id } = req.body;
 
@@ -56,7 +55,6 @@ export const getAllCategories = async (req: Request, res: Response) => {
         console.error('Error fetching Categories', error)
         rethrowHttpError(error, 500, 'An internal server error occurred while fetching categories.');
     }
-    
 
 };
 export const getCategoryById = async (req: Request, res: Response) => {
@@ -97,7 +95,7 @@ export const deleteCategory = async(req: Request, res: Response) =>{
 
 export const updateCategory = async (req: Request, res: Response) => {
     const CategoryId = parseIdParam(res, req.params.id, 'category');
-    const { name, description, manager_id } = req.body; 
+    const { name, description, manager_id } = req.body;
     if (CategoryId === null) {
         return;
     }
@@ -132,7 +130,7 @@ export const updateCategory = async (req: Request, res: Response) => {
         if (!existingCategory) {
             return sendError(res, 404, 'Category not found.');
         }
-        
+
         const success = await categoryRepo.update(CategoryId, updateData);
 
         if (success) {

@@ -9,23 +9,23 @@ export const assignmentRepo = {
         );
         return result || [];
     },
-    
+
     async create(job_id: number, freelancer_id: number): Promise<number | null> {
         const result = await db.connection?.run(
             `INSERT INTO assignments (job_id, freelancer_id) VALUES (?, ?)`,
             job_id, freelancer_id
         );
-        
+
         return result?.lastID ?? null;
     },
-    
+
     async findById(assignment_id: number): Promise<Assignment | undefined> {
         return await db.connection?.get<Assignment | undefined>(
             `SELECT * FROM assignments WHERE assignment_id = ?`,
             assignment_id
         );
     },
-    
+
     async update(assignment_id: number, updateData: { job_id?: number, freelancer_id?: number }): Promise<boolean> {
         const setClauses: string[] = [];
         const params: (string | number)[] = [];
@@ -40,7 +40,7 @@ export const assignmentRepo = {
         }
 
         if (setClauses.length === 0) {
-            return false; 
+            return false;
         }
 
         params.push(assignment_id);
@@ -48,7 +48,7 @@ export const assignmentRepo = {
         const result = await db.connection?.run(statement, params);
         return (result?.changes ?? 0) > 0;
     },
-    
+
     async deleteByID(assignment_id: number): Promise<void> {
         await db.connection?.run(
             'DELETE FROM assignments WHERE assignment_id = ?',

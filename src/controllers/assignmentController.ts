@@ -5,6 +5,7 @@ import { promises as fs } from 'node:fs';
 import { assignmentRepo } from '../repositories/assignmentRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { jobRepo } from '../repositories/jobRepo.js';
+import { jobAplRepo } from '../repositories/jobaplRepo.js';
 import { assignmentDeliverablesRepo } from '../repositories/assignmentDeliverablesRepo.js';
 import { reviewRepo } from '../repositories/reviewRepo.js';
 import { messageRepo } from '../repositories/messageRepo.js';
@@ -92,13 +93,13 @@ export const deleteAssignment = async(req: Request, res: Response) =>{
 
 export const updateAssignment = async (req: Request, res: Response) => {
     const assignmentId = parseIdParam(res, req.params.id, 'assignment');
-    const { job_id, freelancer_id } = req.body; 
+    const { job_id, freelancer_id } = req.body;
     if (assignmentId === null) {
         return;
     }
 
     const updateData: {job_id?: number, freelancer_id?: number} = {};
-    
+
     if (job_id !== undefined) {
         const job = await jobRepo.findById(job_id);
         if (!job) {
@@ -117,13 +118,13 @@ export const updateAssignment = async (req: Request, res: Response) => {
     if (Object.keys(updateData).length === 0) {
         return sendError(res, 400, 'No valid fields provided for update (allowed: job_id, freelancer_id)')
     }
-    
+
     try {
         const existingAssignment = await assignmentRepo.findById(assignmentId);
         if (!existingAssignment) {
             return sendError(res, 404, 'Assignment not found.');
         }
-        
+
         const success = await assignmentRepo.update(assignmentId, updateData);
 
         if (success) {
@@ -376,10 +377,15 @@ export const reviewAssignmentDeliverable = async (req: Request, res: Response) =
             return sendError(res, 500, 'Failed to update deliverable status.');
         }
 
-        // When accepted, complete assignment and job
         if (status === 'accepted') {
             await assignmentRepo.updateStatus(assignment.assignment_id, 'Completed');
             await jobRepo.update(job.job_id, { status: 'Completed' });
+
+            const applications = await jobAplRepo.findByJobId(job.job_id);
+            const acceptedApp = applications.find(a => a.freelancer_id === assignment.freelancer_id && a.status === 'Accepted');
+            if (acceptedApp) {
+                await jobAplRepo.update(acceptedApp.application_id, { status: 'Completed' });
+            }
         }
 
         if (status === 'changes_requested') {
@@ -391,12 +397,11 @@ export const reviewAssignmentDeliverable = async (req: Request, res: Response) =
             }
         }
 
-        // Send message to freelancer when changes are requested
         if (status === 'changes_requested') {
             const messageBody = trimmedMessage
             ? `Changes requested for the job "${job.title}": ${trimmedMessage}`
             : `Changes requested for the job "${job.title}". Please review and make the updates.`;
-            
+
             await messageRepo.create({
                 sender_id: authUser.sub,
                 receiver_id: assignment.freelancer_id,
@@ -421,7 +426,7 @@ export const updateAssignmentStatus = async (req: Request, res: Response) => {
 
     const { status } = req.body;
     const validStatuses = ['Active', 'Completed', 'Terminated'];
-    
+
     if (!status || !validStatuses.includes(status)) {
         return sendError(res, 400, `Invalid status. Must be one of: ${validStatuses.join(', ')}`);
     }
@@ -442,7 +447,6 @@ export const updateAssignmentStatus = async (req: Request, res: Response) => {
             return sendError(res, 404, 'Associated job not found.');
         }
 
-        // Only employer of the job can update assignment status
         if (job.employer_id !== authUser.sub) {
             return sendError(res, 403, 'Only the employer can update assignment status.');
         }
@@ -452,7 +456,6 @@ export const updateAssignmentStatus = async (req: Request, res: Response) => {
             return sendError(res, 500, 'Failed to update assignment status.');
         }
 
-        // If assignment is completed, update job status too
         if (status === 'Completed') {
             await jobRepo.update(job.job_id, { status: 'Completed' });
         }

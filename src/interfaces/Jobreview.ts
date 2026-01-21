@@ -8,7 +8,7 @@ export interface Review {
   rating: Rating;
   feedback?: string | null;
   created_at?: string;
-  // Joined data
+
   reviewer_name?: string;
   job_title?: string;
 }

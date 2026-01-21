@@ -4,7 +4,7 @@ import { getAllUsers, registerUser, getUserById, deleteUser, updateUser} from '.
 
 const router = Router();
 
-router.post('/', asyncHandler(registerUser)); 
+router.post('/', asyncHandler(registerUser));
 router.get('/', asyncHandler(getAllUsers));
 router.get('/:id', asyncHandler(getUserById));
 router.delete('/:id', asyncHandler(deleteUser));

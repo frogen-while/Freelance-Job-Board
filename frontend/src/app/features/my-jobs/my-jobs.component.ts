@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { ApiService } from '../../core/api.service';
+import { FormatService } from '../../core/format.service';
 import { Assignment, AssignmentDeliverable, Job } from '../../core/models';
 
 @Component({
@@ -14,7 +15,6 @@ export class MyJobsComponent implements OnInit {
   filteredJobs: Job[] = [];
   loading = true;
   errorMessage = '';
-  statusFilter: string = 'all';
   activeTab: 'submissions' | 'jobs' = 'submissions';
 
   assignments: Assignment[] = [];
@@ -26,7 +26,6 @@ export class MyJobsComponent implements OnInit {
   reviewMessage: Record<number, string> = {};
   reviewing: Record<number, boolean> = {};
 
-  // Review modal state
   reviewModalOpen = false;
   reviewJobId: number | null = null;
   reviewJobTitle = '';
@@ -45,7 +44,8 @@ export class MyJobsComponent implements OnInit {
   constructor(
     private auth: AuthService,
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    public fmt: FormatService
   ) {}
 
   ngOnInit(): void {
@@ -67,7 +67,7 @@ export class MyJobsComponent implements OnInit {
           this.jobs = res.data.filter(job => job.employer_id === user.user_id);
           this.applyJobFilters();
           this.calculateStats();
-          // Check review status for completed jobs
+
           this.jobs.filter(j => j.status === 'Completed').forEach(job => {
             this.checkIfReviewed(job.job_id);
           });
@@ -117,11 +117,6 @@ export class MyJobsComponent implements OnInit {
     this.stats.completed = visibleJobs.filter(j => j.status === 'Completed').length;
   }
 
-  filterByStatus(status: string): void {
-    this.statusFilter = status;
-    this.applyJobFilters();
-  }
-
   switchTab(tab: 'submissions' | 'jobs'): void {
     this.activeTab = tab;
   }
@@ -132,13 +127,8 @@ export class MyJobsComponent implements OnInit {
 
   private applyJobFilters(): void {
     const base = this.getVisibleJobs();
-    if (this.statusFilter === 'all') {
-      this.filteredJobs = base;
-    } else if (this.statusFilter === 'active') {
-      this.filteredJobs = base.filter(j => j.status === 'Open' || j.status === 'In Progress');
-    } else {
-      this.filteredJobs = base.filter(j => j.status === this.statusFilter);
-    }
+
+    this.filteredJobs = base.filter(j => j.status === 'Open');
   }
 
   viewJob(jobId: number): void {
@@ -191,19 +181,6 @@ export class MyJobsComponent implements OnInit {
     return `${first} ${last}`.trim() || `Freelancer #${assignment.freelancer_id}`;
   }
 
-  trackByAssignmentId(_index: number, assignment: Assignment): number {
-    return assignment.assignment_id;
-  }
-
-  trackByDeliverableId(_index: number, deliverable: AssignmentDeliverable): number {
-    return deliverable.deliverable_id;
-  }
-
-  getStatusClass(status: string): string {
-    return status.toLowerCase().replace(' ', '-');
-  }
-
-  // Review functionality
   openReviewModal(job: Job, freelancerId: number, freelancerName: string): void {
     this.reviewJobId = job.job_id;
     this.reviewJobTitle = job.title;
@@ -238,7 +215,7 @@ export class MyJobsComponent implements OnInit {
   checkIfReviewed(jobId: number): void {
     const user = this.auth.getUser();
     if (!user) return;
-    
+
     this.api.hasReviewedJob(jobId, user.user_id).subscribe({
       next: (res) => {
         if (res.success && res.data?.hasReviewed) {

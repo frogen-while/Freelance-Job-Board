@@ -10,7 +10,7 @@ interface FreelancerProfileRow {
   github_url: string | null;
   linkedin_url: string | null;
   jobs_completed: number;
-  // From joins
+
   first_name?: string;
   last_name?: string;
   email?: string;
@@ -34,7 +34,7 @@ export const freelancerProfilesRepo = {
 
   async findFullByUserId(user_id: number): Promise<FreelancerProfileFull | undefined> {
     const row = await db.connection?.get<FreelancerProfileRow | undefined>(
-      `SELECT 
+      `SELECT
         fp.*,
         u.first_name,
         u.last_name,
@@ -99,10 +99,10 @@ export const freelancerProfilesRepo = {
     );
   },
 
-  async getAll(options?: { 
-    skill?: string; 
+  async getAll(options?: {
+    skill?: string;
     experience_level?: ExperienceLevel;
-    limit?: number; 
+    limit?: number;
     offset?: number;
   }): Promise<{ freelancers: FreelancerProfileFull[]; total: number }> {
     const limit = options?.limit ?? 20;
@@ -123,7 +123,6 @@ export const freelancerProfilesRepo = {
 
     const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
 
-    // Count total
     const countQuery = `
       SELECT COUNT(DISTINCT fp.id) as total
       FROM freelancer_profiles fp
@@ -135,9 +134,8 @@ export const freelancerProfilesRepo = {
     const countResult = await db.connection?.get<{ total: number }>(countQuery, ...params);
     const total = countResult?.total ?? 0;
 
-    // Get freelancers
     const query = `
-      SELECT 
+      SELECT
         fp.*,
         u.first_name,
         u.last_name,

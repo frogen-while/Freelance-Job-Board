@@ -1,12 +1,11 @@
 <div class="job-create-page">
   <div class="container">
-    <!-- Header -->
+
     <div class="page-header">
       <h1 class="page-title">Post a New Job</h1>
       <p class="page-subtitle">Find the perfect freelancer for your project</p>
     </div>
 
-    <!-- Progress Steps -->
     <div class="progress-steps">
       <div class="step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
         <div class="step-number">1</div>
@@ -24,20 +23,18 @@
       </div>
     </div>
 
-    <!-- Messages -->
     <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
     <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-    <!-- Form -->
     <div class="form-container">
-      <!-- Step 1: Basics -->
+
       <div class="form-step" *ngIf="currentStep === 1">
         <h2 class="step-title">Job Basics</h2>
         <p class="step-description">Tell us about your project</p>
 
         <div class="form-group">
           <label for="title">Job Title *</label>
-          <input type="text" id="title" [(ngModel)]="title" 
+          <input type="text" id="title" [(ngModel)]="title"
                  placeholder="e.g., Build a responsive e-commerce website" maxlength="255" />
         </div>
 
@@ -53,7 +50,7 @@
 
         <div class="form-group">
           <label for="description">Job Description *</label>
-          <textarea id="description" [(ngModel)]="description" 
+          <textarea id="description" [(ngModel)]="description"
                     placeholder="Describe what you need done, including any specific requirements or deliverables..."
                     rows="8" maxlength="5000"></textarea>
           <span class="char-count">{{ description.length }} / 5000</span>
@@ -67,7 +64,6 @@
         </div>
       </div>
 
-      <!-- Step 2: Details -->
       <div class="form-step" *ngIf="currentStep === 2">
         <h2 class="step-title">Project Details</h2>
         <p class="step-description">Set your budget and timeline</p>
@@ -75,7 +71,7 @@
         <div class="form-row">
           <div class="form-group half">
             <label for="budget">Budget ($) *</label>
-            <input type="number" id="budget" [(ngModel)]="budget" 
+            <input type="number" id="budget" [(ngModel)]="budget"
                    placeholder="e.g., 500" min="1" />
           </div>
           <div class="form-group half">
@@ -129,7 +125,7 @@
 
         <div class="form-group" *ngIf="!is_remote">
           <label for="location">Location</label>
-          <input type="text" id="location" [(ngModel)]="location" 
+          <input type="text" id="location" [(ngModel)]="location"
                  placeholder="e.g., New York, USA" maxlength="255" />
         </div>
 
@@ -141,7 +137,6 @@
         </div>
       </div>
 
-      <!-- Step 3: Skills -->
       <div class="form-step" *ngIf="currentStep === 3">
         <h2 class="step-title">Required Skills</h2>
         <p class="step-description">Select skills that freelancers should have (optional)</p>
@@ -163,8 +158,8 @@
                  placeholder="Search skills..." class="skill-search" />
 
           <div class="skills-grid">
-            <button type="button" *ngFor="let skill of filteredSkills.slice(0, 30)" 
-                    class="skill-option" 
+            <button type="button" *ngFor="let skill of filteredSkills.slice(0, 30)"
+                    class="skill-option"
                     [class.selected]="isSkillSelected(skill.skill_id)"
                     (click)="toggleSkill(skill.skill_id)">
               {{ skill.name }}
@@ -173,7 +168,6 @@
           <span class="hint">{{ selectedSkills.length }} / 10 skills selected</span>
         </div>
 
-        <!-- Summary -->
         <div class="job-summary">
           <h3>Job Summary</h3>
           <div class="summary-grid">
@@ -198,7 +192,7 @@
 
         <div class="form-actions">
           <button class="btn-dark-ghost" (click)="prevStep()">Back</button>
-          <button class="btn-gradient-success" (click)="submitJob()" 
+          <button class="btn-gradient-success" (click)="submitJob()"
                   [disabled]="!canSubmit() || saving">
             {{ saving ? 'Posting...' : 'Post Job' }}
           </button>

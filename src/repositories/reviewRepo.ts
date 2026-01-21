@@ -27,13 +27,13 @@ export const reviewRepo = {
 
     async findByReviewee(reviewee_id: number): Promise<Review[]> {
         const result = await db.connection?.all<Review[]>(
-            `SELECT r.*, 
+            `SELECT r.*,
                     u.first_name || ' ' || u.last_name as reviewer_name,
                     j.title as job_title
              FROM reviews r
              LEFT JOIN users u ON r.reviewer_id = u.user_id
              LEFT JOIN jobs j ON r.job_id = j.job_id
-             WHERE r.reviewee_id = ? 
+             WHERE r.reviewee_id = ?
              ORDER BY r.created_at DESC`,
             reviewee_id
         );
@@ -48,7 +48,7 @@ export const reviewRepo = {
         feedback?: string;
     }): Promise<number | null> {
         const result = await db.connection?.run(
-            `INSERT INTO reviews (job_id, reviewer_id, reviewee_id, rating, feedback) 
+            `INSERT INTO reviews (job_id, reviewer_id, reviewee_id, rating, feedback)
              VALUES (?, ?, ?, ?, ?)`,
             data.job_id,
             data.reviewer_id,

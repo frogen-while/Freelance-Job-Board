@@ -44,9 +44,9 @@ export const auditLogRepo = {
     offset?: number;
   }): Promise<AuditLog[]> {
     let query = `
-      SELECT al.*, u.first_name, u.last_name, u.email 
-      FROM audit_logs al 
-      LEFT JOIN users u ON al.user_id = u.user_id 
+      SELECT al.*, u.first_name, u.last_name, u.email
+      FROM audit_logs al
+      LEFT JOIN users u ON al.user_id = u.user_id
       WHERE 1=1
     `;
     const params: any[] = [];
@@ -106,6 +106,8 @@ export const auditLogRepo = {
 };
 
 export const AuditActions = {
+  LOGIN: 'LOGIN',
+  LOGOUT: 'LOGOUT',
   ROLE_CHANGE: 'ROLE_CHANGE',
   USER_BLOCKED: 'USER_BLOCKED',
   USER_UNBLOCKED: 'USER_UNBLOCKED',

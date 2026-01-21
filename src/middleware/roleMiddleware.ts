@@ -24,7 +24,7 @@ export const requireRole = (...allowedRoles: Role[]) => {
 
     try {
       const user = await userRepo.findById(tokenUser.sub);
-      
+
       if (!user) {
         sendError(res, 401, 'User not found.');
         return;
@@ -36,7 +36,7 @@ export const requireRole = (...allowedRoles: Role[]) => {
       }
 
       const userRole = user.main_role as Role;
-      
+
       if (!allowedRoles.includes(userRole)) {
         sendError(res, 403, 'Insufficient permissions. Required roles: ' + allowedRoles.join(', '));
         return;
@@ -62,7 +62,7 @@ export const requireMinRole = (minRole: Role) => {
 
     try {
       const user = await userRepo.findById(tokenUser.sub);
-      
+
       if (!user) {
         sendError(res, 401, 'User not found.');
         return;
@@ -102,7 +102,7 @@ export const requireOwnerOrAdmin = (getOwnerId: (req: AuthenticatedRequest) => P
 
     try {
       const user = await userRepo.findById(tokenUser.sub);
-      
+
       if (!user) {
         sendError(res, 401, 'User not found.');
         return;

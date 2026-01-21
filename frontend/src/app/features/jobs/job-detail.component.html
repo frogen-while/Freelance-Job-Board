@@ -1,48 +1,39 @@
 <div class="job-detail-page">
-  <!-- Loading State -->
-  <div class="loading-state-dark" *ngIf="loading">
-    <div class="spinner"></div>
-    <p>Loading job details...</p>
-  </div>
+  <app-loading-state *ngIf="loading" message="Loading job details..."></app-loading-state>
 
-  <!-- Job Not Found -->
-  <div class="not-found" *ngIf="!loading && !job">
-    <div class="not-found-icon">
-      <mat-icon>error_outline</mat-icon>
-    </div>
-    <h2>Job Not Found</h2>
-    <p>This job posting may have been removed or doesn't exist.</p>
+  <app-empty-state *ngIf="!loading && !job"
+    icon="error_outline"
+    title="Job Not Found"
+    description="This job posting may have been removed or doesn't exist.">
     <button class="btn-gradient" (click)="goBack()">Browse Jobs</button>
-  </div>
+  </app-empty-state>
 
-  <!-- Job Content -->
   <div class="job-content" *ngIf="!loading && job">
-    <!-- Payment Success Message -->
+
     <div class="success-banner" *ngIf="paymentSuccess">
       <mat-icon>check_circle</mat-icon>
       <span>Payment successful! The job is now in progress.</span>
     </div>
 
-    <!-- Back Button -->
     <button class="back-btn" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
       Back to Jobs
     </button>
 
     <div class="content-grid">
-      <!-- Main Content -->
+
       <main class="main-section">
-        <!-- Job Header -->
+
         <div class="job-header">
           <div class="header-top">
             <span class="job-category" *ngIf="category">{{ category.name }}</span>
-            <span class="job-status" [class]="getStatusClass()">{{ job.status }}</span>
+            <span class="job-status" [class]="fmt.getStatusClass(job.status)">{{ job.status }}</span>
             <span class="remote-badge" *ngIf="job.is_remote">Remote</span>
           </div>
           <h1 class="job-title">{{ job.title }}</h1>
           <div class="job-meta">
             <span class="meta-item" *ngIf="job.budget">
-              {{ formatBudget(job.budget) }}
+              {{ fmt.formatBudget(job.budget) }}
             </span>
             <span class="meta-item" *ngIf="job.deadline">
               <mat-icon>event</mat-icon>
@@ -55,23 +46,21 @@
           </div>
         </div>
 
-        <!-- Job Details Grid -->
         <div class="job-details-grid" *ngIf="job.experience_level || job.job_type || job.duration_estimate">
           <div class="detail-item" *ngIf="job.experience_level">
             <span class="detail-label">Experience Level</span>
-            <span class="detail-value">{{ getExperienceLevelLabel() }}</span>
+            <span class="detail-value">{{ fmt.getExperienceLabel(job.experience_level) }}</span>
           </div>
           <div class="detail-item" *ngIf="job.job_type">
             <span class="detail-label">Project Type</span>
-            <span class="detail-value">{{ getJobTypeLabel() }}</span>
+            <span class="detail-value">{{ fmt.getJobTypeLabel(job.job_type) }}</span>
           </div>
           <div class="detail-item" *ngIf="job.duration_estimate">
             <span class="detail-label">Estimated Duration</span>
-            <span class="detail-value">{{ getDurationLabel() }}</span>
+            <span class="detail-value">{{ fmt.getDurationLabel(job.duration_estimate) }}</span>
           </div>
         </div>
 
-        <!-- Required Skills -->
         <div class="job-skills" *ngIf="jobSkillNames.length > 0">
           <h2>Required Skills</h2>
           <div class="skills-list">
@@ -79,13 +68,11 @@
           </div>
         </div>
 
-        <!-- Job Description -->
         <div class="job-description">
           <h2>Job Description</h2>
           <p>{{ job.description }}</p>
         </div>
 
-        <!-- Category Info -->
         <div class="category-info" *ngIf="category">
           <h2>Category</h2>
           <div class="category-card">
@@ -95,9 +82,8 @@
         </div>
       </main>
 
-      <!-- Sidebar -->
       <aside class="sidebar">
-        <!-- Employer Card -->
+
         <div class="employer-card">
           <h3>About the Client</h3>
           <div class="employer-info">
@@ -111,9 +97,8 @@
           </div>
         </div>
 
-        <!-- Apply Card -->
         <div class="apply-card">
-          <!-- Already Applied -->
+
           <div class="applied-state" *ngIf="applied">
             <div class="success-icon">
               <mat-icon>check_circle</mat-icon>
@@ -122,14 +107,13 @@
             <p>Your proposal has been sent to the client. You'll be notified when they respond.</p>
           </div>
 
-          <!-- Apply Form (Freelancer Only) -->
           <div class="apply-form" *ngIf="!applied && isLoggedIn && isFreelancer && job.status === 'Open'">
             <h3>Submit a Proposal</h3>
-            
+
             <div class="form-group-dark">
               <label for="bidAmount">Your Bid ($)</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 id="bidAmount"
                 class="form-input-dark"
                 [(ngModel)]="bidAmount"
@@ -137,10 +121,10 @@
                 min="1"
               />
             </div>
-            
+
             <div class="form-group-dark">
               <label for="proposal">Cover Letter</label>
-              <textarea 
+              <textarea
                 id="proposal"
                 class="form-textarea-dark"
                 [(ngModel)]="proposalText"
@@ -148,9 +132,9 @@
                 rows="6"
               ></textarea>
             </div>
-            
-            <button 
-              class="btn-gradient btn-block" 
+
+            <button
+              class="btn-gradient btn-block"
               (click)="apply()"
               [disabled]="applying || !bidAmount || !proposalText.trim()">
               <span *ngIf="!applying">Submit Proposal</span>
@@ -158,26 +142,22 @@
             </button>
           </div>
 
-          <!-- Job Closed -->
           <div class="closed-state" *ngIf="!applied && job.status !== 'Open'">
             <h3>Job Not Available</h3>
             <p>This job is no longer accepting applications.</p>
             <button class="btn-dark-secondary" (click)="goBack()">Browse Other Jobs</button>
           </div>
 
-          <!-- Employer View -->
           <div class="employer-view" *ngIf="!applied && isLoggedIn && isOwner">
             <h3>Manage Your Listing</h3>
             <p class="proposals-count">{{ applications.length }} proposal(s) received</p>
           </div>
 
-          <!-- Non-owner employer view -->
           <div class="employer-view" *ngIf="!applied && isLoggedIn && !isFreelancer && !isOwner && job.status === 'Open'">
             <h3>Employer Account</h3>
             <p>Only freelancers can submit proposals to jobs.</p>
           </div>
 
-          <!-- Guest View -->
           <div class="guest-view" *ngIf="!isLoggedIn && job.status === 'Open'">
             <h3>Want to Apply?</h3>
             <p>Create a free account to submit proposals and start working on projects.</p>
@@ -186,10 +166,9 @@
           </div>
         </div>
 
-        <!-- Proposals Section (Employer Only) -->
         <div class="proposals-card" *ngIf="isOwner && applications.length > 0">
           <h3>Proposals ({{ applications.length }})</h3>
-          
+
           <div class="proposals-list">
             <div class="proposal-item" *ngFor="let app of applications" [class]="'status-' + app.status.toLowerCase()">
               <div class="proposal-header">
@@ -209,16 +188,16 @@
                   <span class="bid-label">Proposed</span>
                 </div>
               </div>
-              
+
               <div class="proposal-text" *ngIf="app.proposal_text">
                 <p>{{ app.proposal_text }}</p>
               </div>
-              
+
               <div class="proposal-footer">
                 <span class="proposal-status" [class]="'status-' + app.status.toLowerCase()">
                   {{ app.status }}
                 </span>
-                
+
                 <div class="proposal-actions" *ngIf="app.status === 'Pending'">
                   <button class="btn-accept" (click)="acceptApplication(app.application_id)">
                     Accept
@@ -232,7 +211,6 @@
           </div>
         </div>
 
-        <!-- No Proposals Yet -->
         <div class="no-proposals-card" *ngIf="isOwner && applications.length === 0 && !loadingApplications">
           <h3>No Proposals Yet</h3>
           <p>Your job is visible to freelancers. Proposals will appear here when freelancers apply.</p>

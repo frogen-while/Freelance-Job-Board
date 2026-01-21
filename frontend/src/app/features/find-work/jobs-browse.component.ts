@@ -17,7 +17,7 @@ export class JobsBrowseComponent implements OnInit {
   categories: Category[] = [];
   skills: Skill[] = [];
   loading = true;
-  
+
   searchQuery = '';
   selectedCategory: number | null = null;
   selectedStatus: string = '';
@@ -28,7 +28,7 @@ export class JobsBrowseComponent implements OnInit {
   budgetMin: number | null = null;
   budgetMax: number | null = null;
   showFilters = false;
-  
+
   isLoggedIn = false;
 
   constructor(
@@ -44,7 +44,7 @@ export class JobsBrowseComponent implements OnInit {
     this.isLoggedIn = this.auth.isLoggedIn();
     this.loadCategories();
     this.loadSkills();
-    
+
     this.route.queryParams.subscribe(params => {
       this.searchQuery = params['q'] || '';
       this.selectedCategory = params['category'] ? Number(params['category']) : null;
@@ -80,7 +80,7 @@ export class JobsBrowseComponent implements OnInit {
     this.loading = true;
 
     const filters: JobFilters = {
-      status: 'Open'  // Only show open jobs in Find Work
+      status: 'Open'
     };
     if (this.selectedCategory) filters.category_id = this.selectedCategory;
     if (this.selectedExperience) filters.experience_level = this.selectedExperience;
@@ -93,7 +93,7 @@ export class JobsBrowseComponent implements OnInit {
     this.api.getJobs(filters).subscribe({
       next: (res) => {
         if (res.success && res.data) {
-          // Handle both formats: direct array or {jobs: array, total: number}
+
           const data = res.data as any;
           this.allJobs = Array.isArray(data) ? data : (data.jobs || []);
           this.filterJobs();
@@ -111,7 +111,7 @@ export class JobsBrowseComponent implements OnInit {
 
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
-      filtered = filtered.filter(job => 
+      filtered = filtered.filter(job =>
         job.title.toLowerCase().includes(query) ||
         job.description.toLowerCase().includes(query)
       );
@@ -191,7 +191,7 @@ export class JobsBrowseComponent implements OnInit {
   }
 
   hasActiveFilters(): boolean {
-    return !!(this.selectedCategory || this.selectedStatus || this.selectedExperience || 
+    return !!(this.selectedCategory || this.selectedStatus || this.selectedExperience ||
               this.selectedJobType || this.remoteOnly || this.searchQuery);
   }
 

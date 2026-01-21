@@ -11,7 +11,7 @@ interface EmployerProfileRow {
   industry: string | null;
   jobs_posted: number;
   total_spent: number;
-  // From joins
+
   first_name?: string;
   last_name?: string;
   email?: string;
@@ -34,7 +34,7 @@ export const employerProfilesRepo = {
 
   async findFullByUserId(user_id: number): Promise<EmployerProfileFull | undefined> {
     const row = await db.connection?.get<EmployerProfileRow | undefined>(
-      `SELECT 
+      `SELECT
         ep.*,
         u.first_name,
         u.last_name,
@@ -102,10 +102,10 @@ export const employerProfilesRepo = {
     );
   },
 
-  async getAll(options?: { 
+  async getAll(options?: {
     industry?: string;
     company_size?: CompanySize;
-    limit?: number; 
+    limit?: number;
     offset?: number;
   }): Promise<{ employers: EmployerProfileFull[]; total: number }> {
     const limit = options?.limit ?? 20;
@@ -126,7 +126,6 @@ export const employerProfilesRepo = {
 
     const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
 
-    // Count total
     const countQuery = `
       SELECT COUNT(*) as total
       FROM employer_profiles ep
@@ -136,9 +135,8 @@ export const employerProfilesRepo = {
     const countResult = await db.connection?.get<{ total: number }>(countQuery, ...params);
     const total = countResult?.total ?? 0;
 
-    // Get employers
     const query = `
-      SELECT 
+      SELECT
         ep.*,
         u.first_name,
         u.last_name,

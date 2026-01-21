@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { AuthService, PublicUser } from '../../core/auth.service';
+import { FormatService } from '../../core/format.service';
 import { Job, Category, Skill, JobApplication } from '../../core/models';
 
 interface EmployerInfo {
@@ -25,15 +26,15 @@ export class JobDetailComponent implements OnInit {
   jobSkillNames: string[] = [];
   applications: JobApplication[] = [];
   loadingApplications = false;
-  
+
   loading = true;
   applying = false;
   applied = false;
   paymentSuccess = false;
-  
+
   bidAmount: number | null = null;
   proposalText = '';
-  
+
   isLoggedIn = false;
   isFreelancer = false;
   isOwner = false;
@@ -42,22 +43,22 @@ export class JobDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private api: ApiService,
-    private auth: AuthService
+    private auth: AuthService,
+    public fmt: FormatService
   ) {}
 
   ngOnInit() {
     this.isLoggedIn = this.auth.isLoggedIn();
     this.isFreelancer = this.auth.isFreelancer();
     this.currentUser = this.auth.getUser();
-    
-    // Check for payment success
+
     this.route.queryParams.subscribe(params => {
       if (params['paymentSuccess'] === 'true') {
         this.paymentSuccess = true;
         setTimeout(() => this.paymentSuccess = false, 5000);
       }
     });
-    
+
     this.loadSkills();
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loadJob(id);
@@ -160,7 +161,7 @@ export class JobDetailComponent implements OnInit {
   }
 
   acceptApplication(applicationId: number) {
-    // Redirect to checkout page instead of directly accepting
+
     this.router.navigate(['/jobs/checkout', applicationId]);
   }
 
@@ -196,7 +197,7 @@ export class JobDetailComponent implements OnInit {
       this.router.navigate(['/login'], { queryParams: { returnUrl: '/jobs/' + this.job?.job_id } });
       return;
     }
-    
+
     if (!this.isFreelancer) {
       alert('Only freelancers can apply for jobs');
       return;
@@ -211,7 +212,7 @@ export class JobDetailComponent implements OnInit {
       alert('This job is no longer accepting applications');
       return;
     }
-    
+
     if (!this.job || !this.currentUser) return;
     if (!this.bidAmount || !this.proposalText.trim()) {
       alert('Please fill in bid amount and proposal');
@@ -226,12 +227,12 @@ export class JobDetailComponent implements OnInit {
       proposal_text: this.proposalText.trim(),
       status: 'Pending'
     };
-    
+
     this.api.applyToJob(payload).subscribe({
       next: () => {
         if (this.job && this.currentUser) {
           const messageBody = `New Proposal for "${this.job.title}"\n\nBid Amount: $${this.bidAmount}\n\n${this.proposalText.trim()}`;
-          
+
           this.api.sendMessage({
             sender_id: this.currentUser.user_id,
             receiver_id: this.job.employer_id,
@@ -268,51 +269,6 @@ export class JobDetailComponent implements OnInit {
   getEmployerInitials(): string {
     if (!this.employer) return '?';
     return (this.employer.first_name[0] + this.employer.last_name[0]).toUpperCase();
-  }
-
-  formatBudget(budget: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0
-    }).format(budget);
-  }
-
-  getStatusClass(): string {
-    if (!this.job) return '';
-    return this.job.status.toLowerCase().replace(' ', '-');
-  }
-
-  getExperienceLevelLabel(): string {
-    if (!this.job?.experience_level) return '';
-    const labels: Record<string, string> = {
-      'entry': 'Entry Level',
-      'intermediate': 'Intermediate',
-      'expert': 'Expert'
-    };
-    return labels[this.job.experience_level] || '';
-  }
-
-  getJobTypeLabel(): string {
-    if (!this.job?.job_type) return '';
-    const labels: Record<string, string> = {
-      'fixed': 'Fixed Price',
-      'hourly': 'Hourly Rate'
-    };
-    return labels[this.job.job_type] || '';
-  }
-
-  getDurationLabel(): string {
-    if (!this.job?.duration_estimate) return '';
-    const labels: Record<string, string> = {
-      'less_than_week': 'Less than a week',
-      '1_2_weeks': '1-2 weeks',
-      '2_4_weeks': '2-4 weeks',
-      '1_3_months': '1-3 months',
-      '3_6_months': '3-6 months',
-      'more_than_6_months': 'More than 6 months'
-    };
-    return labels[this.job.duration_estimate] || '';
   }
 
   goBack() {

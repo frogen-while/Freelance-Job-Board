@@ -14,7 +14,7 @@ export const jobAplRepo = {
                 `INSERT INTO jobapplications (job_id, freelancer_id, bid_amount, proposal_text, status) VALUES (?, ?, ?, ?, ?)`,
                 job_id, freelancer_id, bid_amount, proposal_text, status
             );
-            
+
             return result?.lastID ?? null;
 
     },
@@ -64,7 +64,7 @@ export const jobAplRepo = {
         }
 
         if (setClauses.length === 0) {
-            return false; 
+            return false;
         }
 
         params.push(application_id);

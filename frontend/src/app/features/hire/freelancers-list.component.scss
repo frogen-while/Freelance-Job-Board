@@ -1,4 +1,5 @@
 @use 'app/shared' as *;
+@use 'app/shared/utilities' as u;
 
 :host {
   display: block;
@@ -21,17 +22,8 @@
   text-align: center;
 }
 
-.page-title {
-  font-size: $font-size-4xl;
-  font-weight: $font-weight-bold;
-  color: white;
-  margin-bottom: $space-sm;
-}
-
-.page-subtitle {
-  font-size: $font-size-lg;
-  color: $white-70;
-}
+.page-title { @include u.title-page-dark; font-size: $font-size-4xl; }
+.page-subtitle { @include u.subtitle-page-dark; font-size: $font-size-lg; color: $white-70; }
 
 .page-content {
   max-width: 1600px;
@@ -50,7 +42,6 @@
   }
 }
 
-// Profile Sidebar Wrapper
 .profile-sidebar-wrapper {
   position: sticky;
   top: 100px;
@@ -61,7 +52,6 @@
   }
 }
 
-// Filters Sidebar
 .filters-sidebar {
   @media (max-width: $bp-lg) {
     order: 2;
@@ -171,7 +161,6 @@
   }
 }
 
-// Main Content
 .main-content {
   @media (max-width: $bp-lg) {
     order: 1;
@@ -187,12 +176,10 @@
   color: $text-secondary;
 }
 
-// Empty State
 .empty-state {
   @include empty-state;
 }
 
-// Freelancers Grid
 .freelancers-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -399,7 +386,6 @@
   }
 }
 
-// Pagination
 .pagination {
   display: flex;
   justify-content: center;

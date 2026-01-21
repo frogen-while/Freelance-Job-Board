@@ -5,7 +5,6 @@
   background: $bg-page;
 }
 
-// Hero Section
 .hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -70,7 +69,6 @@
   &.card-3 { bottom: 40px; left: 30%; }
 }
 
-// Features Section
 .features {
   padding: 80px;
   text-align: center;
@@ -118,7 +116,6 @@
   }
 }
 
-// Team Section
 .team {
   padding: 80px;
   background: $bg-page;
@@ -219,7 +216,6 @@
   }
 }
 
-// Documents Section
 .documents {
   padding: 80px;
   text-align: center;
@@ -293,7 +289,6 @@
   }
 }
 
-// Tech Stack
 .tech-stack {
   padding: 60px 80px 100px;
   text-align: center;
@@ -337,7 +332,6 @@
   }
 }
 
-// Responsive
 @media (max-width: 1200px) {
   .features-grid {
     grid-template-columns: repeat(2, 1fr);

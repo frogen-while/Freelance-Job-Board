@@ -1,9 +1,6 @@
 <div class="profile-page">
   <div class="container">
-    <div class="loading-state-dark" *ngIf="loading">
-      <div class="spinner"></div>
-      <p>Loading profile...</p>
-    </div>
+    <app-loading-state *ngIf="loading" message="Loading profile..."></app-loading-state>
 
     <div class="profile-content" *ngIf="!loading && profileUserId">
       <div class="profile-header">
@@ -194,7 +191,7 @@
             </div>
             <input type="text" [(ngModel)]="skillSearch" (input)="filterSkills()" placeholder="Search skills..." class="skill-search" />
             <div class="skills-grid">
-              <button type="button" *ngFor="let skill of filteredSkills" class="skill-option" 
+              <button type="button" *ngFor="let skill of filteredSkills" class="skill-option"
                 [class.selected]="isSkillSelected(skill.skill_id)" (click)="toggleSkill(skill.skill_id)">{{ skill.name }}</button>
             </div>
             <span class="hint">{{ selectedSkills.length }} / 15 selected</span>

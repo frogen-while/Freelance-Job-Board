@@ -4,20 +4,19 @@ import { User, MainRole } from '../interfaces/User.js';
 export const userRepo = {
     async findByEmail(email: string): Promise<User | undefined> {
         return await db.connection?.get<User | undefined>(
-            `SELECT * FROM users WHERE email = ?`, 
+            `SELECT * FROM users WHERE email = ?`,
             email
         );
     },
-    
 
     async create(first_name: string, last_name: string, email: string, password_hash: string, main_role?: MainRole): Promise<number | null> {
-        const role: MainRole = main_role || 'Freelancer'; 
-        
+        const role: MainRole = main_role || 'Freelancer';
+
         const result = await db.connection?.run(
             `INSERT INTO users (first_name, last_name, email, password_hash, main_role) VALUES (?, ?, ?, ?, ?)`,
             first_name, last_name, email, password_hash, role
         );
-        
+
         return result?.lastID ?? null;
     },
 
@@ -41,16 +40,16 @@ export const userRepo = {
             `SELECT user_id, first_name, last_name, email, main_role, is_blocked, created_at, updated_at FROM users WHERE user_id = ?`,
             user_id
         );
-        
+
         if (user) {
-            // Load onboarding status
+
             const profile = await db.connection?.get<{onboarding_completed: number}>(
                 `SELECT onboarding_completed FROM profiles WHERE user_id = ?`,
                 user_id
             );
             (user as any).onboarding_completed = profile?.onboarding_completed === 1;
         }
-        
+
         return user;
     },
 
@@ -79,14 +78,14 @@ export const userRepo = {
         }
 
         if (setClauses.length === 0) {
-            return false; 
+            return false;
         }
 
         setClauses.push('updated_at = CURRENT_TIMESTAMP');
         params.push(userId);
         const statement = `UPDATE users SET ${setClauses.join(', ')} WHERE user_id = ?`;
         const result = await db.connection?.run(statement, params);
-        
+
         return (result?.changes ?? 0) > 0;
     },
 

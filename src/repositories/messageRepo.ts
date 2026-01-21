@@ -27,13 +27,13 @@ export const messageRepo = {
 
     async findByUser(user_id: number): Promise<Message[]> {
         const result = await db.connection?.all<Message[]>(
-            `SELECT m.*, 
+            `SELECT m.*,
                     s.first_name || ' ' || s.last_name as sender_name,
                     r.first_name || ' ' || r.last_name as receiver_name
              FROM messages m
              LEFT JOIN users s ON m.sender_id = s.user_id
              LEFT JOIN users r ON m.receiver_id = r.user_id
-             WHERE m.sender_id = ? OR m.receiver_id = ? 
+             WHERE m.sender_id = ? OR m.receiver_id = ?
              ORDER BY m.sent_at DESC`,
             user_id, user_id
         );
@@ -106,21 +106,21 @@ export const messageRepo = {
 
     async getConversations(user_id: number): Promise<any[]> {
         const result = await db.connection?.all(
-            `SELECT 
+            `SELECT
                 CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END as other_user_id,
                 u.first_name || ' ' || u.last_name as other_user_name,
                 p.photo_url as other_user_photo,
                 m.body as last_message,
                 m.sent_at as last_message_time,
-                (SELECT COUNT(*) FROM messages m2 
-                 WHERE m2.sender_id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END 
+                (SELECT COUNT(*) FROM messages m2
+                 WHERE m2.sender_id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END
                  AND m2.receiver_id = ? AND m2.is_read = 0) as unread_count
             FROM messages m
             JOIN users u ON u.user_id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END
             LEFT JOIN profiles p ON p.user_id = u.user_id
             WHERE m.sender_id = ? OR m.receiver_id = ?
             AND m.sent_at = (
-                SELECT MAX(m3.sent_at) FROM messages m3 
+                SELECT MAX(m3.sent_at) FROM messages m3
                 WHERE (m3.sender_id = ? AND m3.receiver_id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END)
                    OR (m3.receiver_id = ? AND m3.sender_id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END)
             )

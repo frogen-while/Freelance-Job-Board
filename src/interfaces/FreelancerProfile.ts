@@ -13,18 +13,17 @@ export interface FreelancerProfile {
   updated_at?: string;
 }
 
-// Extended freelancer profile with user and base profile info
 export interface FreelancerProfileFull extends FreelancerProfile {
-  // From users table
+
   first_name: string;
   last_name: string;
   email: string;
-  // From profiles table
+
   display_name?: string | null;
   headline?: string | null;
   description?: string | null;
   photo_url?: string | null;
   location?: string | null;
-  // Skills
+
   skills: string[];
 }

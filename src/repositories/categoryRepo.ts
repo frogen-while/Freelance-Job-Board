@@ -14,14 +14,14 @@ export const categoryRepo = {
             );
             return result || [];
         },
-    async create(name: string, description: string, manager_id: number | null): Promise<number | null> { 
-            
+    async create(name: string, description: string, manager_id: number | null): Promise<number | null> {
+
             const result = await db.connection?.run(
                 `INSERT INTO categories (name, description, manager_id) VALUES (?, ?, ?)`,
-                name, description, manager_id 
+                name, description, manager_id
             );
-            
-            return result?.lastID ?? null; 
+
+            return result?.lastID ?? null;
         },
     async findById(category_id: number): Promise<Category | undefined> {
         return await db.connection?.get<Category | undefined>(
@@ -48,7 +48,7 @@ export const categoryRepo = {
         }
 
         if (setClauses.length === 0) {
-            return false; 
+            return false;
         }
 
         params.push(category_id);

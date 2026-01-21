@@ -5,7 +5,7 @@ import { createJob, getAllJobs, getJobById, getJobsByEmployerId, updateJob, dele
 
 const router = Router();
 
-router.post('/', requireAuth, asyncHandler(createJob)); 
+router.post('/', requireAuth, asyncHandler(createJob));
 router.get('/', asyncHandler(getAllJobs));
 router.get('/employer/:employerId', asyncHandler(getJobsByEmployerId));
 router.get('/:id', asyncHandler(getJobById));

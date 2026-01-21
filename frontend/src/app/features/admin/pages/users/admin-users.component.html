@@ -6,27 +6,18 @@
     </div>
   </header>
 
-  <!-- Messages -->
-  <div class="success-message" *ngIf="successMessage">
-    <mat-icon>check_circle</mat-icon>
-    <span>{{ successMessage }}</span>
-  </div>
-  
-  <div class="error-message" *ngIf="errorMessage">
-    <mat-icon>error_outline</mat-icon>
-    <span>{{ errorMessage }}</span>
-  </div>
+  <app-alert-message [message]="successMessage" type="success"></app-alert-message>
+  <app-alert-message [message]="errorMessage" type="error"></app-alert-message>
 
-  <!-- Filters -->
   <div class="filters-bar">
     <div class="search-box">
       <mat-icon>search</mat-icon>
-      <input type="text" 
-             placeholder="Search by email..." 
+      <input type="text"
+             placeholder="Search by email..."
              [(ngModel)]="searchQuery"
              (input)="onSearchChange()">
     </div>
-    
+
     <div class="filter-group">
       <select [(ngModel)]="roleFilter" (change)="onFilterChange()">
         <option value="">All Roles</option>
@@ -35,7 +26,6 @@
     </div>
   </div>
 
-  <!-- Users Table -->
   <div class="table-container" *ngIf="!loading">
     <table class="data-table">
       <thead>
@@ -56,20 +46,20 @@
           </td>
           <td class="date-cell">{{ dateService.format(user.created_at, 'date') }}</td>
           <td class="actions-cell">
-            <select class="role-select" 
+            <select class="role-select"
                     [value]="user.main_role"
                     (change)="assignRole(user, $any($event.target).value)"
                     [disabled]="!canEditUser(user)"
                     title="Change role">
               <option *ngFor="let role of getAvailableRoles()" [value]="role">{{ role }}</option>
             </select>
-            <button class="action-btn" 
+            <button class="action-btn"
                     *ngIf="!user.is_blocked && canEditUser(user)"
                     (click)="blockUser(user)"
                     title="Block user">
               <mat-icon>block</mat-icon>
             </button>
-            <button class="action-btn success" 
+            <button class="action-btn success"
                     *ngIf="user.is_blocked && canEditUser(user)"
                     (click)="unblockUser(user)"
                     title="Unblock user">
@@ -79,16 +69,9 @@
         </tr>
       </tbody>
     </table>
-    
-    <div class="empty-state-dark" *ngIf="filteredUsers.length === 0">
-      <mat-icon>people_outline</mat-icon>
-      <p>No users found</p>
-    </div>
+
+    <app-empty-state *ngIf="filteredUsers.length === 0" icon="people_outline" title="No users found"></app-empty-state>
   </div>
 
-  <!-- Loading -->
-  <div class="loading-state-dark" *ngIf="loading">
-    <div class="spinner"></div>
-    <span>Loading users...</span>
-  </div>
+  <app-loading-state *ngIf="loading" message="Loading users..."></app-loading-state>
 </div>

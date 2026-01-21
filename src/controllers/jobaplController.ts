@@ -18,7 +18,6 @@ export const createJobApplication = async (req: Request, res: Response) => {
             return sendError(res, 400, 'job_id does not reference an existing job.');
         }
 
-        // Check if job is still open for applications
         if (job.status !== 'Open') {
             return sendError(res, 400, 'This job is no longer accepting applications.');
         }
@@ -28,7 +27,6 @@ export const createJobApplication = async (req: Request, res: Response) => {
             return sendError(res, 400, 'freelancer_id does not reference an existing user.');
         }
 
-        // Check if freelancer already applied to this job
         const existingApplications = await jobAplRepo.findByJobId(job_id);
         const alreadyApplied = existingApplications.some(app => app.freelancer_id === freelancer_id);
         if (alreadyApplied) {
@@ -65,7 +63,7 @@ export const getJobApplicationById = async (req: Request, res: Response) => {
     if (applicationId === null) return;
 
     try {
-        // Use findByIdWithDetails to get freelancer info for checkout page
+
         const application = await jobAplRepo.findByIdWithDetails(applicationId);
 
         if (!application) {
@@ -95,11 +93,11 @@ export const deleteJobApplication = async(req: Request, res: Response) => {
 
 export const updateJobApplication = async (req: Request, res: Response) => {
     const applicationId = parseIdParam(res, req.params.id, 'application');
-    const { job_id, freelancer_id, bid_amount, proposal_text, status } = req.body; 
+    const { job_id, freelancer_id, bid_amount, proposal_text, status } = req.body;
     if (applicationId === null) return;
 
     const updateData: {job_id?: number, freelancer_id?: number, bid_amount?: number, proposal_text?: string, status?: JobApplicationStatus} = {};
-    
+
     if (job_id !== undefined) {
         const job = await jobRepo.findById(job_id);
         if (!job) {
@@ -121,13 +119,13 @@ export const updateJobApplication = async (req: Request, res: Response) => {
     if (Object.keys(updateData).length === 0) {
         return sendError(res, 400, 'No valid fields provided for update (allowed: job_id, freelancer_id, bid_amount, proposal_text, status)');
     }
-    
+
     try {
         const existingApplication = await jobAplRepo.findById(applicationId);
         if (!existingApplication) {
             return sendError(res, 404, 'Job application not found.');
         }
-        
+
         const success = await jobAplRepo.update(applicationId, updateData);
 
         if (success) {
@@ -185,18 +183,15 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
         const success = await jobAplRepo.update(applicationId, { status });
 
         if (success) {
-            // When accepting an application, update job status to In Progress, create assignment, and reject other applications
+
             if (status === 'Accepted') {
                 const { jobRepo } = await import('../repositories/jobRepo.js');
                 const { assignmentRepo } = await import('../repositories/assignmentRepo.js');
-                
-                // Update job status
+
                 await jobRepo.update(existingApplication.job_id, { status: 'In Progress' });
-                
-                // Create assignment for the accepted freelancer
+
                 await assignmentRepo.create(existingApplication.job_id, existingApplication.freelancer_id);
-                
-                // Reject all other pending applications for this job
+
                 const allApplications = await jobAplRepo.findByJobId(existingApplication.job_id);
                 for (const app of allApplications) {
                     if (app.application_id !== applicationId && app.status === 'Pending') {

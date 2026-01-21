@@ -1,14 +1,10 @@
 {
-  "name": "frontend",
-  "version": "0.0.0",
+  "name": "skillconnect-frontend",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --proxy-config proxy.conf.json",
-    "build": "ng build",
-    "build:prod": "ng build --configuration production",
-    "lint": "ng lint",
-    "check:ts": "tsc -p tsconfig.app.json --noEmit"
+    "build": "ng build --configuration production"
   },
   "dependencies": {
     "@angular/animations": "~16.0.0",
@@ -22,7 +18,6 @@
     "@angular/platform-browser-dynamic": "~16.0.0",
     "@angular/router": "~16.0.0",
     "chart.js": "^4.5.1",
-    "freelance-job-board": "file:..",
     "rxjs": "~7.8.0",
     "tslib": "^2.5.0",
     "zone.js": "~0.13.0"
@@ -31,9 +26,7 @@
     "@angular-devkit/build-angular": "~16.0.0",
     "@angular/cli": "~16.0.0",
     "@angular/compiler-cli": "~16.0.0",
-    "@types/jasmine": "~4.3.0",
     "@types/node": "^20.19.27",
-    "http-proxy-middleware": "^2.0.6",
     "typescript": "~5.0.0"
   }
 }

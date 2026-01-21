@@ -9,6 +9,7 @@ import { AdminDashboardComponent } from './pages/dashboard/admin-dashboard.compo
 import { AdminUsersComponent } from './pages/users/admin-users.component';
 import { AdminTicketsComponent } from './pages/tickets/admin-tickets.component';
 import { AdminAuditLogsComponent } from './pages/audit-logs/admin-audit-logs.component';
+import { SharedModule } from '../../shared/shared.module';
 
 import { AdminGuard, ManagerGuard, SupportGuard, AdminRoleGuard } from '../../core/guards';
 
@@ -38,6 +39,7 @@ const routes = [
     CommonModule,
     FormsModule,
     MatIconModule,
+    SharedModule,
     RouterModule.forChild(routes)
   ]
 })

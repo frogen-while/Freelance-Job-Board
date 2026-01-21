@@ -20,7 +20,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
   revenueStats: RevenueStats | null = null;
   userStats: UserStats | null = null;
   jobStats: JobStats | null = null;
-  
+
   recentUsers: AdminUser[] = [];
   openTickets: SupportTicket[] = [];
   loading = true;

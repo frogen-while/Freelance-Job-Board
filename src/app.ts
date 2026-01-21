@@ -48,7 +48,6 @@ app.get('/favicon.ico', (req: Request, res: Response) => {
   res.status(204).end();
 });
 
-
 app.use('/api/auth', authRoutes)
 app.use('/api/skills', skillsRoutes)
 app.use('/api/profiles', profilesRoutes)

@@ -1,31 +1,13 @@
 ﻿@use 'app/shared' as t;
+@use 'app/shared/utilities' as u;
 
-.admin-tickets { color: #fff; }
-
-.page-header { margin-bottom: t.$space-6; }
-.page-title { color: #fff; }
-.page-subtitle { color: t.$white-70; }
-
+.admin-tickets { @include u.admin-page; }
+.page-header { @include u.admin-page-header; }
 .filters-bar { margin-bottom: t.$space-4; }
-
-select {
-  padding: t.$space-2 t.$space-4;
-  background: t.$bg-dark-subtle;
-  border: 1px solid t.$white-10;
-  border-radius: t.$radius-md;
-  color: #fff;
-  option { background: t.$bg-dark-card; }
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  
-  th, td { padding: t.$space-3 t.$space-4; text-align: left; border-bottom: 1px solid t.$white-10; }
-  th { color: t.$white-50; font-weight: 500; font-size: t.$font-size-xs; text-transform: uppercase; background: rgba(0,0,0,0.2); }
-  td { color: #fff; }
-  tr:hover td { background: t.$bg-dark-hover; }
-}
+select { @include u.admin-select; }
+.data-table { @include u.admin-data-table; }
+.date-cell { @include u.admin-date-cell; }
+.action-btn { @include u.admin-action-btn; }
 
 .subject-link {
   background: none; border: none; color: t.$accent-light; cursor: pointer;
@@ -34,7 +16,6 @@ select {
 }
 
 .user-cell { color: t.$white-60; font-size: t.$font-size-sm; }
-.date-cell { color: t.$white-60; font-size: t.$font-size-sm; white-space: nowrap; }
 .actions-cell { white-space: nowrap; display: flex; gap: t.$space-2; align-items: center; }
 
 .status-badge {
@@ -43,17 +24,6 @@ select {
   &[data-status="In Progress"] { background: rgba(t.$warning,0.2); color: #fb923c; }
   &[data-status="Resolved"] { background: rgba(t.$success,0.2); color: #4ade80; }
   &[data-status="Closed"] { background: t.$white-10; color: t.$white-50; }
-}
-
-.action-btn {
-  padding: t.$space-1;
-  background: t.$bg-dark-subtle;
-  border: 1px solid t.$white-10;
-  border-radius: t.$radius-sm;
-  color: t.$white-70;
-  cursor: pointer;
-  &:hover { background: t.$white-10; color: #fff; }
-  mat-icon { font-size: t.$font-size-xl; width: t.$font-size-xl; height: t.$font-size-xl; }
 }
 
 .action-select {
@@ -67,7 +37,6 @@ select {
   option { background: t.$bg-dark-card; }
 }
 
-// Modal
 .ticket-info { display: grid; grid-template-columns: 1fr 1fr; gap: t.$space-3; margin-bottom: t.$space-4; }
 .info-row { display: flex; flex-direction: column; gap: t.$space-1; }
 .info-label { font-size: t.$font-size-xs; color: t.$white-50; text-transform: uppercase; }

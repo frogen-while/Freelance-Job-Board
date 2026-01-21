@@ -1,12 +1,9 @@
 @use 'app/shared' as t;
+@use 'app/shared/utilities' as u;
 
-.admin-dashboard { color: #fff; }
+.admin-dashboard { @include u.admin-page; }
+.page-header { @include u.admin-page-header; }
 
-.page-header { margin-bottom: t.$space-6; }
-.page-title { color: #fff; }
-.page-subtitle { color: t.$white-70; }
-
-// Overview stats grid
 .overview-section { margin-bottom: t.$space-6; }
 
 .stats-grid {
@@ -23,7 +20,6 @@
   .stat-change { font-size: t.$font-size-xs; color: t.$white-50; margin-top: t.$space-1; }
 }
 
-// Charts section
 .charts-section { margin-bottom: t.$space-6; }
 .charts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: t.$space-6;
   @media (max-width: t.$bp-md) { grid-template-columns: 1fr; }
@@ -55,7 +51,6 @@
 
 .revenue-section { margin-bottom: t.$space-6; }
 
-// Bottom grid (users + tickets)
 .bottom-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -88,18 +83,4 @@
 .list-title { color: #fff; font-size: t.$font-size-sm; }
 .list-subtitle { color: t.$white-50; font-size: t.$font-size-xs; }
 .date-text { color: t.$white-40; font-size: t.$font-size-xs; }
-
-.role-badge {
-  display: inline-block;
-  padding: t.$space-1 t.$space-2;
-  border-radius: t.$radius-sm;
-  font-size: t.$font-size-xs;
-  font-weight: 500;
-  &.admin { background: rgba(t.$error,0.2); color: t.$danger; }
-  &.manager { background: rgba(168,85,247,0.2); color: #c084fc; }
-  &.support { background: rgba(t.$accent,0.2); color: #818cf8; }
-  &.employer { background: rgba(59,130,246,0.2); color: #3b82f6; }
-  &.freelancer { background: rgba(t.$success,0.2); color: #4ade80; }
-}
-
-.empty-state-dark { padding: t.$space-6; }
+.role-badge { @include u.admin-role-badge; }

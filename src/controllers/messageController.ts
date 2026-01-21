@@ -49,9 +49,8 @@ export const sendMessage = async (req: Request, res: Response) => {
         return sendError(res, 400, 'receiver_id and body are required.');
     }
 
-    // Use authenticated user's ID (sub or user_id), but allow sender_id from body for backward compatibility
     const actualSenderId = authUser?.sub || authUser?.user_id || sender_id;
-    
+
     if (!actualSenderId) {
         return sendError(res, 400, 'sender_id is required.');
     }
@@ -59,7 +58,7 @@ export const sendMessage = async (req: Request, res: Response) => {
     try {
         const sender = await userRepo.findById(actualSenderId);
         const receiver = await userRepo.findById(receiver_id);
-        
+
         if (!sender) {
             return sendError(res, 400, 'Sender does not exist.');
         }

@@ -6,7 +6,7 @@ import { createPayment, updatePayment, getAllPayments, getPaymentById, deletePay
 const router = Router();
 
 router.post('/checkout', requireAuth, asyncHandler(processCheckout));
-router.post('/', requireAuth, asyncHandler(createPayment)); 
+router.post('/', requireAuth, asyncHandler(createPayment));
 router.get('/', requireAuth, asyncHandler(getAllPayments));
 router.get('/:id', requireAuth, asyncHandler(getPaymentById));
 router.delete('/:id', requireAuth, asyncHandler(deletePayment));

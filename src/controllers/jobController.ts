@@ -3,6 +3,7 @@ import { jobRepo } from '../repositories/jobRepo.js';
 import { userRepo } from '../repositories/userRepo.js';
 import { categoryRepo } from '../repositories/categoryRepo.js';
 import { employerProfilesRepo } from '../repositories/employerProfilesRepo.js';
+import { auditLogRepo, AuditActions, EntityTypes } from '../repositories/auditLogRepo.js';
 import { JobStatus, ExperienceLevel, JobType, DurationEstimate } from '../interfaces/Job.js';
 import { parseIdParam, rethrowHttpError, sendError, sendSuccess } from '../utils/http.js';
 
@@ -44,8 +45,18 @@ export const createJob = async (req: Request, res: Response) => {
         });
 
         if (newJobId) {
-            // Increment employer's jobs_posted count
+
             await employerProfilesRepo.incrementJobsPosted(employer_id);
+
+            await auditLogRepo.logAction({
+              user_id: employer_id,
+              action: AuditActions.JOB_CREATED,
+              entity_type: EntityTypes.JOB,
+              entity_id: newJobId,
+              new_value: { title, category_id, budget },
+              ip_address: req.ip || req.socket.remoteAddress
+            });
+
             return sendSuccess(res, { job_id: newJobId }, 201);
         } else {
             return sendError(res, 500, 'Failed to create job.');
@@ -59,13 +70,13 @@ export const createJob = async (req: Request, res: Response) => {
 
 export const getAllJobs = async (req: Request, res: Response) => {
     try {
-        // Check for query parameters for filtering
-        const { 
-            q, category, status, experience_level, job_type, is_remote, skills, limit, offset 
+
+        const {
+            q, category, status, experience_level, job_type, is_remote, skills, limit, offset
         } = req.query;
 
         if (q || category || status || experience_level || job_type || is_remote !== undefined || skills) {
-            // Use search with filters
+
             const result = await jobRepo.search({
                 query: q as string,
                 category_id: category ? parseInt(category as string, 10) : undefined,
@@ -80,7 +91,6 @@ export const getAllJobs = async (req: Request, res: Response) => {
             return sendSuccess(res, result);
         }
 
-        // Default: get all jobs with skills
         const data = await jobRepo.getAllWithSkills();
         return sendSuccess(res, data);
     } catch (error){
@@ -137,10 +147,10 @@ export const deleteJob = async(req: Request, res: Response) =>{
 
 export const updateJob = async (req: Request, res: Response) => {
     const jobId = parseIdParam(res, req.params.id, 'job');
-    const { 
+    const {
         employer_id, category_id, title, description, budget, status, deadline,
         experience_level, job_type, duration_estimate, is_remote, location, skill_ids
-    } = req.body; 
+    } = req.body;
     if (jobId === null) return;
 
     const updateData: {
@@ -193,10 +203,21 @@ export const updateJob = async (req: Request, res: Response) => {
         if (!existingJob) {
             return sendError(res, 404, 'Job not found.');
         }
-        
+
         const success = await jobRepo.update(jobId, updateData);
 
         if (success) {
+
+            await auditLogRepo.logAction({
+              user_id: existingJob.employer_id,
+              action: AuditActions.JOB_UPDATED,
+              entity_type: EntityTypes.JOB,
+              entity_id: jobId,
+              old_value: { title: existingJob.title, status: existingJob.status },
+              new_value: updateData,
+              ip_address: req.ip || req.socket.remoteAddress
+            });
+
             return sendSuccess(res, { message: 'Job updated successfully.' });
         } else {
             return sendError(res, 500, 'Failed to update job.');

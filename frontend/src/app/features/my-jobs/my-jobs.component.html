@@ -1,6 +1,6 @@
 <div class="my-jobs-page">
   <div class="page-container">
-    <!-- Header -->
+
      <br> <br>
     <header class="page-header">
       <div class="header-content">
@@ -13,7 +13,6 @@
       </a>
     </header>
 
-    <!-- Stats -->
     <section class="stats-section">
       <div class="stats-grid">
         <div class="stat-card">
@@ -46,7 +45,6 @@
       </div>
     </section>
 
-    <!-- Submissions Window -->
     <section class="submissions-window" *ngIf="activeTab === 'submissions'">
       <div class="window-header">
         <div>
@@ -55,19 +53,11 @@
         </div>
       </div>
 
-      <div class="loading-state-dark" *ngIf="assignmentsLoading">
-        <div class="spinner"></div>
-        <span>Loading submissions...</span>
-      </div>
-
-      <div class="error-state-dark" *ngIf="assignmentsError && !assignmentsLoading">
-        <div class="error-icon">⚠️</div>
-        <p>{{ assignmentsError }}</p>
-        <button class="btn-dark-secondary" (click)="loadAssignments()">Try Again</button>
-      </div>
+      <app-loading-state *ngIf="assignmentsLoading" message="Loading submissions..."></app-loading-state>
+      <app-error-state *ngIf="assignmentsError && !assignmentsLoading" [message]="assignmentsError" (retry)="loadAssignments()"></app-error-state>
 
       <div class="assignments-list" *ngIf="!assignmentsLoading && !assignmentsError && assignments.length > 0">
-        <div class="assignment-card" *ngFor="let assignment of assignments; trackBy: trackByAssignmentId">
+        <div class="assignment-card" *ngFor="let assignment of assignments; trackBy: fmt.trackByAssignmentId">
           <div class="assignment-main" (click)="viewJob(assignment.job_id)">
             <h3 class="job-title">{{ assignment.job_title || ('Job #' + assignment.job_id) }}</h3>
             <p class="job-desc">{{ getFreelancerName(assignment) }}</p>
@@ -84,7 +74,7 @@
 
           <div class="deliverables" *ngIf="deliverablesOpen[assignment.assignment_id]">
             <div class="deliverables-list" *ngIf="(deliverables[assignment.assignment_id] || []).length > 0">
-              <div class="deliverable-item" *ngFor="let item of deliverables[assignment.assignment_id]; trackBy: trackByDeliverableId">
+              <div class="deliverable-item" *ngFor="let item of deliverables[assignment.assignment_id]; trackBy: fmt.trackByDeliverableId">
                 <span class="deliverable-status" [class]="item.status || 'submitted'">{{ item.status || 'submitted' }}</span>
                 <span class="deliverable-name" *ngIf="item.file_path">
                   <mat-icon>attach_file</mat-icon>
@@ -111,64 +101,31 @@
               </div>
             </div>
 
-            <div class="empty-state" *ngIf="(deliverables[assignment.assignment_id] || []).length === 0">
-              <div class="empty-icon">
-                <mat-icon>upload</mat-icon>
-              </div>
-              <h3 class="empty-title">No submissions yet</h3>
-              <p class="empty-desc">This freelancer has not submitted any files or links yet.</p>
-            </div>
+            <app-empty-state *ngIf="(deliverables[assignment.assignment_id] || []).length === 0"
+              icon="upload"
+              title="No submissions yet"
+              description="This freelancer has not submitted any files or links yet.">
+            </app-empty-state>
           </div>
         </div>
       </div>
 
-      <div class="empty-state" *ngIf="!assignmentsLoading && !assignmentsError && assignments.length === 0">
-        <div class="empty-icon">
-          <mat-icon>work_outline</mat-icon>
-        </div>
-        <h3 class="empty-title">No submissions yet</h3>
-        <p class="empty-desc">Once freelancers submit their work, it will appear here.</p>
-      </div>
+      <app-empty-state *ngIf="!assignmentsLoading && !assignmentsError && assignments.length === 0"
+        icon="work_outline"
+        title="No submissions yet"
+        description="Once freelancers submit their work, it will appear here.">
+      </app-empty-state>
     </section>
 
-    <!-- Filters -->
-    <section class="filters-section" *ngIf="activeTab === 'jobs'">
-      <div class="filter-tabs">
-        <button class="filter-tab" 
-                [class.active]="statusFilter === 'all'" 
-                (click)="filterByStatus('all')">All Jobs</button>
-        <button class="filter-tab" 
-                [class.active]="statusFilter === 'active'" 
-                (click)="filterByStatus('active')">Active</button>
-        <button class="filter-tab" 
-                [class.active]="statusFilter === 'Open'" 
-                (click)="filterByStatus('Open')">Open</button>
-        <button class="filter-tab" 
-                [class.active]="statusFilter === 'Completed'" 
-                (click)="filterByStatus('Completed')">Completed</button>
-      </div>
-    </section>
+    <app-loading-state *ngIf="loading && activeTab === 'jobs'" message="Loading your jobs..."></app-loading-state>
+    <app-error-state *ngIf="errorMessage && !loading && activeTab === 'jobs'" [message]="errorMessage" (retry)="loadJobs()"></app-error-state>
 
-    <!-- Loading State -->
-    <div class="loading-state-dark" *ngIf="loading && activeTab === 'jobs'">
-      <div class="spinner"></div>
-      <span>Loading your jobs...</span>
-    </div>
-
-    <!-- Error State -->
-    <div class="error-state-dark" *ngIf="errorMessage && !loading && activeTab === 'jobs'">
-      <div class="error-icon">⚠️</div>
-      <p>{{ errorMessage }}</p>
-      <button class="btn-dark-secondary" (click)="loadJobs()">Try Again</button>
-    </div>
-
-    <!-- Jobs List -->
     <section class="jobs-section" *ngIf="!loading && !errorMessage && activeTab === 'jobs'">
       <div class="jobs-list" *ngIf="filteredJobs.length > 0">
         <div class="job-card" *ngFor="let job of filteredJobs">
           <div class="job-header" (click)="viewJob(job.job_id)">
             <h3 class="job-title">{{ job.title }}</h3>
-            <span class="job-status" [class]="getStatusClass(job.status)">{{ job.status }}</span>
+            <span class="job-status" [class]="fmt.getStatusClass(job.status)">{{ job.status }}</span>
           </div>
           <p class="job-desc" (click)="viewJob(job.job_id)">{{ job.description | slice:0:150 }}{{ job.description.length > 150 ? '...' : '' }}</p>
           <div class="job-footer">
@@ -182,7 +139,7 @@
               </span>
             </div>
             <div class="job-actions">
-              <button 
+              <button
                 *ngIf="canReviewJob(job) && getCompletedAssignmentForJob(job.job_id) as assignment"
                 class="btn-review"
                 (click)="openReviewModal(job, assignment.freelancer_id, (assignment.freelancer_first_name || '') + ' ' + (assignment.freelancer_last_name || '')); $event.stopPropagation()">
@@ -199,19 +156,15 @@
         </div>
       </div>
 
-      <!-- Empty State -->
-      <div class="empty-state" *ngIf="filteredJobs.length === 0">
-        <div class="empty-icon">
-          <mat-icon>work</mat-icon>
-        </div>
-        <h3 class="empty-title">No jobs yet</h3>
-        <p class="empty-desc">Post your first job to start hiring talented freelancers</p>
+      <app-empty-state *ngIf="filteredJobs.length === 0"
+        icon="work"
+        title="No jobs yet"
+        description="Post your first job to start hiring talented freelancers">
         <a class="btn-gradient" routerLink="/hire/post-job">Post a Job</a>
-      </div>
+      </app-empty-state>
     </section>
   </div>
 
-  <!-- Review Modal -->
   <app-review-modal
     *ngIf="reviewModalOpen"
     [isOpen]="reviewModalOpen"

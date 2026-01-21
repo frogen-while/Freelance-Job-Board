@@ -22,12 +22,12 @@ export class MessagesComponent implements OnInit {
   currentUser: PublicUser | null = null;
   conversations: ConversationPreview[] = [];
   loading = true;
-  
+
   selectedUserId: number | null = null;
   selectedUser: { first_name: string; last_name: string } | null = null;
   messages: Message[] = [];
   loadingMessages = false;
-  
+
   newMessage = '';
   sending = false;
 
@@ -42,8 +42,7 @@ export class MessagesComponent implements OnInit {
     this.currentUser = this.auth.getUser();
     if (this.currentUser) {
       this.loadConversations();
-      
-      // Check if userId passed in query params
+
       const userId = this.route.snapshot.queryParams['userId'];
       if (userId) {
         this.selectConversation(Number(userId));
@@ -54,7 +53,7 @@ export class MessagesComponent implements OnInit {
   loadConversations() {
     if (!this.currentUser) return;
     this.loading = true;
-    
+
     this.api.getMessagesByUser(this.currentUser.user_id).subscribe({
       next: (res) => {
         if (res.success && res.data) {
@@ -69,15 +68,15 @@ export class MessagesComponent implements OnInit {
 
   groupMessages(messages: Message[]): ConversationPreview[] {
     const map = new Map<number, ConversationPreview>();
-    
+
     for (const msg of messages) {
       const otherId = msg.sender_id === this.currentUser?.user_id ? msg.receiver_id : msg.sender_id;
-      
+
       if (!map.has(otherId)) {
         const name = msg.sender_id === this.currentUser?.user_id
           ? (msg.receiver_name?.trim() || `User #${msg.receiver_id}`)
           : (msg.sender_name?.trim() || `User #${msg.sender_id}`);
-        
+
         map.set(otherId, {
           other_user_id: otherId,
           other_user_name: name,
@@ -90,7 +89,7 @@ export class MessagesComponent implements OnInit {
         }
       }
     }
-    
+
     return Array.from(map.values());
   }
 
@@ -115,7 +114,7 @@ export class MessagesComponent implements OnInit {
 
   loadSelectedUser() {
     if (!this.selectedUserId) return;
-    
+
     this.api.getUserById(this.selectedUserId).subscribe({
       next: (res) => {
         if (res.success && res.data) {
@@ -128,7 +127,7 @@ export class MessagesComponent implements OnInit {
   loadMessages() {
     if (!this.currentUser || !this.selectedUserId) return;
     this.loadingMessages = true;
-    
+
     this.api.getConversation(this.currentUser.user_id, this.selectedUserId).subscribe({
       next: (res) => {
         if (res.success && res.data) {
@@ -143,7 +142,7 @@ export class MessagesComponent implements OnInit {
 
   sendMessage() {
     if (!this.currentUser || !this.selectedUserId || !this.newMessage.trim()) return;
-    
+
     this.sending = true;
     this.api.sendMessage({
       sender_id: this.currentUser.user_id,
@@ -178,13 +177,13 @@ export class MessagesComponent implements OnInit {
   }
 
   getSelectedUserName(): string {
-    return this.selectedUser 
+    return this.selectedUser
       ? `${this.selectedUser.first_name} ${this.selectedUser.last_name}`
       : 'Loading...';
   }
 
   getSelectedUserInitials(): string {
-    return this.selectedUser 
+    return this.selectedUser
       ? (this.selectedUser.first_name[0] + this.selectedUser.last_name[0]).toUpperCase()
       : '?';
   }
@@ -200,19 +199,19 @@ export class MessagesComponent implements OnInit {
   formatMessageDate(dateStr: string): string {
     const date = new Date(dateStr);
     const today = new Date();
-    
+
     if (date.toDateString() === today.toDateString()) return 'Today';
-    
+
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
     if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
-    
+
     return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
   }
 
   shouldShowDateSeparator(index: number): boolean {
     if (index === 0) return true;
-    return new Date(this.messages[index].sent_at).toDateString() !== 
+    return new Date(this.messages[index].sent_at).toDateString() !==
            new Date(this.messages[index - 1].sent_at).toDateString();
   }
 

@@ -67,7 +67,7 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/admin']);
       return;
     }
-    
+
     if (this.auth.needsOnboarding()) {
       this.router.navigate(['/onboarding']);
     } else if (this.returnUrl && this.returnUrl !== '/' && !this.returnUrl.includes('/login') && !this.returnUrl.includes('/register')) {

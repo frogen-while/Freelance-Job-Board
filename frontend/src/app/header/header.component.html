@@ -4,21 +4,21 @@
 
     <nav class="main-nav">
       <ng-container *ngIf="auth.isLoggedIn(); else guestNav">
-        <!-- Regular users (Freelancer/Employer without staff role) see full nav -->
+
         <ng-container *ngIf="!auth.isAdminRole()">
           <a class="nav-link" *ngIf="auth.isFreelancer()" routerLink="/find-work/browse" routerLinkActive="active">Find Work</a>
           <a class="nav-link" *ngIf="auth.isFreelancer()" routerLink="/my-proposals" routerLinkActive="active">My Proposals</a>
           <a class="nav-link" *ngIf="auth.isEmployer()" routerLink="/hire/browse" routerLinkActive="active">Find Talent</a>
           <a class="nav-link" *ngIf="auth.isEmployer()" routerLink="/my-jobs" routerLinkActive="active">My Jobs</a>
         </ng-container>
-        <!-- Staff users see Admin panel link -->
+
         <a class="nav-link admin-link" *ngIf="auth.isAdminRole()" routerLink="/admin" routerLinkActive="active">
           Admin
         </a>
         <a class="nav-link" routerLink="/messages" routerLinkActive="active">Messages</a>
         <a class="nav-link" routerLink="/about" routerLinkActive="active">About Us</a>
       </ng-container>
-      
+
       <ng-template #guestNav>
         <a class="nav-link" routerLink="/find-work/browse" routerLinkActive="active">Find Work</a>
         <a class="nav-link" routerLink="/hire/browse" routerLinkActive="active">Hire Freelancers</a>

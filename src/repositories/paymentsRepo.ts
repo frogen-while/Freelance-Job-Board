@@ -9,23 +9,23 @@ export const paymentsRepo = {
         );
         return result || [];
     },
-    
+
     async create(job_id: number, payer_id: number, payee_id: number, amount: number): Promise<number | null> {
         const result = await db.connection?.run(
             `INSERT INTO payments (job_id, payer_id, payee_id, amount) VALUES (?, ?, ?, ?)`,
             job_id, payer_id, payee_id, amount
         );
-        
+
         return result?.lastID ?? null;
     },
-    
+
     async findById(payment_id: number): Promise<Payment | undefined> {
         return await db.connection?.get<Payment | undefined>(
             `SELECT * FROM payments WHERE payment_id = ?`,
             payment_id
         );
     },
-    
+
     async update(payment_id: number, updateData: { job_id?: number, payer_id?: number, payee_id?: number, amount?: number }): Promise<boolean> {
         const setClauses: string[] = [];
         const params: (string | number)[] = [];
@@ -48,7 +48,7 @@ export const paymentsRepo = {
         }
 
         if (setClauses.length === 0) {
-            return false; 
+            return false;
         }
 
         params.push(payment_id);
@@ -56,7 +56,7 @@ export const paymentsRepo = {
         const result = await db.connection?.run(statement, params);
         return (result?.changes ?? 0) > 0;
     },
-    
+
     async deleteByID(payment_id: number): Promise<void> {
         await db.connection?.run(
             'DELETE FROM payments WHERE payment_id = ?',

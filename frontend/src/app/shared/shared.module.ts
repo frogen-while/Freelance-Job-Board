@@ -6,21 +6,33 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { ProfileSidebarComponent } from './profile-sidebar/profile-sidebar.component';
 import { ReviewModalComponent } from './review-modal/review-modal.component';
+import { LoadingStateComponent } from './loading-state/loading-state.component';
+import { EmptyStateComponent } from './empty-state/empty-state.component';
+import { ErrorStateComponent } from './error-state/error-state.component';
+import { AlertMessageComponent } from './alert-message/alert-message.component';
 
 @NgModule({
   declarations: [
     ProfileSidebarComponent,
-    ReviewModalComponent
+    ReviewModalComponent,
+    LoadingStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent
   ],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
-    MatIconModule
+    MatIconModule,
+    AlertMessageComponent
   ],
   exports: [
     ProfileSidebarComponent,
     ReviewModalComponent,
+    LoadingStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+    AlertMessageComponent,
     MatIconModule
   ]
 })

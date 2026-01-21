@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { 
-  getAllUsers, 
-  assignRole, 
-  blockUser, 
-  unblockUser, 
+import {
+  getAllUsers,
+  assignRole,
+  blockUser,
+  unblockUser,
   getAuditLogs,
   bulkBlockUsers,
   bulkUnblockUsers,

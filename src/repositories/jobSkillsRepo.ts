@@ -30,13 +30,12 @@ export const jobSkillsRepo = {
   },
 
   async setJobSkills(job_id: number, skill_ids: number[]): Promise<void> {
-    // Delete existing skills
+
     await db.connection?.run(
       `DELETE FROM job_skills WHERE job_id = ?`,
       job_id
     );
 
-    // Insert new skills
     for (const skill_id of skill_ids) {
       await db.connection?.run(
         `INSERT INTO job_skills (job_id, skill_id) VALUES (?, ?)`,

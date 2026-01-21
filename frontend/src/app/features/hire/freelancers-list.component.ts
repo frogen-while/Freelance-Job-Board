@@ -15,12 +15,12 @@ export class FreelancersListComponent implements OnInit {
   categories: Category[] = [];
   loading = true;
   total = 0;
-  
+
   searchQuery = '';
   selectedCategory: number | null = null;
   currentPage = 1;
   pageSize = 12;
-  
+
   isLoggedIn = false;
 
   constructor(
@@ -34,7 +34,7 @@ export class FreelancersListComponent implements OnInit {
   ngOnInit() {
     this.isLoggedIn = this.auth.isLoggedIn();
     this.loadCategories();
-    
+
     this.route.queryParams.subscribe(params => {
       this.searchQuery = params['skill'] || '';
       this.selectedCategory = params['category'] ? Number(params['category']) : null;

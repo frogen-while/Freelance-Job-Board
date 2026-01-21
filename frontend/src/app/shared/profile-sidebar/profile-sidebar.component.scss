@@ -88,7 +88,6 @@
   }
 }
 
-// Stats Grid
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -117,7 +116,6 @@
   }
 }
 
-// Employer Company Info
 .company-info {
   display: flex;
   flex-direction: column;
@@ -194,7 +192,6 @@
   }
 }
 
-// Skeleton loading
 .skeleton {
   padding: $space-lg;
 
@@ -218,7 +215,6 @@
   }
 }
 
-// Guest Sidebar Styles
 .guest-sidebar {
   padding: $space-xl;
   text-align: center;
@@ -237,7 +233,7 @@
   height: 64px;
   background: rgba(99, 102, 241, 0.15);
   border-radius: 50%;
-  
+
   mat-icon {
     font-size: 32px;
     width: 32px;

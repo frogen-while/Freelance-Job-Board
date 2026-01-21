@@ -14,10 +14,11 @@ import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
 import { SupportComponent } from './features/support/support.component';
 import { AuthInterceptor } from './core/auth.interceptor';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, HomeComponent, AboutComponent, ProfileComponent, LoginComponent, RegisterComponent, SupportComponent],
-  imports: [BrowserModule, BrowserAnimationsModule, HttpClientModule, FormsModule, MatIconModule, AppRoutingModule],
+  imports: [BrowserModule, BrowserAnimationsModule, HttpClientModule, FormsModule, MatIconModule, AppRoutingModule, SharedModule],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })

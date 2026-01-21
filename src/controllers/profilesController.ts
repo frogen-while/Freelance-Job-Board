@@ -142,7 +142,6 @@ export const getFeaturedFreelancers = async (req: Request, res: Response) => {
   }
 };
 
-// Freelancer-specific profile endpoints
 export const getFreelancerProfile = async (req: Request, res: Response) => {
   const userId = parseIdParam(res, req.params.userId, 'user');
   if (userId === null) return;
@@ -198,7 +197,6 @@ export const upsertFreelancerProfile = async (req: Request, res: Response) => {
   }
 };
 
-// Employer-specific profile endpoints
 export const getEmployerProfile = async (req: Request, res: Response) => {
   const userId = parseIdParam(res, req.params.userId, 'user');
   if (userId === null) return;

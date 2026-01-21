@@ -1,4 +1,5 @@
 @use 'app/shared' as *;
+@use 'app/shared/utilities' as u;
 
 :host {
   display: block;
@@ -9,7 +10,6 @@
   background: $bg-page;
 }
 
-// Header
 .page-header {
   background: $primary;
   padding: 120px $space-xl 60px;
@@ -20,19 +20,9 @@
   margin: 0 auto;
 }
 
-.page-title {
-  font-size: $font-size-3xl;
-  font-weight: $font-weight-bold;
-  color: white;
-  margin-bottom: $space-xs;
-}
+.page-title { @include u.title-page-dark; font-size: $font-size-3xl; }
+.page-subtitle { @include u.subtitle-page-dark; font-size: $font-size-md; }
 
-.page-subtitle {
-  font-size: $font-size-md;
-  color: $white-60;
-}
-
-// Page Body
 .page-body {
   margin-top: -30px;
   position: relative;
@@ -45,7 +35,6 @@
   padding: 0 $space-xl $space-3xl;
 }
 
-// Content Layout with Sidebar
 .content-layout {
   display: grid;
   grid-template-columns: 1fr 300px;
@@ -70,7 +59,6 @@
   }
 }
 
-// Filters Bar
 .filters-bar {
   background: white;
   border-radius: $radius-xl;
@@ -188,7 +176,6 @@
   }
 }
 
-// Filters Panel
 .filters-panel {
   background: white;
   border-radius: $radius-xl;
@@ -276,7 +263,6 @@
   margin-bottom: $space-xl;
 }
 
-// Jobs Grid
 .jobs-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));

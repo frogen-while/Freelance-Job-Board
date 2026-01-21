@@ -15,7 +15,7 @@ export class CheckoutComponent implements OnInit {
   application: JobApplication | null = null;
   job: Job | null = null;
   freelancerName = '';
-  
+
   loading = true;
   processing = false;
   errorMessage = '';
@@ -41,12 +41,12 @@ export class CheckoutComponent implements OnInit {
 
   loadData(): void {
     if (!this.applicationId) return;
-    
+
     this.api.getApplicationById(this.applicationId).subscribe({
       next: (res) => {
         if (res.success && res.data) {
           this.application = res.data;
-          this.freelancerName = this.application.display_name || 
+          this.freelancerName = this.application.display_name ||
             `${this.application.first_name || ''} ${this.application.last_name || ''}`.trim() ||
             'Freelancer';
           this.loadJob(this.application.job_id);
@@ -83,10 +83,10 @@ export class CheckoutComponent implements OnInit {
 
   processPayment(): void {
     if (!this.application || !this.job || this.processing) return;
-    
+
     this.processing = true;
     this.errorMessage = '';
-    
+
     const user = this.auth.getUser();
     if (!user) {
       this.errorMessage = 'You must be logged in';
@@ -94,7 +94,6 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
-    // Create payment and accept application
     this.api.processPaymentAndAccept({
       application_id: this.applicationId!,
       job_id: this.job.job_id,

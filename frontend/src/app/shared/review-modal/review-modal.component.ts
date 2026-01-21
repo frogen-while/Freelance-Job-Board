@@ -13,7 +13,7 @@ export class ReviewModalComponent {
   @Input() reviewerId: number | null = null;
   @Input() revieweeId: number | null = null;
   @Input() revieweeName: string = '';
-  
+
   @Output() closed = new EventEmitter<void>();
   @Output() reviewSubmitted = new EventEmitter<void>();
 

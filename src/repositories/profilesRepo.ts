@@ -87,17 +87,17 @@ export const profilesRepo = {
     );
   },
 
-  async getFreelancers(options?: { 
-    category?: string; 
-    skill?: string; 
-    limit?: number; 
+  async getFreelancers(options?: {
+    category?: string;
+    skill?: string;
+    limit?: number;
     offset?: number;
   }): Promise<FreelancerProfile[]> {
     const limit = options?.limit ?? 20;
     const offset = options?.offset ?? 0;
 
     let query = `
-      SELECT 
+      SELECT
         p.profile_id,
         p.user_id,
         p.display_name,
@@ -129,7 +129,7 @@ export const profilesRepo = {
     params.push(limit, offset);
 
     const rows = await db.connection?.all<FreelancerProfileRow[]>(query, ...params);
-    
+
     if (!rows) return [];
 
     return rows.map(row => ({
@@ -150,7 +150,7 @@ export const profilesRepo = {
 
   async getFeaturedFreelancers(limit: number = 6): Promise<FreelancerProfile[]> {
     const query = `
-      SELECT 
+      SELECT
         p.profile_id,
         p.user_id,
         p.display_name,
@@ -175,7 +175,7 @@ export const profilesRepo = {
     `;
 
     const rows = await db.connection?.all<FreelancerProfileRow[]>(query, limit);
-    
+
     if (!rows) return [];
 
     return rows.map(row => ({

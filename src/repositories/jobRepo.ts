@@ -7,8 +7,8 @@ export const jobRepo = {
 
     async get_all(): Promise<Job[]> {
         const result = await db.connection?.all<Job[]>(
-            `SELECT job_id, employer_id, category_id, title, description, budget, status, deadline, 
-                    experience_level, job_type, duration_estimate, is_remote, location 
+            `SELECT job_id, employer_id, category_id, title, description, budget, status, deadline,
+                    experience_level, job_type, duration_estimate, is_remote, location
              FROM jobs`
         );
         return result || [];
@@ -38,15 +38,15 @@ export const jobRepo = {
         skill_ids?: number[];
     }): Promise<number | null> {
         const result = await db.connection?.run(
-            `INSERT INTO jobs (employer_id, category_id, title, description, budget, status, deadline, 
-                               experience_level, job_type, duration_estimate, is_remote, location) 
+            `INSERT INTO jobs (employer_id, category_id, title, description, budget, status, deadline,
+                               experience_level, job_type, duration_estimate, is_remote, location)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            data.employer_id, 
-            data.category_id, 
-            data.title, 
-            data.description, 
-            data.budget, 
-            data.status || 'Open', 
+            data.employer_id,
+            data.category_id,
+            data.title,
+            data.description,
+            data.budget,
+            data.status || 'Open',
             data.deadline || null,
             data.experience_level || null,
             data.job_type || 'fixed',
@@ -54,14 +54,13 @@ export const jobRepo = {
             data.is_remote !== undefined ? (data.is_remote ? 1 : 0) : 1,
             data.location || null
         );
-        
+
         const job_id = result?.lastID ?? null;
 
-        // Add skills if provided
         if (job_id && data.skill_ids && data.skill_ids.length > 0) {
             await jobSkillsRepo.setJobSkills(job_id, data.skill_ids);
         }
-            
+
         return job_id;
     },
 
@@ -89,7 +88,7 @@ export const jobRepo = {
         return jobs || [];
     },
 
-    async update(job_id: number, updateData: { 
+    async update(job_id: number, updateData: {
         employer_id?: number;
         category_id?: number;
         title?: string;
@@ -157,7 +156,7 @@ export const jobRepo = {
         }
 
         if (setClauses.length === 0 && !updateData.skill_ids) {
-            return false; 
+            return false;
         }
 
         if (setClauses.length > 0) {
@@ -167,7 +166,6 @@ export const jobRepo = {
             await db.connection?.run(statement, params);
         }
 
-        // Update skills if provided
         if (updateData.skill_ids) {
             await jobSkillsRepo.setJobSkills(job_id, updateData.skill_ids);
         }
@@ -252,7 +250,6 @@ export const jobRepo = {
 
         const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
 
-        // Count total
         const countQuery = `
             SELECT COUNT(DISTINCT j.job_id) as total
             FROM jobs j
@@ -262,7 +259,6 @@ export const jobRepo = {
         const countResult = await db.connection?.get<{ total: number }>(countQuery, ...params);
         const total = countResult?.total ?? 0;
 
-        // Get jobs
         const query = `
             SELECT DISTINCT j.*
             FROM jobs j
@@ -274,7 +270,6 @@ export const jobRepo = {
 
         const jobs = await db.connection?.all<Job[]>(query, ...params, limit, offset);
 
-        // Add skills to each job
         for (const job of jobs || []) {
             job.skills = await jobSkillsRepo.getSkillNamesByJobId(job.job_id);
         }

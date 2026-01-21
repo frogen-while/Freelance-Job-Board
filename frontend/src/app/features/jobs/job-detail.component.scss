@@ -9,7 +9,6 @@
   padding-top: 80px;
 }
 
-// Success Banner
 .success-banner {
   @include flex-center;
   gap: $space-sm;
@@ -19,21 +18,20 @@
   border-radius: $radius-lg;
   margin-bottom: $space-lg;
   box-shadow: 0 0 12px rgba($success, 0.15);
-  
+
   mat-icon {
     color: $success;
     font-size: $font-size-24;
     width: $font-size-24;
     height: $font-size-24;
   }
-  
+
   span {
     color: #4ade80;
     font-weight: $font-weight-medium;
   }
 }
 
-// Not Found State
 .not-found {
   display: flex;
   flex-direction: column;
@@ -72,20 +70,17 @@
   }
 }
 
-// Job Content
 .job-content {
   max-width: 1200px;
   margin: 0 auto;
   padding: $space-xl;
 }
 
-// Back Button
 .back-btn {
   @include btn-back;
   margin-bottom: $space-xl;
 }
 
-// Content Grid
 .content-grid {
   display: grid;
   grid-template-columns: 1fr 380px;
@@ -96,14 +91,12 @@
   }
 }
 
-// Main Section
 .main-section {
   display: flex;
   flex-direction: column;
   gap: $space-xl;
 }
 
-// Job Header
 .job-header {
   @include card-dark-padded;
   padding: $space-2xl;
@@ -143,7 +136,6 @@
   border-radius: $radius-full;
 }
 
-// Job Details Grid
 .job-details-grid {
   @include card-dark-padded;
   display: grid;
@@ -169,7 +161,6 @@
   }
 }
 
-// Skills
 .job-skills {
   @include card-dark-padded;
   padding: $space-2xl;
@@ -221,7 +212,6 @@
   }
 }
 
-// Job Description
 .job-description {
   @include card-dark-padded;
   padding: $space-2xl;
@@ -241,7 +231,6 @@
   }
 }
 
-// Category Info
 .category-info {
   @include card-dark-padded;
   padding: $space-2xl;
@@ -274,7 +263,6 @@
   }
 }
 
-// Sidebar
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -285,7 +273,6 @@
   }
 }
 
-// Employer Card
 .employer-card {
   @include card-dark-padded;
 
@@ -325,12 +312,10 @@
   color: $white-50;
 }
 
-// Apply Card
 .apply-card {
   @include card-dark-padded;
 }
 
-// Applied State
 .applied-state {
   text-align: center;
   padding: $space-lg 0;
@@ -365,7 +350,6 @@
   }
 }
 
-// Apply Form
 .apply-form {
   h3 {
     font-size: $font-size-lg;
@@ -375,7 +359,6 @@
   }
 }
 
-// Closed State
 .closed-state, .employer-view, .guest-view {
   text-align: center;
   padding: $space-lg 0;
@@ -395,7 +378,6 @@
   }
 }
 
-// Guest View
 .guest-view {
   .login-link {
     margin-top: $space-lg;
@@ -414,7 +396,6 @@
   }
 }
 
-// Proposals Section
 .proposals-card,
 .no-proposals-card {
   background: $white-3;
@@ -433,7 +414,7 @@
 
 .no-proposals-card {
   text-align: center;
-  
+
   p {
     color: $white-50;
     font-size: $font-size-sm;

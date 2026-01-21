@@ -1,4 +1,5 @@
 @use 'app/shared' as *;
+@use 'app/shared/utilities' as u;
 
 :host {
   @include bg-dark-page;
@@ -14,25 +15,14 @@
   margin: 0 auto;
 }
 
-// Header
 .page-header {
   text-align: center;
   margin-bottom: $space-2xl;
 }
 
-.page-title {
-  font-size: $font-size-3xl;
-  font-weight: $font-weight-bold;
-  color: white;
-  margin-bottom: $space-sm;
-}
+.page-title { @include u.title-page-dark; font-size: $font-size-3xl; }
+.page-subtitle { @include u.subtitle-page-dark; font-size: $font-size-lg; }
 
-.page-subtitle {
-  font-size: $font-size-lg;
-  color: $white-60;
-}
-
-// Progress Steps
 .progress-steps {
   @include flex-center;
   margin-bottom: $space-2xl;
@@ -92,7 +82,6 @@
   }
 }
 
-// Messages
 .message {
   padding: $space-md $space-lg;
   border-radius: $radius-lg;
@@ -111,7 +100,6 @@
   }
 }
 
-// Form Container
 .form-container {
   background: white;
   border-radius: $radius-2xl;
@@ -229,7 +217,6 @@
   font-weight: 500;
 }
 
-// Checkbox
 .checkbox-wrapper {
   margin-top: $space-md;
 }
@@ -249,7 +236,6 @@
   }
 }
 
-// Skills
 .selected-skills {
   display: flex;
   flex-wrap: wrap;
@@ -314,7 +300,6 @@
   margin-top: $space-sm;
 }
 
-// Job Summary
 .job-summary {
   background: $bg-page;
   border-radius: $radius-xl;
@@ -356,7 +341,6 @@
   }
 }
 
-// Form Actions
 .form-actions {
   display: flex;
   justify-content: space-between;

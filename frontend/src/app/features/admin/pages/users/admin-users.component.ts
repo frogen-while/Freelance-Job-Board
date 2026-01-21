@@ -12,18 +12,16 @@ import { AdminUser, UserRole } from '../../../../core/models';
 export class AdminUsersComponent implements OnInit {
   users: AdminUser[] = [];
   filteredUsers: AdminUser[] = [];
-  
+
   loading = true;
   errorMessage = '';
   successMessage = '';
-  
-  // Filters
+
   searchQuery = '';
   roleFilter = '';
-  
-  // Available roles
+
   roles: UserRole[] = ['Admin', 'Manager', 'Support', 'Employer', 'Freelancer'];
-  
+
   constructor(
     private api: ApiService,
     public auth: AuthService,
@@ -37,11 +35,11 @@ export class AdminUsersComponent implements OnInit {
   loadUsers(): void {
     this.loading = true;
     this.errorMessage = '';
-    
+
     const filters: any = {};
     if (this.roleFilter) filters.role = this.roleFilter;
     if (this.searchQuery) filters.search = this.searchQuery;
-    
+
     this.api.getAdminUsers(filters).subscribe({
       next: (res: any) => {
         if (res.success) {
@@ -59,11 +57,11 @@ export class AdminUsersComponent implements OnInit {
 
   applyFilters(): void {
     this.filteredUsers = this.users.filter(user => {
-      const matchesSearch = !this.searchQuery || 
+      const matchesSearch = !this.searchQuery ||
         user.email.toLowerCase().includes(this.searchQuery.toLowerCase());
-      
+
       const matchesRole = !this.roleFilter || user.main_role === this.roleFilter;
-      
+
       return matchesSearch && matchesRole;
     });
   }
@@ -76,26 +74,24 @@ export class AdminUsersComponent implements OnInit {
     this.loadUsers();
   }
 
-  // Check if current user can edit the target user
   canEditUser(user: AdminUser): boolean {
-    // Admin can edit anyone except other admins
+
     if (this.auth.isAdmin()) {
       return user.main_role !== 'Admin';
     }
-    // Manager can edit Support, Employer, Freelancer (not Admin, Manager)
+
     if (this.auth.isManager()) {
       return !['Admin', 'Manager'].includes(user.main_role);
     }
     return false;
   }
 
-  // Get available roles based on current user's role
   getAvailableRoles(): UserRole[] {
     if (this.auth.isAdmin()) {
-      return this.roles; // Admin can assign any role
+      return this.roles;
     }
     if (this.auth.isManager()) {
-      // Manager can only assign Support, Employer, Freelancer
+
       return ['Support', 'Employer', 'Freelancer'];
     }
     return [];

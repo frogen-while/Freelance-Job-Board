@@ -12,7 +12,7 @@ router.post('/:id/deliverables', requireAuth, asyncHandler(uploadAssignmentDeliv
 router.patch('/deliverables/:deliverableId', requireAuth, asyncHandler(reviewAssignmentDeliverable));
 router.patch('/:id/status', requireAuth, asyncHandler(updateAssignmentStatus));
 
-router.post('/', requireAuth, asyncHandler(createAssignment)); 
+router.post('/', requireAuth, asyncHandler(createAssignment));
 router.get('/', requireAuth, asyncHandler(getAllAssignments));
 router.get('/:id', requireAuth, asyncHandler(getAssignmentById));
 router.delete('/:id', requireAuth, asyncHandler(deleteAssignment));
